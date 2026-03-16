@@ -542,12 +542,10 @@ async function compileWithTexlive(){
   document.getElementById('compile-btn').disabled=true;
   switchPreview('pdf', document.querySelectorAll('.ptab')[1]);
 
-  // Guardar cambios del archivo activo
   if(window.activeFile && typeof window.projectFiles[window.activeFile]==='string'){
     window.projectFiles[window.activeFile]=document.getElementById('editor').value;
   }
 
-  // Obtener código principal
   const mainCode = window.mainTexFile
     ? (window.projectFiles[window.mainTexFile]||document.getElementById('editor').value)
     : document.getElementById('editor').value;
@@ -556,47 +554,112 @@ async function compileWithTexlive(){
     const formData = new FormData();
     formData.append('code', mainCode);
 
-    // Agregar imágenes y archivos extra del proyecto
+    // Enviar TODOS los archivos del proyecto
     if(window.projectFiles){
       for(const [fname, content] of Object.entries(window.projectFiles)){
-        const shortName = fname.split('/').pop();
-        if(/\.(png|jpg|jpeg|gif|svg|webp|bmp)$/i.test(fname) && content instanceof Uint8Array){
+        const shortName=fname.split('/').pop();
+        if(fname===window.mainTexFile) continue;
+        if(typeof content==='string' && content.length>0){
+          formData.append('files', new Blob([content],{type:'text/plain'}), shortName);
+        } else if(content instanceof Uint8Array){
           formData.append('files', new Blob([content]), shortName);
-        } else if(/\.(cls|sty|bib)$/i.test(fname) && typeof content==='string'){
-          formData.append('files', new Blob([content], {type:'text/plain'}), shortName);
         }
+      }
+    }
+    // Enviar imágenes del ZIP
+    if(window.imageBlobs){
+      for(const [fname, dataUrl] of Object.entries(window.imageBlobs)){
+        if(fname.includes('/')) continue;
+        try{
+          const r=await fetch(dataUrl); const b=await r.blob();
+          formData.append('files', b, fname);
+        }catch(e){}
       }
     }
 
     const res = await fetch('https://latexify-co.duckdns.org/compile', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code: mainCode })
+      body: formData
     });
 
     if(res.ok){
-      const blob = await res.blob();
-      const url = URL.createObjectURL(new Blob([await blob.arrayBuffer()], {type:'application/pdf'}));
-      const frame = document.getElementById('prev-pdf');
-      frame.src = '';
-      setTimeout(()=>{ frame.src = url; }, 100);
+      const blob=await res.blob();
+      const url=URL.createObjectURL(new Blob([await blob.arrayBuffer()],{type:'application/pdf'}));
+      const frame=document.getElementById('prev-pdf');
+      frame.src='';
+      setTimeout(()=>{ frame.src=url; },100);
       document.getElementById('status-msg').textContent='PDF listo ✓';
       document.getElementById('status-err').textContent='';
-      window._lastPdfUrl = url;
+      window._lastPdfUrl=url;
       document.getElementById('download-btn').style.display='block';
       document.getElementById('open-btn').style.display='block';
     } else {
-      const data = await res.json();
-      document.getElementById('status-err').textContent = data.error?.substring(0,80)||'Error de compilación';
+      const data=await res.json();
+      const errText=data.error||'Error de compilación';
+      document.getElementById('status-err').textContent=errText.split('\n')[0].substring(0,80);
       document.getElementById('status-msg').textContent='';
+      showCompileErrors(errText, data.log||'');
     }
   } catch(e){
     document.getElementById('status-err').textContent='Error de conexión con el compilador';
     document.getElementById('status-msg').textContent='';
-    console.error('Compile error:',e);
   }
   document.getElementById('compile-btn').disabled=false;
 }
+
+function escHtml2(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function showCompileErrors(errText, log){
+  switchPreview('math', document.querySelectorAll('.ptab')[0]);
+  const errors=errText.split('\n').filter(l=>l.trim());
+  const suggestions={
+    'Undefined control sequence':'El comando no existe o falta importar el paquete. Revisa si lo escribiste bien o agrega \\usepackage{} correspondiente.',
+    'Missing $ inserted':'Hay una expresión matemática fuera del modo matemático. Enciérrala entre $...$ o \\(...\\).',
+    'File not found':'Un archivo referenciado no existe. Verifica que el nombre sea correcto y que esté incluido en el ZIP.',
+    'Runaway argument':'Falta cerrar una llave }. Revisa que cada { tenga su } correspondiente.',
+    'Extra }':'Hay una llave } de más. Revisa el balance de llaves en tu código.',
+    'Unknown document class':'La clase del documento no está instalada. Asegúrate de incluir el archivo .cls en el ZIP.',
+    'cannot find':'El paquete o archivo no está disponible. Verifica el nombre o inclúyelo en el ZIP.',
+    'Missing \\begin{document}':'Falta \\begin{document} en el código.',
+    'Undefined color':'Falta definir el color o cargar el paquete xcolor/color.',
+    'No room for a new':'Demasiados contadores o flotantes. Agrega \\usepackage{morefloats}.',
+  };
+  let sugg='Revisa la sintaxis del código en la línea indicada.';
+  for(const [key,val] of Object.entries(suggestions)){
+    if(errText.includes(key)||log.includes(key)){ sugg=val; break; }
+  }
+  const lineMatch=log.match(/l\.(\d+)/);
+  const lineNum=lineMatch?parseInt(lineMatch[1]):null;
+  document.getElementById('prev-math').innerHTML=`
+    <div style="padding:16px">
+      <div style="background:var(--red-l);border:1px solid var(--red);border-radius:8px;padding:14px;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:500;color:var(--red);margin-bottom:8px">⚠ Error de compilación</div>
+        ${errors.slice(0,5).map(e=>`<div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--red);margin-bottom:4px">${escHtml2(e)}</div>`).join('')}
+        ${lineNum?`<div style="margin-top:8px;font-size:12px;color:var(--red)">📍 Línea ${lineNum}</div>`:''}
+      </div>
+      <div style="background:var(--amber-l);border:1px solid var(--amber-m);border-radius:8px;padding:14px;margin-bottom:12px">
+        <div style="font-size:13px;font-weight:500;color:var(--amber);margin-bottom:6px">💡 Sugerencia</div>
+        <div style="font-size:13px;color:var(--ink2);line-height:1.6">${sugg}</div>
+        ${lineNum?`<button onclick="goToLine(${lineNum})" style="margin-top:10px;background:var(--amber);color:#fff;border:none;border-radius:5px;padding:6px 12px;font-size:12px;cursor:pointer;font-family:'DM Sans',sans-serif">Ir a la línea ${lineNum}</button>`:''}
+      </div>
+      <details>
+        <summary style="font-size:12px;color:var(--ink3);cursor:pointer;font-family:'DM Mono',monospace">Ver log completo</summary>
+        <pre style="font-size:10px;color:var(--ink3);margin-top:8px;line-height:1.5;overflow-x:auto;white-space:pre-wrap;background:var(--paper2);padding:10px;border-radius:6px;border:1px solid var(--border)">${escHtml2(log.substring(0,2000))}</pre>
+      </details>
+    </div>`;
+}
+
+function goToLine(n){
+  const ed=document.getElementById('editor');
+  const lines=ed.value.split('\n');
+  let pos=0;
+  for(let i=0;i<Math.min(n-1,lines.length);i++) pos+=lines[i].length+1;
+  ed.focus(); ed.selectionStart=ed.selectionEnd=pos;
+  const lineH=ed.scrollHeight/lines.length;
+  ed.scrollTop=(n-5)*lineH;
+  switchPreview('math',document.querySelectorAll('.ptab')[0]);
+}
+window.goToLine=goToLine;
 
 let saveTimer;
 function schedSave(){
