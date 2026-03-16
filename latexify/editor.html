@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,99 +9,104 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
+
+[data-theme="light"]{
   --ink:#0D1117;--ink2:#3D4451;--ink3:#6B7280;
-  --paper:#FAFAF8;--paper2:#F3F2EE;--paper3:#ECEAE4;--border:#E2DED6;--border2:#CCC9BF;
+  --paper:#FAFAF8;--paper2:#F3F2EE;--paper3:#ECEAE4;
+  --border:#E2DED6;
   --teal:#0B6E5E;--teal-l:#E0F2EE;--teal-m:#1D9E75;
   --amber:#B45309;--amber-l:#FEF3C7;--amber-m:#D97706;
   --red:#991B1B;--red-l:#FEE2E2;
-  --mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;
+  --statusbar:#0D1117;--statusbar-text:#6B7280;
+  --editor-bg:#FAFAF8;--editor-color:#0D1117;
 }
-html,body{height:100%;overflow:hidden}
-body{font-family:var(--sans);background:var(--paper2);color:var(--ink);display:flex;flex-direction:column}
+[data-theme="dark"]{
+  --ink:#E2E8F0;--ink2:#A0AEC0;--ink3:#718096;
+  --paper:#1A1D23;--paper2:#13151A;--paper3:#0D0F13;
+  --border:#2D3748;
+  --teal:#1D9E75;--teal-l:#0B3D2E;--teal-m:#2DD4A0;
+  --amber:#D97706;--amber-l:#2D1F00;--amber-m:#F59E0B;
+  --red:#F87171;--red-l:#2D1515;
+  --statusbar:#0D0F13;--statusbar-text:#4A5568;
+  --editor-bg:#1E2128;--editor-color:#ABB2BF;
+}
 
-/* NAV */
-#topbar{display:flex;align-items:center;gap:8px;padding:0 12px;height:48px;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;min-height:48px}
-.logo{font-family:var(--mono);font-size:15px;font-weight:500;color:var(--ink);text-decoration:none;white-space:nowrap}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--paper2);color:var(--ink);display:flex;flex-direction:column;transition:background .25s,color .25s}
+
+#topbar{display:flex;align-items:center;gap:8px;padding:0 12px;height:48px;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;min-height:48px;transition:background .25s,border-color .25s}
+.logo{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--ink);text-decoration:none;white-space:nowrap}
 .logo span{color:var(--teal-m)}
 #sep{flex:1}
-.tb-btn{font-size:12px;font-family:var(--sans);background:var(--paper2);color:var(--ink2);border:1px solid var(--border);border-radius:6px;padding:5px 11px;cursor:pointer;white-space:nowrap;transition:background .15s}
+.tb-btn{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--paper2);color:var(--ink2);border:1px solid var(--border);border-radius:6px;padding:5px 11px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s}
 .tb-btn:hover{background:var(--paper3);color:var(--ink)}
 .tb-btn.green{background:var(--teal);color:#fff;border-color:var(--teal)}
 .tb-btn.green:hover{background:var(--teal-m)}
-.tb-btn.green:disabled{background:#9CA3AF;border-color:#9CA3AF;cursor:not-allowed}
+.tb-btn.green:disabled{background:#4A5568;border-color:#4A5568;cursor:not-allowed}
 .tb-btn.orange{background:var(--amber);color:#fff;border-color:var(--amber)}
 .tb-btn.orange:hover{background:var(--amber-m)}
+#theme-btn{font-size:17px;background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;line-height:1.4;transition:border-color .2s,background .2s}
+#theme-btn:hover{background:var(--paper3)}
 .divv{width:1px;height:20px;background:var(--border)}
-#plan-badge{font-size:11px;font-family:var(--mono);padding:3px 10px;border-radius:20px;white-space:nowrap}
+#plan-badge{font-size:11px;font-family:'DM Mono',monospace;padding:3px 10px;border-radius:20px;white-space:nowrap}
 #plan-badge.free{background:var(--paper3);color:var(--ink3)}
 #plan-badge.premium{background:var(--amber-l);color:var(--amber)}
-#compil-count{font-size:11px;font-family:var(--mono);color:var(--ink3);white-space:nowrap}
+#compil-count{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);white-space:nowrap}
 #user-name{font-size:12px;color:var(--ink3);white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis}
 
-/* TOOLBAR 2 */
-#toolbar2{display:flex;align-items:center;gap:4px;padding:4px 12px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap}
-.cmd{font-size:11px;font-family:var(--mono);color:var(--ink2);background:var(--paper);border:1px solid var(--border);border-radius:4px;padding:3px 8px;cursor:pointer;transition:background .15s;white-space:nowrap}
+#toolbar2{display:flex;align-items:center;gap:4px;padding:4px 12px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;transition:background .25s}
+.cmd{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink2);background:var(--paper);border:1px solid var(--border);border-radius:4px;padding:3px 8px;cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
 .cmd:hover{background:var(--paper3);color:var(--ink)}
-select.tpl-sel{font-size:12px;font-family:var(--sans);background:var(--paper);color:var(--ink);border:1px solid var(--border);border-radius:6px;padding:4px 8px;cursor:pointer}
-select.tpl-sel option[data-pro]{color:var(--amber)}
+select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);border:1px solid var(--border);border-radius:6px;padding:4px 8px;cursor:pointer;transition:background .2s,color .2s}
 
-/* MAIN */
 #main{display:flex;flex:1;overflow:hidden;min-height:0}
 #editor-pane{display:flex;flex-direction:column;flex:1;min-width:0;border-right:1px solid var(--border)}
-#editor-head{display:flex;align-items:center;padding:4px 12px;background:var(--paper);border-bottom:1px solid var(--border);font-family:var(--mono);font-size:11px;color:var(--ink3);gap:8px;flex-shrink:0}
-#editor{flex:1;resize:none;width:100%;font-family:var(--mono);font-size:13px;line-height:1.7;color:var(--ink);background:var(--paper);border:none;outline:none;padding:14px;overflow-y:auto;tab-size:2}
+#editor-head{display:flex;align-items:center;padding:4px 12px;background:var(--paper);border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);gap:8px;flex-shrink:0;transition:background .25s}
+#editor{flex:1;resize:none;width:100%;font-family:'DM Mono',monospace;font-size:13px;line-height:1.7;color:var(--editor-color);background:var(--editor-bg);border:none;outline:none;padding:14px;overflow-y:auto;tab-size:2;transition:background .25s,color .25s}
 #preview-pane{display:flex;flex-direction:column;flex:1;min-width:0}
-#prev-tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0}
-.ptab{font-size:12px;font-family:var(--sans);color:var(--ink3);background:transparent;border:none;border-bottom:2px solid transparent;padding:8px 16px;cursor:pointer;transition:color .15s}
+#prev-tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0;transition:background .25s}
+.ptab{font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink3);background:transparent;border:none;border-bottom:2px solid transparent;padding:8px 16px;cursor:pointer;transition:color .15s}
 .ptab.active{color:var(--ink);border-bottom-color:var(--teal-m)}
-#prev-math{flex:1;overflow-y:auto;padding:14px;background:var(--paper)}
+#prev-math{flex:1;overflow-y:auto;padding:14px;background:var(--paper);transition:background .25s}
 #prev-pdf{flex:1;border:none;background:var(--paper2);display:none}
 
-/* STATUS */
-#statusbar{display:flex;gap:16px;padding:3px 12px;background:var(--ink);color:#6B7280;font-size:10px;font-family:var(--mono);flex-shrink:0}
+#statusbar{display:flex;gap:16px;padding:3px 12px;background:var(--statusbar);color:var(--statusbar-text);font-size:10px;font-family:'DM Mono',monospace;flex-shrink:0;transition:background .25s}
 #statusbar span{white-space:nowrap}
-#status-msg{color:#9CA3AF}
-#status-ok{color:#1D9E75}
-#status-err{color:#F87171}
+#status-ok{color:var(--teal-m)}
+#status-err{color:var(--red)}
 
-/* PREVIEW STYLES */
 .doc-title{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:4px}
 .doc-author{font-size:12px;color:var(--ink3);margin-bottom:10px}
 .doc-abs{background:var(--paper2);border-left:3px solid var(--teal-m);padding:8px 12px;font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:10px;border-radius:0 6px 6px 0}
 .doc-h1{font-size:14px;font-weight:500;color:var(--ink);margin:10px 0 4px;padding-bottom:4px;border-bottom:1px solid var(--border)}
 .doc-h2{font-size:13px;font-weight:500;color:var(--ink2);margin:8px 0 2px 8px}
-.doc-p{font-size:12px;color:var(--ink3);line-height:1.6;margin-left:8px;margin-bottom:4px}
 .eq-block{text-align:center;margin:10px 0;padding:8px;background:var(--teal-l);border-radius:6px;overflow-x:auto}
 .eq-inline-wrap{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
-.eq-pill{background:var(--paper2);border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:12px}
-.env-pill{background:var(--paper3);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;font-family:var(--mono);color:var(--ink2)}
-.section-label{font-size:10px;color:var(--ink3);font-family:var(--mono);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px;margin-top:12px}
+.eq-pill{background:var(--paper2);border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:12px;color:var(--ink)}
+.env-pill{background:var(--paper3);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;font-family:'DM Mono',monospace;color:var(--ink2)}
+.section-label{font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px;margin-top:12px}
 
-/* UPGRADE MODAL */
-#upgrade-modal{display:none;position:fixed;inset:0;background:rgba(13,17,23,0.6);z-index:200;align-items:center;justify-content:center}
+#upgrade-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center}
 #upgrade-modal.show{display:flex}
 .modal-box{background:var(--paper);border-radius:14px;padding:32px;max-width:400px;width:calc(100% - 32px);border:1px solid var(--border)}
 .modal-box h2{font-size:20px;color:var(--ink);margin-bottom:8px}
 .modal-box p{font-size:14px;color:var(--ink3);line-height:1.6;margin-bottom:20px}
 .modal-btns{display:flex;gap:10px;flex-wrap:wrap}
-.mbtn{flex:1;padding:10px;border-radius:7px;font-family:var(--sans);font-weight:500;font-size:14px;cursor:pointer;transition:background .2s;border:none;text-align:center;text-decoration:none;display:block}
+.mbtn{flex:1;padding:10px;border-radius:7px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:14px;cursor:pointer;transition:background .2s;border:none;text-align:center;text-decoration:none;display:block}
 .mbtn-primary{background:var(--amber);color:#fff}
 .mbtn-primary:hover{background:var(--amber-m)}
 .mbtn-sec{background:var(--paper2);color:var(--ink2);border:1px solid var(--border)}
 .mbtn-sec:hover{background:var(--paper3)}
-.payment-info{background:var(--amber-l);border-radius:8px;padding:14px;font-size:13px;color:#78350F;margin-bottom:20px;border:1px solid #FDE68A;line-height:1.6}
+.payment-info{background:var(--amber-l);border-radius:8px;padding:14px;font-size:13px;color:var(--amber-m);margin-bottom:20px;border:1px solid var(--border);line-height:1.6}
 
-/* SAVE INDICATOR */
-#save-ind{font-size:11px;font-family:var(--mono);color:var(--ink3);display:flex;align-items:center;gap:4px}
+#save-ind{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);display:flex;align-items:center;gap:4px}
 .save-dot{width:6px;height:6px;border-radius:50%;background:#9CA3AF}
-.save-dot.saved{background:#1D9E75}
+.save-dot.saved{background:var(--teal-m)}
 .save-dot.saving{background:var(--amber-m);animation:blink .8s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
 @media(max-width:680px){
   #preview-pane{display:none}
-  #main{flex-direction:column}
 }
 </style>
 </head>
@@ -113,10 +118,10 @@ select.tpl-sel option[data-pro]{color:var(--amber)}
   <select class="tpl-sel" id="tpl-sel">
     <option value="article">Artículo científico</option>
     <option value="lab">Reporte de laboratorio</option>
-    <option value="thesis" data-pro>🔒 Tesis (Premium)</option>
-    <option value="beamer" data-pro>🔒 Beamer (Premium)</option>
-    <option value="ieee" data-pro>🔒 IEEE (Premium)</option>
-    <option value="apa" data-pro>🔒 APA Report (Premium)</option>
+    <option value="thesis">🔒 Tesis (Premium)</option>
+    <option value="beamer">🔒 Beamer (Premium)</option>
+    <option value="ieee">🔒 IEEE (Premium)</option>
+    <option value="apa">🔒 APA Report (Premium)</option>
   </select>
   <button class="tb-btn" onclick="loadTemplate()">Cargar</button>
   <div class="divv"></div>
@@ -125,6 +130,7 @@ select.tpl-sel option[data-pro]{color:var(--amber)}
   <span id="compil-count">— / —</span>
   <span id="plan-badge" class="free">FREE</span>
   <span id="user-name">Cargando...</span>
+  <button id="theme-btn" onclick="toggleTheme()" title="Cambiar tema claro/oscuro">🌙</button>
   <button class="tb-btn green" id="compile-btn" onclick="compilePDF()">⬡ Compilar PDF</button>
   <button class="tb-btn orange" onclick="openOverleaf()">↗ Overleaf</button>
   <button class="tb-btn" onclick="doLogout()">Salir</button>
@@ -145,7 +151,7 @@ select.tpl-sel option[data-pro]{color:var(--amber)}
   <button class="cmd" onclick="ins('\\cite{','}')">\cite</button>
   <button class="cmd" onclick="ins('\\ref{','}')">\ref</button>
   <button class="cmd" onclick="ins('\\label{','}')">\label</button>
-  <button class="cmd" onclick="ins('\\section{','}')">§ Section</button>
+  <button class="cmd" onclick="ins('\\section{','}')">§ Sección</button>
   <button class="cmd" onclick="ins('\\subsection{','}')">§§ Sub</button>
 </div>
 
@@ -177,7 +183,6 @@ select.tpl-sel option[data-pro]{color:var(--amber)}
   <span>LaTeX · UTF-8</span>
 </div>
 
-<!-- Upgrade modal -->
 <div id="upgrade-modal">
   <div class="modal-box">
     <h2>Límite alcanzado</h2>
@@ -190,7 +195,6 @@ select.tpl-sel option[data-pro]{color:var(--amber)}
   </div>
 </div>
 
-<!-- Firebase hidden compile form -->
 <form id="compile-form" method="POST" action="https://latexonline.cc/compile" target="latex-frame" style="display:none">
   <input type="hidden" name="code" id="form-code">
 </form>
@@ -202,7 +206,6 @@ import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/fire
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ── CONFIGURA AQUÍ ───────────────────────────────────────────────────────────
 const FIREBASE_CONFIG = {
   apiKey:            "AIzaSyAaezwe-pPDi1rsS3uFopk9JMY199LLoqk",
   authDomain:        "latexify-4bfc9.firebaseapp.com",
@@ -211,133 +214,103 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "292044762895",
   appId:             "1:292044762895:web:a7a0ed9489331e2e88d87a"
 };
-const PAYMENT_NUM  = "302 5677053";   // Nequi/Daviplata
-const FREE_LIMIT   = 5;
-// ────────────────────────────────────────────────────────────────────────────
+const PAYMENT_NUM = "TU_NUMERO_NEQUI";
+const FREE_LIMIT  = 5;
 
 const app  = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db   = getFirestore(app);
-
-let userData = null;
-let currentUser = null;
+let userData = null, currentUser = null;
 
 onAuthStateChanged(auth, async user => {
-  if(!user){ window.location.href = 'login.html'; return; }
+  if(!user){ window.location.href='login.html'; return; }
   currentUser = user;
   document.getElementById('user-name').textContent = user.displayName || user.email;
   const snap = await getDoc(doc(db,'users',user.uid));
-  if(snap.exists()){
-    userData = snap.data();
-    window._userData = userData;
-    updatePlanUI();
-  }
+  if(snap.exists()){ userData=snap.data(); window._userData=userData; updatePlanUI(); }
   loadLastCode(user.uid);
 });
 
 function updatePlanUI(){
   if(!userData) return;
-  const badge = document.getElementById('plan-badge');
-  const today = new Date().toDateString();
-  let used = userData.compilationsToday || 0;
-  if(userData.compilationsDate !== today) used = 0;
-  
+  const badge=document.getElementById('plan-badge');
+  const today=new Date().toDateString();
+  let used=userData.compilationsToday||0;
+  if(userData.compilationsDate!==today) used=0;
   if(userData.premium){
-    badge.textContent='PREMIUM'; badge.className='premium';
-    document.getElementById('compil-count').textContent = '∞ compilaciones';
-  } else {
-    badge.textContent='FREE'; badge.className='free';
-    document.getElementById('compil-count').textContent = `${used}/${FREE_LIMIT} hoy`;
+    badge.textContent='PREMIUM';badge.className='premium';
+    document.getElementById('compil-count').textContent='∞ compilaciones';
+  }else{
+    badge.textContent='FREE';badge.className='free';
+    document.getElementById('compil-count').textContent=`${used}/${FREE_LIMIT} hoy`;
   }
 }
 
-window.doLogout = async function(){
-  await signOut(auth);
-  window.location.href = 'login.html';
-};
+window.doLogout=async function(){ await signOut(auth); window.location.href='login.html'; };
 
-window.compilePDF = async function(){
-  if(!currentUser || !userData) return;
-  const today = new Date().toDateString();
-  let used = userData.compilationsToday || 0;
-  if(userData.compilationsDate !== today) used = 0;
-
-  if(!userData.premium && used >= FREE_LIMIT){
-    document.getElementById('modal-payment-info').innerHTML =
+window.compilePDF=async function(){
+  if(!currentUser||!userData) return;
+  const today=new Date().toDateString();
+  let used=userData.compilationsToday||0;
+  if(userData.compilationsDate!==today) used=0;
+  if(!userData.premium&&used>=FREE_LIMIT){
+    document.getElementById('modal-payment-info').innerHTML=
       `Envía <strong>$8.000 COP</strong> por Nequi/Daviplata al número <strong>${PAYMENT_NUM}</strong> con tu correo como asunto.`;
     document.getElementById('upgrade-modal').classList.add('show');
     return;
   }
-
-  setStatus('Compilando PDF…','msg');
-  document.getElementById('compile-btn').disabled = true;
-  document.getElementById('form-code').value = document.getElementById('editor').value;
+  document.getElementById('status-msg').textContent='Compilando PDF…';
+  document.getElementById('compile-btn').disabled=true;
+  document.getElementById('form-code').value=document.getElementById('editor').value;
   document.getElementById('compile-form').submit();
-  switchPreview('pdf', document.querySelectorAll('.ptab')[1]);
-
-  // Actualizar contador
-  const newUsed = used + 1;
-  userData.compilationsToday = newUsed;
-  userData.compilationsDate  = today;
-  await updateDoc(doc(db,'users',currentUser.uid),{
-    compilationsToday: newUsed,
-    compilationsDate: today
-  });
+  switchPreview('pdf',document.querySelectorAll('.ptab')[1]);
+  const newUsed=used+1;
+  userData.compilationsToday=newUsed; userData.compilationsDate=today;
+  await updateDoc(doc(db,'users',currentUser.uid),{compilationsToday:newUsed,compilationsDate:today});
   updatePlanUI();
-  setTimeout(()=>{
-    setStatus('PDF listo','ok');
-    document.getElementById('compile-btn').disabled = false;
-  },3000);
+  setTimeout(()=>{ document.getElementById('status-msg').textContent='PDF listo ✓'; document.getElementById('compile-btn').disabled=false; },3000);
 };
 
-// Auto-save to Firestore
 let saveTimer;
 function schedSave(){
   clearTimeout(saveTimer);
   setSaveDot('saving','Guardando...');
-  saveTimer = setTimeout(async ()=>{
+  saveTimer=setTimeout(async()=>{
     if(!currentUser) return;
     try{
-      await updateDoc(doc(db,'users',currentUser.uid),{
-        lastCode: document.getElementById('editor').value,
-        lastSaved: new Date().toISOString()
-      });
+      await updateDoc(doc(db,'users',currentUser.uid),{lastCode:document.getElementById('editor').value,lastSaved:new Date().toISOString()});
       setSaveDot('saved','Guardado');
-    }catch(e){ setSaveDot('','Sin guardar'); }
-  }, 1500);
+    }catch(e){setSaveDot('','Sin guardar');}
+  },1500);
 }
-
 function loadLastCode(uid){
   getDoc(doc(db,'users',uid)).then(s=>{
-    if(s.exists() && s.data().lastCode){
-      document.getElementById('editor').value = s.data().lastCode;
-      updatePreview();
-      setSaveDot('saved','Guardado');
-    } else {
-      document.getElementById('editor').value = window.TEMPLATES?.article || '';
-      updatePreview();
-    }
+    if(s.exists()&&s.data().lastCode){ document.getElementById('editor').value=s.data().lastCode; updatePreview(); setSaveDot('saved','Guardado'); }
+    else{ document.getElementById('editor').value=window.TEMPLATES?.article||''; updatePreview(); }
   });
 }
-
-window._saveCode = schedSave;
-
-function setSaveDot(cls,label){
-  const dot = document.getElementById('save-dot');
-  dot.className = 'save-dot' + (cls?' '+cls:'');
-  document.getElementById('save-label').textContent = label;
-}
-function setStatus(msg,type){
-  document.getElementById('status-msg').textContent = type==='msg'?msg:'';
-  document.getElementById('status-ok').textContent  = type==='ok'?msg:'';
-  document.getElementById('status-err').textContent = type==='err'?msg:'';
-}
-window._setStatus = setStatus;
+window._saveCode=schedSave;
+function setSaveDot(cls,label){ const d=document.getElementById('save-dot'); d.className='save-dot'+(cls?' '+cls:''); document.getElementById('save-label').textContent=label; }
 </script>
 
 <script>
-// ── PLANTILLAS ──────────────────────────────────────────────────────────────
-window.TEMPLATES = {
+// ── MODO OSCURO ──────────────────────────────────────────────────────────────
+function toggleTheme(){
+  const html=document.documentElement;
+  const dark=html.getAttribute('data-theme')==='dark';
+  const next=dark?'light':'dark';
+  html.setAttribute('data-theme',next);
+  document.getElementById('theme-btn').textContent=dark?'🌙':'☀️';
+  localStorage.setItem('ltx-theme',next);
+}
+window.toggleTheme=toggleTheme;
+(function(){
+  const s=localStorage.getItem('ltx-theme');
+  if(s){ document.documentElement.setAttribute('data-theme',s); document.getElementById('theme-btn').textContent=s==='dark'?'☀️':'🌙'; }
+})();
+
+// ── PLANTILLAS ───────────────────────────────────────────────────────────────
+window.TEMPLATES={
 article:`\\documentclass[12pt,a4paper]{article}
 \\usepackage[utf8]{inputenc}
 \\usepackage[T1]{fontenc}
@@ -527,7 +500,6 @@ keyword1, keyword2, keyword3
 \\end{IEEEkeywords}
 
 \\section{Introduction}
-Context and problem statement. The fundamental equation:
 \\begin{equation}
 P = \\frac{V^2}{R}
 \\end{equation}
@@ -544,7 +516,6 @@ P = \\frac{V^2}{R}
 
 apa:`\\documentclass[stu,12pt]{apa7}
 \\usepackage[spanish]{babel}
-\\usepackage[style=apa,backend=biber]{biblatex}
 
 \\title{Título del Reporte}
 \\author{Nombre Apellido}
@@ -565,47 +536,38 @@ Cuerpo del reporte con análisis y discusión.
 \\section{Conclusiones}
 Síntesis de los hallazgos principales.
 
-\\printbibliography
 \\end{document}`
 };
 
-// ── PREMIUM CHECK ────────────────────────────────────────────────────────────
-const PRO_TPLS = ['thesis','beamer','ieee','apa'];
+const PRO_TPLS=['thesis','beamer','ieee','apa'];
 
 function loadTemplate(){
-  const val = document.getElementById('tpl-sel').value;
-  if(PRO_TPLS.includes(val) && !window._userData?.premium){
-    document.getElementById('modal-payment-info').innerHTML =
-      'Las plantillas avanzadas (Tesis, Beamer, IEEE, APA) son exclusivas del plan Premium.';
+  const val=document.getElementById('tpl-sel').value;
+  if(PRO_TPLS.includes(val)&&!window._userData?.premium){
+    document.getElementById('modal-payment-info').innerHTML='Las plantillas avanzadas son exclusivas del plan Premium.';
     document.getElementById('upgrade-modal').classList.add('show');
     return;
   }
   if(!confirm('¿Cargar plantilla? Se perderán los cambios actuales.')) return;
-  document.getElementById('editor').value = TEMPLATES[val] || '';
+  document.getElementById('editor').value=TEMPLATES[val]||'';
   updatePreview();
 }
-window.loadTemplate = loadTemplate;
+window.loadTemplate=loadTemplate;
 
-// ── EDITOR ──────────────────────────────────────────────────────────────────
-const editor = document.getElementById('editor');
-editor.value = TEMPLATES.article;
+const editor=document.getElementById('editor');
+editor.value=TEMPLATES.article;
 updatePreview();
 
 editor.addEventListener('input',()=>{ updatePreview(); updateCursor(); window._saveCode?.(); });
 editor.addEventListener('keydown',e=>{
-  if(e.key==='Tab'){
-    e.preventDefault();
-    const s=editor.selectionStart;
-    editor.value=editor.value.substring(0,s)+'  '+editor.value.substring(editor.selectionEnd);
-    editor.selectionStart=editor.selectionEnd=s+2;
-  }
+  if(e.key==='Tab'){ e.preventDefault(); const s=editor.selectionStart; editor.value=editor.value.substring(0,s)+'  '+editor.value.substring(editor.selectionEnd); editor.selectionStart=editor.selectionEnd=s+2; }
 });
 editor.addEventListener('keyup',updateCursor);
 editor.addEventListener('click',updateCursor);
 
 function updateCursor(){
   const txt=editor.value.substring(0,editor.selectionStart);
-  const ln=txt.split('\n').length, col=txt.split('\n').pop().length+1;
+  const ln=txt.split('\n').length,col=txt.split('\n').pop().length+1;
   document.getElementById('cursor-info').textContent=`L${ln} C${col}`;
   document.getElementById('line-count').textContent=editor.value.split('\n').length+' líneas';
 }
@@ -614,17 +576,13 @@ function ins(before,after){
   const s=editor.selectionStart,e=editor.selectionEnd;
   const sel=editor.value.substring(s,e);
   editor.value=editor.value.substring(0,s)+before+sel+after+editor.value.substring(e);
-  editor.focus();
-  editor.selectionStart=s+before.length;
-  editor.selectionEnd=s+before.length+sel.length;
-  updatePreview();
-  window._saveCode?.();
+  editor.focus(); editor.selectionStart=s+before.length; editor.selectionEnd=s+before.length+sel.length;
+  updatePreview(); window._saveCode?.();
 }
-window.ins = ins;
+window.ins=ins;
 
-// ── PREVIEW ──────────────────────────────────────────────────────────────────
 function updatePreview(){
-  const code = editor.value;
+  const code=editor.value;
   let html='<div>';
   const title=code.match(/\\title\{([^}]*)\}/);
   const author=code.match(/\\author\{([^}]*)\}/);
@@ -635,40 +593,19 @@ function updatePreview(){
   const secs=[...code.matchAll(/\\(chapter|section|subsection)\{([^}]*)\}/g)];
   if(secs.length){
     html+='<div class="section-label">Estructura</div>';
-    secs.forEach(m=>{
-      const l=m[1],t=m[2];
-      if(l==='chapter'||l==='section') html+=`<div class="doc-h1">${t}</div>`;
-      else html+=`<div class="doc-h2">↳ ${t}</div>`;
-    });
+    secs.forEach(m=>{ const l=m[1],t=m[2]; if(l==='chapter'||l==='section') html+=`<div class="doc-h1">${t}</div>`; else html+=`<div class="doc-h2">↳ ${t}</div>`; });
   }
-  const displayMath=[...code.matchAll(/\\\[([\s\S]*?)\\\]/g),...code.matchAll(/\\begin\{equation[\*]?\}([\s\S]*?)\\end\{equation[\*]?\}/g)];
-  if(displayMath.length){
-    html+='<div class="section-label">Ecuaciones</div>';
-    displayMath.slice(0,4).forEach((m,i)=>html+=`<div class="eq-block" id="eq${i}"></div>`);
-  }
-  const inline=[...new Set([...code.matchAll(/\$([^$\n]{1,60})\$/g)].map(m=>m[1]))].slice(0,8);
-  if(inline.length){
-    html+='<div class="section-label">Expresiones inline</div><div class="eq-inline-wrap">';
-    inline.forEach((_,i)=>html+=`<span class="eq-pill" id="il${i}"></span>`);
-    html+='</div>';
-  }
+  const dm=[...code.matchAll(/\\\[([\s\S]*?)\\\]/g),...code.matchAll(/\\begin\{equation[\*]?\}([\s\S]*?)\\end\{equation[\*]?\}/g)];
+  if(dm.length){ html+='<div class="section-label">Ecuaciones</div>'; dm.slice(0,4).forEach((_,i)=>html+=`<div class="eq-block" id="eq${i}"></div>`); }
+  const il=[...new Set([...code.matchAll(/\$([^$\n]{1,60})\$/g)].map(m=>m[1]))].slice(0,8);
+  if(il.length){ html+='<div class="section-label">Expresiones inline</div><div class="eq-inline-wrap">'; il.forEach((_,i)=>html+=`<span class="eq-pill" id="il${i}"></span>`); html+='</div>'; }
   const envs=[...new Set([...code.matchAll(/\\begin\{(\w+)\}/g)].map(m=>m[1]).filter(e=>!['document','abstract','equation','itemize','enumerate','tabular','table','figure','frame','columns','block','alertblock','thebibliography','IEEEkeywords'].includes(e)))];
-  if(envs.length){
-    html+='<div class="section-label">Entornos</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">';
-    envs.forEach(e=>html+=`<span class="env-pill">${e}</span>`);
-    html+='</div>';
-  }
+  if(envs.length){ html+='<div class="section-label">Entornos</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">'; envs.forEach(e=>html+=`<span class="env-pill">${e}</span>`); html+='</div>'; }
   html+='</div>';
   document.getElementById('prev-math').innerHTML=html;
   if(typeof katex!=='undefined'){
-    displayMath.slice(0,4).forEach((m,i)=>{
-      const el=document.getElementById('eq'+i);
-      if(el) try{katex.render(m[1].trim(),el,{displayMode:true,throwOnError:false})}catch(e){}
-    });
-    inline.forEach((expr,i)=>{
-      const el=document.getElementById('il'+i);
-      if(el) try{katex.render(expr,el,{displayMode:false,throwOnError:false})}catch(e){el.textContent=expr}
-    });
+    dm.slice(0,4).forEach((m,i)=>{ const el=document.getElementById('eq'+i); if(el) try{katex.render(m[1].trim(),el,{displayMode:true,throwOnError:false})}catch(e){} });
+    il.forEach((expr,i)=>{ const el=document.getElementById('il'+i); if(el) try{katex.render(expr,el,{displayMode:false,throwOnError:false})}catch(e){el.textContent=expr} });
   }
   document.getElementById('line-count').textContent=code.split('\n').length+' líneas';
 }
@@ -676,7 +613,6 @@ window.updatePreview=updatePreview;
 
 function clean(s){ return s.replace(/\\[a-zA-Z]+\{([^}]*)\}/g,'$1').replace(/\\\\/g,' ').replace(/\{|\}/g,''); }
 
-// ── TABS / OVERLEAF ───────────────────────────────────────────────────────────
 function switchPreview(tab,btn){
   document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));
   btn?.classList.add('active');
