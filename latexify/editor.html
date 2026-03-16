@@ -299,6 +299,8 @@ select.tpl-sel{font-size:11px;font-family:'DM Sans',sans-serif;background:var(--
     <div id="prev-tabs">
       <button class="ptab active" onclick="switchPreview('math',this)">Vista previa</button>
       <button class="ptab" onclick="switchPreview('pdf',this)">PDF compilado</button>
+      <button class="ptab" id="download-btn" style="display:none;margin-left:auto;color:var(--teal-m)" onclick="downloadPDF()">⬇ Descargar PDF</button>
+      <button class="ptab" id="open-btn" style="display:none;color:var(--teal-m)" onclick="openPDFTab()">↗ Abrir en nueva pestaña</button>
     </div>
     <div id="prev-math"></div>
     <iframe id="prev-pdf" name="latex-frame"></iframe>
@@ -574,10 +576,15 @@ async function compileWithTexlive(){
 
     if(res.ok){
       const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      document.getElementById('prev-pdf').src = url;
+      const url = URL.createObjectURL(new Blob([await blob.arrayBuffer()], {type:'application/pdf'}));
+      const frame = document.getElementById('prev-pdf');
+      frame.src = '';
+      setTimeout(()=>{ frame.src = url; }, 100);
       document.getElementById('status-msg').textContent='PDF listo ✓';
       document.getElementById('status-err').textContent='';
+      window._lastPdfUrl = url;
+      document.getElementById('download-btn').style.display='block';
+      document.getElementById('open-btn').style.display='block';
     } else {
       const data = await res.json();
       document.getElementById('status-err').textContent = data.error?.substring(0,80)||'Error de compilación';
@@ -2294,8 +2301,19 @@ function openOverleaf(){
 }
 window.openOverleaf=openOverleaf;
 
-function closeModal(){ document.getElementById('upgrade-modal').classList.remove('show'); }
-window.closeModal=closeModal;
+function downloadPDF(){
+  if(!window._lastPdfUrl) return;
+  const a=document.createElement('a');
+  a.href=window._lastPdfUrl;
+  a.download='documento.pdf';
+  a.click();
+}
+function openPDFTab(){
+  if(!window._lastPdfUrl) return;
+  window.open(window._lastPdfUrl,'_blank');
+}
+window.downloadPDF=downloadPDF;
+window.openPDFTab=openPDFTab;
 </script>
 </body>
 </html>
