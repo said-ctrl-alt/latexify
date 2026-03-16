@@ -352,17 +352,7 @@ window.compilePDF=async function(){
     document.getElementById('upgrade-modal').classList.add('show'); return;
   }
 
-  // Si hay proyecto ZIP cargado, compilar como ZIP (multi-archivo)
-  if(window.projectFiles && Object.keys(window.projectFiles).length > 0){
-    await compileZipProject();
-  } else {
-    // Compilar archivo único
-    document.getElementById('status-msg').textContent='Compilando PDF…';
-    document.getElementById('compile-btn').disabled=true;
-    document.getElementById('form-code').value=document.getElementById('editor').value;
-    document.getElementById('compile-form').submit();
-    switchPreview('pdf',document.querySelectorAll('.ptab')[1]);
-  }
+  await compileWithTexlive();
 
   const newUsed=used+1;
   userData.compilationsToday=newUsed; userData.compilationsDate=today;
@@ -371,56 +361,73 @@ window.compilePDF=async function(){
   setTimeout(()=>{ document.getElementById('status-msg').textContent='PDF listo ✓'; document.getElementById('compile-btn').disabled=false; },4000);
 };
 
-async function compileZipProject(){
-  document.getElementById('status-msg').textContent='Empaquetando proyecto…';
+async function compileWithTexlive(){
+  document.getElementById('status-msg').textContent='Compilando PDF…';
   document.getElementById('compile-btn').disabled=true;
+  switchPreview('pdf', document.querySelectorAll('.ptab')[1]);
 
-  // Guardar cambios del editor activo en projectFiles
-  const activeTab=window.activeFile;
-  if(activeTab) window.projectFiles[activeTab]=document.getElementById('editor').value;
-
-  // Construir nuevo ZIP con cambios
-  const zip=new JSZip();
-  for(const [fname,content] of Object.entries(window.projectFiles)){
-    if(typeof content==='string'){
-      zip.file(fname, content);
-    } else {
-      // Es binario (imagen, etc.)
-      zip.file(fname, content);
-    }
+  // Guardar cambios del archivo activo
+  if(window.activeFile && typeof window.projectFiles[window.activeFile]==='string'){
+    window.projectFiles[window.activeFile]=document.getElementById('editor').value;
   }
 
-  const blob=await zip.generateAsync({type:'blob'});
-  const formData=new FormData();
-  formData.append('file', blob, 'project.zip');
-  if(window.mainTexFile) formData.append('target', window.mainTexFile);
-
-  document.getElementById('status-msg').textContent='Compilando proyecto ZIP…';
-
-  // Enviar a latexonline.cc
-  const frame=document.getElementById('prev-pdf');
-  switchPreview('pdf',document.querySelectorAll('.ptab')[1]);
+  // Obtener código principal
+  const mainCode = window.mainTexFile
+    ? (window.projectFiles[window.mainTexFile]||document.getElementById('editor').value)
+    : document.getElementById('editor').value;
 
   try{
-    const res=await fetch('https://latexonline.cc/compile',{ method:'POST', body:formData });
+    const formData = new FormData();
+    formData.append('filecontents[]', mainCode);
+    formData.append('filename[]', 'document.tex');
+    formData.append('engine', 'pdflatex');
+    formData.append('return', 'pdf');
+
+    // Agregar imágenes del proyecto si las hay
+    if(window.projectFiles){
+      for(const [fname, content] of Object.entries(window.projectFiles)){
+        if(/\.(png|jpg|jpeg|gif|svg|webp|bmp)$/i.test(fname) && content instanceof Uint8Array){
+          formData.append('filecontents[]', new Blob([content]));
+          formData.append('filename[]', fname.split('/').pop());
+        } else if(/\.(cls|sty|bib)$/i.test(fname) && typeof content==='string'){
+          formData.append('filecontents[]', content);
+          formData.append('filename[]', fname.split('/').pop());
+        }
+      }
+    }
+
+    const res = await fetch('https://texlive.net/cgi-bin/latexcgi', {
+      method: 'POST',
+      body: formData
+    });
+
     if(res.ok){
-      const pdfBlob=await res.blob();
-      const url=URL.createObjectURL(pdfBlob);
-      frame.src=url;
-      document.getElementById('status-ok').textContent='PDF compilado ✓';
-      document.getElementById('status-err').textContent='';
+      const blob = await res.blob();
+      if(blob.type==='application/pdf'){
+        const url = URL.createObjectURL(blob);
+        document.getElementById('prev-pdf').src = url;
+        document.getElementById('status-msg').textContent='PDF listo ✓';
+        document.getElementById('status-err').textContent='';
+      } else {
+        // texlive devuelve el log si hay error
+        const txt = await blob.text();
+        const errLine = txt.split('\n').find(l=>l.startsWith('!')||l.includes('Error'))||'Error de compilación';
+        document.getElementById('status-err').textContent=errLine.substring(0,80);
+        document.getElementById('status-msg').textContent='Error — revisa el código';
+        // Mostrar log en el iframe como texto
+        const logBlob = new Blob([txt],{type:'text/plain'});
+        document.getElementById('prev-pdf').src = URL.createObjectURL(logBlob);
+      }
     } else {
-      const errText=await res.text();
-      document.getElementById('status-err').textContent='Error de compilación — revisa el código';
-      document.getElementById('status-ok').textContent='';
-      console.error('LaTeX error:', errText);
+      throw new Error('HTTP '+res.status);
     }
   } catch(e){
-    // Fallback: compilar solo el main.tex
-    document.getElementById('status-msg').textContent='Compilando main.tex…';
-    document.getElementById('form-code').value=window.projectFiles[window.mainTexFile]||document.getElementById('editor').value;
-    document.getElementById('compile-form').submit();
+    // Fallback: abrir en Overleaf
+    document.getElementById('status-err').textContent='Error de red — intenta con Overleaf';
+    document.getElementById('status-msg').textContent='';
+    console.error('Compile error:',e);
   }
+  document.getElementById('compile-btn').disabled=false;
 }
 
 let saveTimer;
