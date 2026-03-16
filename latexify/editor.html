@@ -9,142 +9,149 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-
 [data-theme="light"]{
   --ink:#0D1117;--ink2:#3D4451;--ink3:#6B7280;
-  --paper:#FAFAF8;--paper2:#F3F2EE;--paper3:#ECEAE4;
-  --border:#E2DED6;
+  --paper:#FAFAF8;--paper2:#F3F2EE;--paper3:#ECEAE4;--border:#E2DED6;
   --teal:#0B6E5E;--teal-l:#E0F2EE;--teal-m:#1D9E75;
   --amber:#B45309;--amber-l:#FEF3C7;--amber-m:#D97706;
-  --red:#991B1B;--red-l:#FEE2E2;
-  --statusbar:#0D1117;--statusbar-text:#6B7280;
-  --editor-bg:#FAFAF8;--editor-color:#0D1117;
-  --img-panel:#F3F2EE;
+  --red:#991B1B;--red-l:#FEE2E2;--purple:#553C9A;
+  --statusbar:#0D1117;--sbar-text:#6B7280;
+  --ed-bg:#FAFAF8;--ed-col:#0D1117;
+  --tree-bg:#F3F2EE;--tab-bg:#E8E6E0;--tab-act:#FAFAF8;
 }
 [data-theme="dark"]{
   --ink:#E2E8F0;--ink2:#A0AEC0;--ink3:#718096;
-  --paper:#1A1D23;--paper2:#13151A;--paper3:#0D0F13;
-  --border:#2D3748;
+  --paper:#1A1D23;--paper2:#13151A;--paper3:#0D0F13;--border:#2D3748;
   --teal:#1D9E75;--teal-l:#0B3D2E;--teal-m:#2DD4A0;
   --amber:#D97706;--amber-l:#2D1F00;--amber-m:#F59E0B;
-  --red:#F87171;--red-l:#2D1515;
-  --statusbar:#0D0F13;--statusbar-text:#4A5568;
-  --editor-bg:#1E2128;--editor-color:#ABB2BF;
-  --img-panel:#13151A;
+  --red:#F87171;--red-l:#2D1515;--purple:#7C3AED;
+  --statusbar:#0D0F13;--sbar-text:#4A5568;
+  --ed-bg:#1E2128;--ed-col:#ABB2BF;
+  --tree-bg:#13151A;--tab-bg:#1A1D23;--tab-act:#1E2128;
 }
-
 html,body{height:100%;overflow:hidden}
-body{font-family:'DM Sans',sans-serif;background:var(--paper2);color:var(--ink);display:flex;flex-direction:column;transition:background .25s,color .25s}
+body{font-family:'DM Sans',sans-serif;background:var(--paper2);color:var(--ink);display:flex;flex-direction:column;transition:background .2s,color .2s}
 
 /* TOPBAR */
-#topbar{display:flex;align-items:center;gap:8px;padding:0 12px;height:48px;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;min-height:48px;transition:background .25s,border-color .25s}
-.logo{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--ink);text-decoration:none;white-space:nowrap}
-.logo span{color:var(--teal-m)}
+#topbar{display:flex;align-items:center;gap:6px;padding:0 10px;height:46px;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;transition:background .2s}
+.logo{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--ink);text-decoration:none;white-space:nowrap}.logo span{color:var(--teal-m)}
 #sep{flex:1}
-.tb-btn{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--paper2);color:var(--ink2);border:1px solid var(--border);border-radius:6px;padding:5px 11px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
+.tb-btn{font-size:11px;font-family:'DM Sans',sans-serif;background:var(--paper2);color:var(--ink2);border:1px solid var(--border);border-radius:5px;padding:5px 10px;cursor:pointer;white-space:nowrap;transition:background .15s}
 .tb-btn:hover{background:var(--paper3);color:var(--ink)}
-.tb-btn.green{background:var(--teal);color:#fff;border-color:var(--teal)}
-.tb-btn.green:hover{background:var(--teal-m)}
+.tb-btn.green{background:var(--teal);color:#fff;border-color:var(--teal)}.tb-btn.green:hover{background:var(--teal-m)}
 .tb-btn.green:disabled{background:#4A5568;border-color:#4A5568;cursor:not-allowed}
-.tb-btn.orange{background:var(--amber);color:#fff;border-color:var(--amber)}
-.tb-btn.orange:hover{background:var(--amber-m)}
-.tb-btn.purple{background:#553C9A;color:#fff;border-color:#553C9A}
-.tb-btn.purple:hover{background:#6B46C1}
-#theme-btn{font-size:17px;background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;line-height:1.4;transition:border-color .2s,background .2s}
+.tb-btn.orange{background:var(--amber);color:#fff;border-color:var(--amber)}.tb-btn.orange:hover{background:var(--amber-m)}
+.tb-btn.purple{background:var(--purple);color:#fff;border-color:var(--purple)}.tb-btn.purple:hover{opacity:.85}
+#theme-btn{font-size:16px;background:none;border:1px solid var(--border);border-radius:5px;padding:3px 7px;cursor:pointer;line-height:1.4}
 #theme-btn:hover{background:var(--paper3)}
-.divv{width:1px;height:20px;background:var(--border)}
-#plan-badge{font-size:11px;font-family:'DM Mono',monospace;padding:3px 10px;border-radius:20px;white-space:nowrap}
+.divv{width:1px;height:18px;background:var(--border);flex-shrink:0}
+#plan-badge{font-size:10px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:20px;white-space:nowrap}
 #plan-badge.free{background:var(--paper3);color:var(--ink3)}
 #plan-badge.premium{background:var(--amber-l);color:var(--amber)}
-#compil-count{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);white-space:nowrap}
-#user-name{font-size:12px;color:var(--ink3);white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis}
+#compil-count{font-size:10px;font-family:'DM Mono',monospace;color:var(--ink3);white-space:nowrap}
+#user-name{font-size:11px;color:var(--ink3);white-space:nowrap;max-width:110px;overflow:hidden;text-overflow:ellipsis}
 
 /* TOOLBAR2 */
-#toolbar2{display:flex;align-items:center;gap:4px;padding:4px 12px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;transition:background .25s}
-.cmd{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink2);background:var(--paper);border:1px solid var(--border);border-radius:4px;padding:3px 8px;cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
+#toolbar2{display:flex;align-items:center;gap:3px;padding:3px 10px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;transition:background .2s}
+.cmd{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink2);background:var(--paper);border:1px solid var(--border);border-radius:4px;padding:2px 7px;cursor:pointer;transition:background .15s;white-space:nowrap}
 .cmd:hover{background:var(--paper3);color:var(--ink)}
-select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);border:1px solid var(--border);border-radius:6px;padding:4px 8px;cursor:pointer;transition:background .2s,color .2s}
+select.tpl-sel{font-size:11px;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);border:1px solid var(--border);border-radius:5px;padding:3px 7px;cursor:pointer}
 
-/* MAIN LAYOUT */
+/* MAIN */
 #main{display:flex;flex:1;overflow:hidden;min-height:0}
-#editor-pane{display:flex;flex-direction:column;flex:1;min-width:0;border-right:1px solid var(--border)}
-#editor-head{display:flex;align-items:center;padding:4px 12px;background:var(--paper);border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);gap:8px;flex-shrink:0;transition:background .25s}
-#editor{flex:1;resize:none;width:100%;font-family:'DM Mono',monospace;font-size:13px;line-height:1.7;color:var(--editor-color);background:var(--editor-bg);border:none;outline:none;padding:14px;overflow-y:auto;tab-size:2;transition:background .25s,color .25s}
 
-/* IMAGE PANEL */
-#img-panel{width:180px;flex-shrink:0;display:none;flex-direction:column;background:var(--img-panel);border-right:1px solid var(--border);transition:background .25s}
-#img-panel.visible{display:flex}
-#img-panel-head{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
-#img-panel-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);text-transform:uppercase;letter-spacing:0.05em}
-#img-panel-close{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;line-height:1;padding:0 2px}
-#img-panel-close:hover{color:var(--ink)}
-#img-grid{flex:1;overflow-y:auto;padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:6px;align-content:start}
-.img-thumb{cursor:pointer;border-radius:6px;overflow:hidden;border:2px solid transparent;transition:border-color .15s,transform .15s;position:relative}
-.img-thumb:hover{border-color:var(--teal-m);transform:scale(1.03)}
-.img-thumb img{width:100%;height:60px;object-fit:cover;display:block}
-.img-thumb-name{font-size:9px;font-family:'DM Mono',monospace;color:var(--ink3);padding:3px 4px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;background:var(--paper2)}
-.img-thumb-tip{position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.55);color:#fff;font-size:9px;border-radius:3px;padding:1px 4px;pointer-events:none}
-#img-panel-empty{padding:20px 10px;text-align:center;font-size:12px;color:var(--ink3);line-height:1.6}
+/* FILE TREE */
+#file-tree{width:160px;flex-shrink:0;display:flex;flex-direction:column;background:var(--tree-bg);border-right:1px solid var(--border);transition:background .2s}
+#tree-head{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-bottom:1px solid var(--border);flex-shrink:0}
+#tree-title{font-size:10px;font-family:'DM Mono',monospace;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+#tree-list{flex:1;overflow-y:auto;padding:4px 0}
+.tree-section{font-size:9px;font-family:'DM Mono',monospace;color:var(--ink3);padding:6px 8px 2px;text-transform:uppercase;letter-spacing:.06em}
+.tree-item{display:flex;align-items:center;gap:5px;padding:4px 8px;cursor:pointer;font-size:11px;font-family:'DM Mono',monospace;color:var(--ink2);transition:background .1s;border-radius:4px;margin:1px 4px;overflow:hidden}
+.tree-item:hover{background:var(--paper3);color:var(--ink)}
+.tree-item.active{background:var(--teal-l);color:var(--teal)}
+.tree-item.img-item{cursor:default;color:var(--ink3)}
+.tree-item.img-item:hover{background:transparent}
+.tree-icon{font-size:12px;flex-shrink:0}
+.tree-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.tree-empty{font-size:11px;color:var(--ink3);padding:12px 8px;text-align:center;line-height:1.6}
+.img-preview-thumb{width:100%;margin-top:4px;border-radius:4px;overflow:hidden;border:1px solid var(--border)}
+.img-preview-thumb img{width:100%;height:50px;object-fit:cover;display:block}
+
+/* EDITOR PANE */
+#editor-pane{display:flex;flex-direction:column;flex:1;min-width:0;border-right:1px solid var(--border)}
+#file-tabs{display:flex;background:var(--tab-bg);border-bottom:1px solid var(--border);overflow-x:auto;flex-shrink:0;scrollbar-width:none}
+#file-tabs::-webkit-scrollbar{display:none}
+.ftab{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);background:var(--tab-bg);border:none;border-right:1px solid var(--border);padding:6px 12px;cursor:pointer;white-space:nowrap;transition:background .1s;display:flex;align-items:center;gap:5px;flex-shrink:0}
+.ftab:hover{background:var(--paper3);color:var(--ink)}
+.ftab.active{background:var(--tab-act);color:var(--ink);border-bottom:2px solid var(--teal-m)}
+.ftab-dot{width:5px;height:5px;border-radius:50%;background:var(--amber-m);display:none}
+.ftab.modified .ftab-dot{display:block}
+#editor-head{display:flex;align-items:center;padding:3px 10px;background:var(--paper);border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--ink3);gap:8px;flex-shrink:0}
+#editor{flex:1;resize:none;width:100%;font-family:'DM Mono',monospace;font-size:13px;line-height:1.7;color:var(--ed-col);background:var(--ed-bg);border:none;outline:none;padding:14px;overflow-y:auto;tab-size:2;transition:background .2s,color .2s}
+#no-file-msg{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--ink3);font-size:13px;background:var(--ed-bg)}
+#no-file-msg .big{font-size:40px}
 
 /* PREVIEW */
 #preview-pane{display:flex;flex-direction:column;flex:1;min-width:0}
-#prev-tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0;transition:background .25s}
-.ptab{font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink3);background:transparent;border:none;border-bottom:2px solid transparent;padding:8px 16px;cursor:pointer;transition:color .15s}
+#prev-tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0}
+.ptab{font-size:11px;font-family:'DM Sans',sans-serif;color:var(--ink3);background:transparent;border:none;border-bottom:2px solid transparent;padding:7px 14px;cursor:pointer;transition:color .15s}
 .ptab.active{color:var(--ink);border-bottom-color:var(--teal-m)}
-#prev-math{flex:1;overflow-y:auto;padding:14px;background:var(--paper);transition:background .25s}
+#prev-math{flex:1;overflow-y:auto;padding:14px;background:var(--paper);transition:background .2s}
 #prev-pdf{flex:1;border:none;background:var(--paper2);display:none}
 
 /* STATUS */
-#statusbar{display:flex;gap:16px;padding:3px 12px;background:var(--statusbar);color:var(--statusbar-text);font-size:10px;font-family:'DM Mono',monospace;flex-shrink:0;transition:background .25s}
+#statusbar{display:flex;gap:12px;padding:2px 10px;background:var(--statusbar);color:var(--sbar-text);font-size:10px;font-family:'DM Mono',monospace;flex-shrink:0}
 #statusbar span{white-space:nowrap}
-#status-ok{color:var(--teal-m)}
-#status-err{color:var(--red)}
+#status-ok{color:var(--teal-m)}#status-err{color:var(--red)}
 
 /* PREVIEW CONTENT */
 .doc-title{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:4px}
-.doc-author{font-size:12px;color:var(--ink3);margin-bottom:10px}
+.doc-author{font-size:12px;color:var(--ink3);margin-bottom:8px}
 .doc-abs{background:var(--paper2);border-left:3px solid var(--teal-m);padding:8px 12px;font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:10px;border-radius:0 6px 6px 0}
 .doc-h1{font-size:14px;font-weight:500;color:var(--ink);margin:10px 0 4px;padding-bottom:4px;border-bottom:1px solid var(--border)}
-.doc-h2{font-size:13px;font-weight:500;color:var(--ink2);margin:8px 0 2px 8px}
-.eq-block{text-align:center;margin:10px 0;padding:8px;background:var(--teal-l);border-radius:6px;overflow-x:auto}
-.eq-inline-wrap{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
-.eq-pill{background:var(--paper2);border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:12px;color:var(--ink)}
-.env-pill{background:var(--paper3);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;font-family:'DM Mono',monospace;color:var(--ink2)}
-.section-label{font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px;margin-top:12px}
-.prev-img-wrap{margin:10px 0;text-align:center}
-.prev-img-wrap img{max-width:100%;max-height:200px;border-radius:6px;border:1px solid var(--border)}
-.prev-img-caption{font-size:11px;color:var(--ink3);margin-top:4px;font-style:italic}
-.prev-img-placeholder{background:var(--paper2);border:1px dashed var(--border);border-radius:6px;padding:16px;text-align:center;font-size:11px;color:var(--ink3);font-family:'DM Mono',monospace}
+.doc-h2{font-size:13px;font-weight:500;color:var(--ink2);margin:6px 0 2px 8px}
+.doc-h3{font-size:12px;color:var(--ink3);margin:4px 0 2px 16px}
+.doc-para{font-size:12px;color:var(--ink3);line-height:1.6;margin:4px 0 4px 8px}
+.eq-block{text-align:center;margin:8px 0;padding:8px;background:var(--teal-l);border-radius:6px;overflow-x:auto}
+.eq-inline-wrap{display:flex;flex-wrap:wrap;gap:5px;margin:4px 0}
+.eq-pill{background:var(--paper2);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:12px;color:var(--ink)}
+.env-pill{background:var(--paper3);border:1px solid var(--border);border-radius:4px;padding:2px 7px;font-size:10px;font-family:'DM Mono',monospace;color:var(--ink2)}
+.sec-lbl{font-size:9px;color:var(--ink3);font-family:'DM Mono',monospace;letter-spacing:.05em;text-transform:uppercase;margin:10px 0 4px}
+.prev-fig{margin:8px 0;border:1px solid var(--border);border-radius:6px;overflow:hidden}
+.prev-fig img{width:100%;max-height:180px;object-fit:contain;display:block;background:#fff}
+.prev-fig-cap{font-size:11px;color:var(--ink3);padding:4px 8px;background:var(--paper2);text-align:center;font-style:italic}
+.prev-fig-ph{background:var(--paper2);border:1px dashed var(--border);border-radius:6px;padding:12px;text-align:center;font-size:11px;color:var(--ink3);font-family:'DM Mono',monospace;margin:6px 0}
+.doc-class-badge{display:inline-block;background:var(--teal-l);color:var(--teal);font-size:10px;font-family:'DM Mono',monospace;padding:2px 8px;border-radius:4px;margin-bottom:8px}
+.prev-table{width:100%;border-collapse:collapse;font-size:11px;margin:8px 0}
+.prev-table td,.prev-table th{border:1px solid var(--border);padding:4px 8px;color:var(--ink2)}
+.prev-table th{background:var(--paper2);font-weight:500;color:var(--ink)}
+.file-list-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:'DM Mono',monospace;background:var(--paper2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--ink3);margin:2px}
 
 /* MODAL */
 #upgrade-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center}
 #upgrade-modal.show{display:flex}
-.modal-box{background:var(--paper);border-radius:14px;padding:32px;max-width:400px;width:calc(100% - 32px);border:1px solid var(--border)}
-.modal-box h2{font-size:20px;color:var(--ink);margin-bottom:8px}
-.modal-box p{font-size:14px;color:var(--ink3);line-height:1.6;margin-bottom:20px}
+.modal-box{background:var(--paper);border-radius:12px;padding:28px;max-width:400px;width:calc(100% - 32px);border:1px solid var(--border)}
+.modal-box h2{font-size:18px;color:var(--ink);margin-bottom:8px}
+.modal-box p{font-size:13px;color:var(--ink3);line-height:1.6;margin-bottom:16px}
 .modal-btns{display:flex;gap:10px;flex-wrap:wrap}
-.mbtn{flex:1;padding:10px;border-radius:7px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:14px;cursor:pointer;transition:background .2s;border:none;text-align:center;text-decoration:none;display:block}
-.mbtn-primary{background:var(--amber);color:#fff}
-.mbtn-primary:hover{background:var(--amber-m)}
-.mbtn-sec{background:var(--paper2);color:var(--ink2);border:1px solid var(--border)}
-.mbtn-sec:hover{background:var(--paper3)}
-.payment-info{background:var(--amber-l);border-radius:8px;padding:14px;font-size:13px;color:var(--amber-m);margin-bottom:20px;border:1px solid var(--border);line-height:1.6}
+.mbtn{flex:1;padding:9px;border-radius:6px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:13px;cursor:pointer;transition:background .2s;border:none;text-align:center;text-decoration:none;display:block}
+.mbtn-primary{background:var(--amber);color:#fff}.mbtn-primary:hover{background:var(--amber-m)}
+.mbtn-sec{background:var(--paper2);color:var(--ink2);border:1px solid var(--border)}.mbtn-sec:hover{background:var(--paper3)}
+.payment-info{background:var(--amber-l);border-radius:7px;padding:12px;font-size:12px;color:var(--amber-m);margin-bottom:16px;border:1px solid var(--border);line-height:1.5}
 
 /* SAVE */
-#save-ind{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);display:flex;align-items:center;gap:4px}
-.save-dot{width:6px;height:6px;border-radius:50%;background:#9CA3AF}
+#save-ind{font-size:10px;font-family:'DM Mono',monospace;color:var(--ink3);display:flex;align-items:center;gap:4px}
+.save-dot{width:5px;height:5px;border-radius:50%;background:#9CA3AF}
 .save-dot.saved{background:var(--teal-m)}
 .save-dot.saving{background:var(--amber-m);animation:blink .8s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-/* ZIP DROP ZONE */
-#zip-dropzone{display:none;position:fixed;inset:0;background:rgba(11,110,94,0.18);z-index:150;border:4px dashed var(--teal-m);align-items:center;justify-content:center;font-size:20px;color:var(--teal);font-family:'DM Sans',sans-serif;font-weight:500;pointer-events:none}
-#zip-dropzone.show{display:flex}
+/* DROP ZONE */
+#zip-drop{display:none;position:fixed;inset:0;background:rgba(11,110,94,0.15);z-index:150;border:4px dashed var(--teal-m);align-items:center;justify-content:center;font-size:22px;color:var(--teal);font-weight:500;pointer-events:none}
+#zip-drop.show{display:flex}
 
-@media(max-width:768px){
-  #preview-pane{display:none}
-  #img-panel{width:140px}
-}
+@media(max-width:900px){#preview-pane{display:none}}
+@media(max-width:600px){#file-tree{display:none}}
 </style>
 </head>
 <body>
@@ -158,9 +165,9 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
     <option value="thesis">🔒 Tesis (Premium)</option>
     <option value="beamer">🔒 Beamer (Premium)</option>
     <option value="ieee">🔒 IEEE (Premium)</option>
-    <option value="apa">🔒 APA Report (Premium)</option>
+    <option value="apa">🔒 APA (Premium)</option>
   </select>
-  <button class="tb-btn" onclick="loadTemplate()">Cargar</button>
+  <button class="tb-btn" onclick="loadTemplate()">Cargar plantilla</button>
   <div class="divv"></div>
   <div id="save-ind"><div class="save-dot" id="save-dot"></div><span id="save-label">Sin cambios</span></div>
   <div id="sep"></div>
@@ -168,7 +175,7 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
   <span id="plan-badge" class="free">FREE</span>
   <span id="user-name">Cargando...</span>
   <button id="theme-btn" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
-  <button class="tb-btn purple" onclick="document.getElementById('zip-input').click()" title="Cargar imágenes desde ZIP">📦 Cargar ZIP</button>
+  <button class="tb-btn purple" onclick="document.getElementById('zip-input').click()" title="Cargar proyecto ZIP completo">📦 Cargar proyecto ZIP</button>
   <input type="file" id="zip-input" accept=".zip" style="display:none" onchange="handleZip(this)">
   <button class="tb-btn green" id="compile-btn" onclick="compilePDF()">⬡ Compilar PDF</button>
   <button class="tb-btn orange" onclick="openOverleaf()">↗ Overleaf</button>
@@ -179,8 +186,8 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
   <button class="cmd" onclick="ins('\\textbf{','}')"><b>B</b></button>
   <button class="cmd" onclick="ins('\\textit{','}')" style="font-style:italic">I</button>
   <button class="cmd" onclick="ins('\\underline{','}')"><u>U</u></button>
-  <button class="cmd" onclick="ins('$','$')">$ x $</button>
-  <button class="cmd" onclick="ins('\\[\n','\\]\n')">$$ $$</button>
+  <button class="cmd" onclick="ins('$','$')">$x$</button>
+  <button class="cmd" onclick="ins('\\[\n','\\]\n')">$$$$</button>
   <button class="cmd" onclick="ins('\\frac{','}{n}')">½</button>
   <button class="cmd" onclick="ins('\\sqrt{','}')">√</button>
   <button class="cmd" onclick="ins('\\begin{equation}\n','\\n\\end{equation}')">Eq.</button>
@@ -190,12 +197,27 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
   <button class="cmd" onclick="ins('\\cite{','}')">\cite</button>
   <button class="cmd" onclick="ins('\\ref{','}')">\ref</button>
   <button class="cmd" onclick="ins('\\label{','}')">\label</button>
-  <button class="cmd" onclick="ins('\\section{','}')">§ Sección</button>
+  <button class="cmd" onclick="ins('\\section{','}')">§ Sec</button>
   <button class="cmd" onclick="ins('\\subsection{','}')">§§ Sub</button>
+  <button class="cmd" onclick="ins('\\includegraphics[width=0.8\\linewidth]{','}')">🖼 img</button>
 </div>
 
 <div id="main">
+
+  <!-- ÁRBOL DE ARCHIVOS -->
+  <div id="file-tree">
+    <div id="tree-head">
+      <span id="tree-title">Proyecto</span>
+      <span style="font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace" id="tree-filecount"></span>
+    </div>
+    <div id="tree-list">
+      <div class="tree-empty" id="tree-empty">Carga un ZIP para ver los archivos del proyecto</div>
+    </div>
+  </div>
+
+  <!-- EDITOR -->
   <div id="editor-pane">
+    <div id="file-tabs" style="display:none"></div>
     <div id="editor-head">
       <span id="file-name">main.tex</span>
       <span style="flex:1"></span>
@@ -203,19 +225,14 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
       <span id="cursor-info">L1 C1</span>
     </div>
     <textarea id="editor" spellcheck="false"></textarea>
-  </div>
-
-  <!-- PANEL DE IMÁGENES -->
-  <div id="img-panel">
-    <div id="img-panel-head">
-      <span id="img-panel-title">Imágenes</span>
-      <button id="img-panel-close" onclick="closeImgPanel()" title="Cerrar panel">✕</button>
-    </div>
-    <div id="img-grid">
-      <div id="img-panel-empty">Carga un ZIP con imágenes para verlas aquí</div>
+    <div id="no-file-msg" style="display:none">
+      <div class="big">📦</div>
+      <div>Carga un proyecto ZIP o usa una plantilla</div>
+      <button class="tb-btn purple" onclick="document.getElementById('zip-input').click()">Cargar ZIP</button>
     </div>
   </div>
 
+  <!-- VISTA PREVIA -->
   <div id="preview-pane">
     <div id="prev-tabs">
       <button class="ptab active" onclick="switchPreview('math',this)">Vista previa</button>
@@ -231,58 +248,57 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
   <span id="status-ok"></span>
   <span id="status-err"></span>
   <span style="flex:1"></span>
-  <span id="img-count"></span>
+  <span id="project-info"></span>
   <span>LaTeX · UTF-8</span>
 </div>
 
+<!-- Modal upgrade -->
 <div id="upgrade-modal">
   <div class="modal-box">
     <h2>Límite alcanzado</h2>
-    <p>Has usado tus <strong>5 compilaciones gratuitas</strong> de hoy. Actualiza a Premium para compilaciones ilimitadas y todas las plantillas.</p>
-    <div class="payment-info" id="modal-payment-info">Cargando info de pago...</div>
+    <p>Has usado tus <strong>5 compilaciones gratuitas</strong> de hoy.</p>
+    <div class="payment-info" id="modal-payment-info"></div>
     <div class="modal-btns">
       <a href="index.html#payment" class="mbtn mbtn-primary" target="_blank">Ver cómo pagar →</a>
-      <button class="mbtn mbtn-sec" onclick="closeModal()">Seguir con gratis</button>
+      <button class="mbtn mbtn-sec" onclick="closeModal()">Cerrar</button>
     </div>
   </div>
 </div>
 
-<div id="zip-dropzone">📦 Suelta el ZIP aquí</div>
+<div id="zip-drop">📦 Suelta el proyecto ZIP aquí</div>
 
 <form id="compile-form" method="POST" action="https://latexonline.cc/compile" target="latex-frame" style="display:none">
   <input type="hidden" name="code" id="form-code">
 </form>
 
-<!-- JSZip -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 
+<!-- Firebase -->
 <script type="module">
-import { initializeApp }   from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyAaezwe-pPDi1rsS3uFopk9JMY199LLoqk",
-  authDomain:        "latexify-4bfc9.firebaseapp.com",
-  projectId:         "latexify-4bfc9",
-  storageBucket:     "latexify-4bfc9.firebasestorage.app",
-  messagingSenderId: "292044762895",
-  appId:             "1:292044762895:web:a7a0ed9489331e2e88d87a"
+const FB = {
+  apiKey:"AIzaSyAaezwe-pPDi1rsS3uFopk9JMY199LLoqk",
+  authDomain:"latexify-4bfc9.firebaseapp.com",
+  projectId:"latexify-4bfc9",
+  storageBucket:"latexify-4bfc9.firebasestorage.app",
+  messagingSenderId:"292044762895",
+  appId:"1:292044762895:web:a7a0ed9489331e2e88d87a"
 };
 const PAYMENT_NUM = "TU_NUMERO_NEQUI";
 const FREE_LIMIT  = 5;
 
-const app  = initializeApp(FIREBASE_CONFIG);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-let userData = null, currentUser = null;
+const app=initializeApp(FB), auth=getAuth(app), db=getFirestore(app);
+let userData=null, currentUser=null;
 
-onAuthStateChanged(auth, async user => {
+onAuthStateChanged(auth, async user=>{
   if(!user){ window.location.href='login.html'; return; }
-  currentUser = user;
-  document.getElementById('user-name').textContent = user.displayName || user.email;
-  const snap = await getDoc(doc(db,'users',user.uid));
+  currentUser=user;
+  document.getElementById('user-name').textContent=user.displayName||user.email;
+  const snap=await getDoc(doc(db,'users',user.uid));
   if(snap.exists()){ userData=snap.data(); window._userData=userData; updatePlanUI(); }
   loadLastCode(user.uid);
 });
@@ -293,13 +309,8 @@ function updatePlanUI(){
   const today=new Date().toDateString();
   let used=userData.compilationsToday||0;
   if(userData.compilationsDate!==today) used=0;
-  if(userData.premium){
-    badge.textContent='PREMIUM';badge.className='premium';
-    document.getElementById('compil-count').textContent='∞ compilaciones';
-  }else{
-    badge.textContent='FREE';badge.className='free';
-    document.getElementById('compil-count').textContent=`${used}/${FREE_LIMIT} hoy`;
-  }
+  if(userData.premium){ badge.textContent='PREMIUM'; badge.className='premium'; document.getElementById('compil-count').textContent='∞ compil.'; }
+  else{ badge.textContent='FREE'; badge.className='free'; document.getElementById('compil-count').textContent=`${used}/${FREE_LIMIT} hoy`; }
 }
 
 window.doLogout=async function(){ await signOut(auth); window.location.href='login.html'; };
@@ -310,33 +321,90 @@ window.compilePDF=async function(){
   let used=userData.compilationsToday||0;
   if(userData.compilationsDate!==today) used=0;
   if(!userData.premium&&used>=FREE_LIMIT){
-    document.getElementById('modal-payment-info').innerHTML=
-      `Envía <strong>$8.000 COP</strong> por Nequi/Daviplata al número <strong>${PAYMENT_NUM}</strong> con tu correo como asunto.`;
-    document.getElementById('upgrade-modal').classList.add('show');
-    return;
+    document.getElementById('modal-payment-info').innerHTML=`Envía <strong>$8.000 COP</strong> por Nequi/Daviplata al número <strong>${PAYMENT_NUM}</strong> con tu correo como asunto.`;
+    document.getElementById('upgrade-modal').classList.add('show'); return;
   }
-  document.getElementById('status-msg').textContent='Compilando PDF…';
-  document.getElementById('compile-btn').disabled=true;
-  document.getElementById('form-code').value=document.getElementById('editor').value;
-  document.getElementById('compile-form').submit();
-  switchPreview('pdf',document.querySelectorAll('.ptab')[1]);
+
+  // Si hay proyecto ZIP cargado, compilar como ZIP (multi-archivo)
+  if(window.projectFiles && Object.keys(window.projectFiles).length > 0){
+    await compileZipProject();
+  } else {
+    // Compilar archivo único
+    document.getElementById('status-msg').textContent='Compilando PDF…';
+    document.getElementById('compile-btn').disabled=true;
+    document.getElementById('form-code').value=document.getElementById('editor').value;
+    document.getElementById('compile-form').submit();
+    switchPreview('pdf',document.querySelectorAll('.ptab')[1]);
+  }
+
   const newUsed=used+1;
   userData.compilationsToday=newUsed; userData.compilationsDate=today;
   await updateDoc(doc(db,'users',currentUser.uid),{compilationsToday:newUsed,compilationsDate:today});
   updatePlanUI();
-  setTimeout(()=>{ document.getElementById('status-msg').textContent='PDF listo ✓'; document.getElementById('compile-btn').disabled=false; },3500);
+  setTimeout(()=>{ document.getElementById('status-msg').textContent='PDF listo ✓'; document.getElementById('compile-btn').disabled=false; },4000);
 };
+
+async function compileZipProject(){
+  document.getElementById('status-msg').textContent='Empaquetando proyecto…';
+  document.getElementById('compile-btn').disabled=true;
+
+  // Guardar cambios del editor activo en projectFiles
+  const activeTab=window.activeFile;
+  if(activeTab) window.projectFiles[activeTab]=document.getElementById('editor').value;
+
+  // Construir nuevo ZIP con cambios
+  const zip=new JSZip();
+  for(const [fname,content] of Object.entries(window.projectFiles)){
+    if(typeof content==='string'){
+      zip.file(fname, content);
+    } else {
+      // Es binario (imagen, etc.)
+      zip.file(fname, content);
+    }
+  }
+
+  const blob=await zip.generateAsync({type:'blob'});
+  const formData=new FormData();
+  formData.append('file', blob, 'project.zip');
+  if(window.mainTexFile) formData.append('target', window.mainTexFile);
+
+  document.getElementById('status-msg').textContent='Compilando proyecto ZIP…';
+
+  // Enviar a latexonline.cc
+  const frame=document.getElementById('prev-pdf');
+  switchPreview('pdf',document.querySelectorAll('.ptab')[1]);
+
+  try{
+    const res=await fetch('https://latexonline.cc/compile',{ method:'POST', body:formData });
+    if(res.ok){
+      const pdfBlob=await res.blob();
+      const url=URL.createObjectURL(pdfBlob);
+      frame.src=url;
+      document.getElementById('status-ok').textContent='PDF compilado ✓';
+      document.getElementById('status-err').textContent='';
+    } else {
+      const errText=await res.text();
+      document.getElementById('status-err').textContent='Error de compilación — revisa el código';
+      document.getElementById('status-ok').textContent='';
+      console.error('LaTeX error:', errText);
+    }
+  } catch(e){
+    // Fallback: compilar solo el main.tex
+    document.getElementById('status-msg').textContent='Compilando main.tex…';
+    document.getElementById('form-code').value=window.projectFiles[window.mainTexFile]||document.getElementById('editor').value;
+    document.getElementById('compile-form').submit();
+  }
+}
 
 let saveTimer;
 function schedSave(){
-  clearTimeout(saveTimer);
-  setSaveDot('saving','Guardando...');
+  clearTimeout(saveTimer); setSaveDot('saving','Guardando...');
   saveTimer=setTimeout(async()=>{
     if(!currentUser) return;
     try{
       await updateDoc(doc(db,'users',currentUser.uid),{lastCode:document.getElementById('editor').value,lastSaved:new Date().toISOString()});
       setSaveDot('saved','Guardado');
-    }catch(e){setSaveDot('','Sin guardar');}
+    }catch(e){ setSaveDot('','Sin guardar'); }
   },1500);
 }
 function loadLastCode(uid){
@@ -350,113 +418,213 @@ function setSaveDot(cls,label){ const d=document.getElementById('save-dot'); d.c
 </script>
 
 <script>
-// ── MODO OSCURO ──────────────────────────────────────────────────────────────
+// ── TEMA OSCURO ───────────────────────────────────────────────────────────────
 function toggleTheme(){
-  const html=document.documentElement;
-  const dark=html.getAttribute('data-theme')==='dark';
-  const next=dark?'light':'dark';
-  html.setAttribute('data-theme',next);
-  document.getElementById('theme-btn').textContent=dark?'🌙':'☀️';
+  const h=document.documentElement,dark=h.getAttribute('data-theme')==='dark',next=dark?'light':'dark';
+  h.setAttribute('data-theme',next); document.getElementById('theme-btn').textContent=dark?'🌙':'☀️';
   localStorage.setItem('ltx-theme',next);
 }
 window.toggleTheme=toggleTheme;
-(function(){
-  const s=localStorage.getItem('ltx-theme');
-  if(s){ document.documentElement.setAttribute('data-theme',s); document.getElementById('theme-btn').textContent=s==='dark'?'☀️':'🌙'; }
-})();
+(function(){ const s=localStorage.getItem('ltx-theme'); if(s){ document.documentElement.setAttribute('data-theme',s); document.getElementById('theme-btn').textContent=s==='dark'?'☀️':'🌙'; } })();
 
-// ── IMÁGENES DEL ZIP ─────────────────────────────────────────────────────────
-window.imageMap = {}; // nombre → base64 dataURL
+// ── ESTADO DEL PROYECTO ───────────────────────────────────────────────────────
+window.projectFiles = {};   // {ruta: contenido string o Uint8Array}
+window.imageBlobs   = {};   // {nombre: dataURL}  para vista previa
+window.mainTexFile  = null; // nombre del archivo principal .tex
+window.activeFile   = null; // archivo abierto en el editor
+window.fileTabs     = [];   // archivos .tex abiertos
 
+const TEX_EXTS  = /\.(tex|bib|cls|sty|cfg|def|fd)$/i;
+const IMG_EXTS  = /\.(png|jpg|jpeg|gif|svg|webp|bmp)$/i;
+const TEXT_EXTS = /\.(tex|bib|cls|sty|cfg|def|fd|txt|md)$/i;
+
+// ── CARGAR ZIP ────────────────────────────────────────────────────────────────
 async function handleZip(input){
-  const file = input.files[0];
-  if(!file) return;
-  if(!window.JSZip){ alert('Error: JSZip no cargó. Revisa tu conexión.'); return; }
-  document.getElementById('status-msg').textContent = 'Leyendo ZIP…';
+  const file=input.files[0]; if(!file) return;
+  document.getElementById('status-msg').textContent='Leyendo proyecto ZIP…';
   try{
-    const zip = await JSZip.loadAsync(file);
-    const imgExts = /\.(png|jpg|jpeg|gif|svg|webp|bmp)$/i;
-    const entries = Object.values(zip.files).filter(f=>!f.dir && imgExts.test(f.name));
-    if(!entries.length){ alert('No se encontraron imágenes en el ZIP.\nFormatos soportados: PNG, JPG, GIF, SVG, WEBP.'); return; }
+    const zip=await JSZip.loadAsync(file);
+    window.projectFiles={}; window.imageBlobs={}; window.mainTexFile=null;
+    window.fileTabs=[]; window.activeFile=null;
 
-    window.imageMap = {};
-    const grid = document.getElementById('img-grid');
-    grid.innerHTML = '';
+    // Extraer todos los archivos
+    const promises=[];
+    zip.forEach((path,entry)=>{ if(!entry.dir) promises.push(processEntry(path,entry)); });
+    await Promise.all(promises);
 
-    for(const entry of entries){
-      const blob   = await entry.async('blob');
-      const url    = URL.createObjectURL(blob);
-      const fname  = entry.name.split('/').pop();
-      const ext    = fname.split('.').pop().toLowerCase();
-      const mime   = ext==='svg'?'image/svg+xml':ext==='jpg'||ext==='jpeg'?'image/jpeg':ext==='png'?'image/png':ext==='gif'?'image/gif':ext==='webp'?'image/webp':'image/png';
-      // Convertir a base64 para la vista previa
-      const b64 = await new Promise(res=>{ const r=new FileReader(); r.onload=e=>res(e.target.result); r.readAsDataURL(blob); });
-      window.imageMap[fname] = b64;
+    // Detectar main.tex
+    const texFiles=Object.keys(window.projectFiles).filter(f=>TEX_EXTS.test(f));
+    const candidates=['main.tex','Main.tex','documento.tex','paper.tex','thesis.tex','tesis.tex','article.tex'];
+    window.mainTexFile = texFiles.find(f=>candidates.includes(f.split('/').pop())) || texFiles.find(f=>f.endsWith('.tex')) || texFiles[0];
 
-      const thumb = document.createElement('div');
-      thumb.className = 'img-thumb';
-      thumb.title = `Clic para insertar ${fname}`;
-      thumb.innerHTML = `
-        <img src="${url}" alt="${fname}" loading="lazy">
-        <div class="img-thumb-name">${fname}</div>
-        <div class="img-thumb-tip">+ insertar</div>
-      `;
-      thumb.onclick = () => insertImage(fname);
-      grid.appendChild(thumb);
+    // Construir UI
+    buildFileTree();
+    buildFileTabs(texFiles);
+
+    if(window.mainTexFile){
+      openFile(window.mainTexFile);
     }
 
-    document.getElementById('img-panel').classList.add('visible');
-    document.getElementById('img-count').textContent = `${entries.length} imágenes cargadas`;
-    document.getElementById('status-msg').textContent = `ZIP cargado: ${entries.length} imagen(es)`;
+    const total=Object.keys(window.projectFiles).length;
+    const imgs=Object.keys(window.imageBlobs).length;
+    document.getElementById('status-msg').textContent=`Proyecto cargado: ${total} archivos, ${imgs} imágenes`;
+    document.getElementById('project-info').textContent=`${texFiles.length} .tex · ${imgs} imgs`;
     updatePreview();
-  }catch(e){
-    document.getElementById('status-msg').textContent = 'Error al leer el ZIP';
+  } catch(e){
+    document.getElementById('status-err').textContent='Error al leer ZIP: '+e.message;
     console.error(e);
   }
   input.value='';
 }
 window.handleZip=handleZip;
 
-function insertImage(fname){
-  const editor = document.getElementById('editor');
-  const code = `\n\\begin{figure}[h]\n  \\centering\n  \\includegraphics[width=0.8\\linewidth]{${fname}}\n  \\caption{Descripción de la imagen}\n  \\label{fig:${fname.replace(/\.[^.]+$/,'')}}\n\\end{figure}\n`;
-  const s = editor.selectionStart;
-  editor.value = editor.value.substring(0,s) + code + editor.value.substring(editor.selectionEnd);
-  editor.focus();
-  editor.selectionStart = editor.selectionEnd = s + code.length;
+async function processEntry(path, entry){
+  const fname=path.split('/').pop();
+  if(!fname) return;
+  const shortPath=path.startsWith('./')?path.slice(2):path;
+
+  if(TEXT_EXTS.test(fname)){
+    const text=await entry.async('string');
+    window.projectFiles[shortPath]=text;
+  } else if(IMG_EXTS.test(fname)){
+    const blob=await entry.async('blob');
+    const dataUrl=await blobToDataUrl(blob);
+    window.imageBlobs[fname]=dataUrl;
+    window.imageBlobs[shortPath]=dataUrl;
+    const uint8=await entry.async('uint8array');
+    window.projectFiles[shortPath]=uint8;
+  } else {
+    // Otros archivos binarios (pdf, etc.)
+    const uint8=await entry.async('uint8array');
+    window.projectFiles[shortPath]=uint8;
+  }
+}
+
+function blobToDataUrl(blob){
+  return new Promise(res=>{ const r=new FileReader(); r.onload=e=>res(e.target.result); r.readAsDataURL(blob); });
+}
+
+// ── ÁRBOL DE ARCHIVOS ─────────────────────────────────────────────────────────
+function buildFileTree(){
+  const list=document.getElementById('tree-list');
+  document.getElementById('tree-empty').style.display='none';
+  list.innerHTML='';
+
+  const allFiles=Object.keys(window.projectFiles).sort();
+  const texFiles=allFiles.filter(f=>TEX_EXTS.test(f));
+  const imgFiles=allFiles.filter(f=>IMG_EXTS.test(f));
+  const otherFiles=allFiles.filter(f=>!TEX_EXTS.test(f)&&!IMG_EXTS.test(f));
+
+  if(texFiles.length){
+    const s=document.createElement('div'); s.className='tree-section'; s.textContent='Documentos'; list.appendChild(s);
+    texFiles.forEach(f=>{ const item=createTreeItem(f,'📄',()=>openFile(f)); list.appendChild(item); });
+  }
+  if(imgFiles.length){
+    const s=document.createElement('div'); s.className='tree-section'; s.textContent='Imágenes'; list.appendChild(s);
+    imgFiles.forEach(f=>{
+      const fname=f.split('/').pop();
+      const item=createTreeItem(fname,'🖼',null,true);
+      // Miniatura
+      if(window.imageBlobs[fname]||window.imageBlobs[f]){
+        const wrap=document.createElement('div'); wrap.className='img-preview-thumb';
+        const img=document.createElement('img'); img.src=window.imageBlobs[fname]||window.imageBlobs[f]; img.alt=fname;
+        wrap.appendChild(img); item.appendChild(wrap);
+      }
+      // Botón insertar
+      item.style.cursor='pointer'; item.classList.remove('img-item');
+      item.title=`Clic para insertar ${fname} en el editor`;
+      item.onclick=()=>insertImageCode(fname);
+      list.appendChild(item);
+    });
+  }
+  if(otherFiles.length){
+    const s=document.createElement('div'); s.className='tree-section'; s.textContent='Otros'; list.appendChild(s);
+    otherFiles.forEach(f=>{ const item=createTreeItem(f.split('/').pop(),'📎',null,true); list.appendChild(item); });
+  }
+
+  document.getElementById('tree-filecount').textContent=allFiles.length+' archivos';
+}
+
+function createTreeItem(name,icon,onclick,noClick=false){
+  const item=document.createElement('div'); item.className='tree-item'+(noClick?' img-item':'');
+  item.dataset.file=name;
+  item.innerHTML=`<span class="tree-icon">${icon}</span><span class="tree-name" title="${name}">${name}</span>`;
+  if(onclick) item.onclick=onclick;
+  return item;
+}
+
+// ── PESTAÑAS DE ARCHIVOS ──────────────────────────────────────────────────────
+function buildFileTabs(texFiles){
+  const tabBar=document.getElementById('file-tabs');
+  tabBar.innerHTML=''; tabBar.style.display='flex';
+  window.fileTabs=texFiles;
+  texFiles.forEach(f=>{
+    const tab=document.createElement('button'); tab.className='ftab';
+    tab.dataset.file=f;
+    tab.innerHTML=`<span class="ftab-dot"></span>${f.split('/').pop()}`;
+    tab.onclick=()=>openFile(f);
+    tabBar.appendChild(tab);
+  });
+}
+
+function openFile(path){
+  // Guardar contenido actual antes de cambiar
+  if(window.activeFile && window.projectFiles[window.activeFile]!==undefined){
+    const current=document.getElementById('editor').value;
+    if(typeof window.projectFiles[window.activeFile]==='string') window.projectFiles[window.activeFile]=current;
+  }
+
+  window.activeFile=path;
+  const content=window.projectFiles[path];
+  const editor=document.getElementById('editor');
+
+  if(typeof content==='string'){
+    editor.style.display=''; document.getElementById('no-file-msg').style.display='none';
+    editor.value=content;
+  } else {
+    editor.style.display=''; document.getElementById('no-file-msg').style.display='none';
+    editor.value='% Archivo binario — no editable';
+  }
+
+  document.getElementById('file-name').textContent=path;
+
+  // Marcar tab activa
+  document.querySelectorAll('.ftab').forEach(t=>{ t.classList.toggle('active', t.dataset.file===path); });
+  // Marcar árbol
+  document.querySelectorAll('.tree-item').forEach(t=>{ t.classList.toggle('active', t.dataset.file===path||t.dataset.file===path.split('/').pop()); });
+
   updatePreview();
-  window._saveCode?.();
-  // Feedback visual en miniatura
-  const thumbs = document.querySelectorAll('.img-thumb');
-  thumbs.forEach(t=>{ if(t.querySelector('.img-thumb-name')?.textContent===fname){ t.style.borderColor='var(--teal-m)'; setTimeout(()=>t.style.borderColor='',1000); } });
-}
-window.insertImage=insertImage;
+  updateCursor();
 
-function closeImgPanel(){
-  document.getElementById('img-panel').classList.remove('visible');
+  // Marcar si mainTex
+  if(path===window.mainTexFile) document.getElementById('file-name').textContent=path+' ★ (principal)';
 }
-window.closeImgPanel=closeImgPanel;
 
-// Arrastrar ZIP al editor
-const body = document.body;
-body.addEventListener('dragover',e=>{ e.preventDefault(); if([...e.dataTransfer.items].some(i=>i.type==='application/zip'||i.type==='application/x-zip-compressed'||i.getAsFile()?.name.endsWith('.zip'))) document.getElementById('zip-dropzone').classList.add('show'); });
-body.addEventListener('dragleave',e=>{ if(!e.relatedTarget) document.getElementById('zip-dropzone').classList.remove('show'); });
-body.addEventListener('drop',e=>{
-  e.preventDefault();
-  document.getElementById('zip-dropzone').classList.remove('show');
+function insertImageCode(fname){
+  const code=`\n\\begin{figure}[h]\n  \\centering\n  \\includegraphics[width=0.8\\linewidth]{${fname}}\n  \\caption{Descripción de la imagen}\n  \\label{fig:${fname.replace(/\.[^.]+$/,'')}}\n\\end{figure}\n`;
+  const ed=document.getElementById('editor');
+  const s=ed.selectionStart;
+  ed.value=ed.value.substring(0,s)+code+ed.value.substring(ed.selectionEnd);
+  ed.focus(); ed.selectionStart=ed.selectionEnd=s+code.length;
+  updatePreview(); window._saveCode?.();
+}
+
+// Drag & drop ZIP
+document.body.addEventListener('dragover',e=>{ e.preventDefault(); if([...e.dataTransfer.items].some(i=>i.getAsFile()?.name.endsWith('.zip'))) document.getElementById('zip-drop').classList.add('show'); });
+document.body.addEventListener('dragleave',e=>{ if(!e.relatedTarget) document.getElementById('zip-drop').classList.remove('show'); });
+document.body.addEventListener('drop',e=>{
+  e.preventDefault(); document.getElementById('zip-drop').classList.remove('show');
   const f=[...e.dataTransfer.files].find(f=>f.name.endsWith('.zip'));
   if(f){ const dt=new DataTransfer(); dt.items.add(f); const inp=document.getElementById('zip-input'); inp.files=dt.files; handleZip(inp); }
 });
 
-// ── PLANTILLAS ───────────────────────────────────────────────────────────────
+// ── PLANTILLAS ────────────────────────────────────────────────────────────────
 window.TEMPLATES={
 article:`\\documentclass[12pt,a4paper]{article}
 \\usepackage[utf8]{inputenc}
 \\usepackage[T1]{fontenc}
 \\usepackage[spanish]{babel}
-\\usepackage{amsmath,amssymb}
-\\usepackage{graphicx}
-\\usepackage{hyperref}
+\\usepackage{amsmath,amssymb,graphicx,hyperref}
 \\usepackage{geometry}
 \\geometry{margin=2.5cm}
 
@@ -593,10 +761,7 @@ beamer:`\\documentclass[aspectratio=169]{beamer}
 
 \\begin{document}
 \\begin{frame}\\titlepage\\end{frame}
-
-\\begin{frame}{Contenido}
-\\tableofcontents
-\\end{frame}
+\\begin{frame}{Contenido}\\tableofcontents\\end{frame}
 
 \\section{Introducción}
 \\begin{frame}{Motivación}
@@ -609,13 +774,6 @@ beamer:`\\documentclass[aspectratio=169]{beamer}
 \\section{Resultados}
 \\begin{frame}{Ecuaciones}
 \\[ \\hat{f}(\\xi) = \\int_{-\\infty}^{\\infty} f(x)e^{-2\\pi ix\\xi}\\,dx \\]
-\\end{frame}
-
-\\begin{frame}{Conclusiones}
-\\begin{itemize}
-  \\item Conclusión 1
-  \\item Conclusión 2
-\\end{itemize}
 \\end{frame}
 \\end{document}`,
 
@@ -630,18 +788,11 @@ ieee:`\\documentclass[conference]{IEEEtran}
 \\begin{document}
 \\maketitle
 
-\\begin{abstract}
-Abstract of the paper.
-\\end{abstract}
-
-\\begin{IEEEkeywords}
-keyword1, keyword2, keyword3
-\\end{IEEEkeywords}
+\\begin{abstract}Abstract of the paper.\\end{abstract}
+\\begin{IEEEkeywords}keyword1, keyword2\\end{IEEEkeywords}
 
 \\section{Introduction}
-\\begin{equation}
-P = \\frac{V^2}{R}
-\\end{equation}
+\\begin{equation}P = \\frac{V^2}{R}\\end{equation}
 
 \\section{Methodology}
 \\section{Results}
@@ -674,31 +825,39 @@ Cuerpo del reporte con análisis y discusión.
 
 \\section{Conclusiones}
 Síntesis de los hallazgos principales.
-
 \\end{document}`
 };
 
 const PRO_TPLS=['thesis','beamer','ieee','apa'];
-
 function loadTemplate(){
   const val=document.getElementById('tpl-sel').value;
   if(PRO_TPLS.includes(val)&&!window._userData?.premium){
     document.getElementById('modal-payment-info').innerHTML='Las plantillas avanzadas son exclusivas del plan Premium.';
-    document.getElementById('upgrade-modal').classList.add('show');
-    return;
+    document.getElementById('upgrade-modal').classList.add('show'); return;
   }
-  if(!confirm('¿Cargar plantilla? Se perderán los cambios actuales.')) return;
+  if(Object.keys(window.projectFiles).length&&!confirm('¿Cargar plantilla? Se perderá el proyecto actual.')) return;
+  window.projectFiles={}; window.imageBlobs={}; window.mainTexFile=null; window.activeFile=null;
+  document.getElementById('file-tabs').style.display='none';
+  document.getElementById('tree-list').innerHTML=''; document.getElementById('tree-empty').style.display='';
+  document.getElementById('editor').style.display=''; document.getElementById('no-file-msg').style.display='none';
   document.getElementById('editor').value=TEMPLATES[val]||'';
+  document.getElementById('file-name').textContent='main.tex';
   updatePreview();
 }
 window.loadTemplate=loadTemplate;
 
 // ── EDITOR ────────────────────────────────────────────────────────────────────
 const editor=document.getElementById('editor');
-editor.value=TEMPLATES.article;
-updatePreview();
+editor.value=TEMPLATES.article; updatePreview();
 
-editor.addEventListener('input',()=>{ updatePreview(); updateCursor(); window._saveCode?.(); });
+editor.addEventListener('input',()=>{
+  if(window.activeFile && typeof window.projectFiles[window.activeFile]==='string'){
+    window.projectFiles[window.activeFile]=editor.value;
+    // Marcar tab como modificada
+    document.querySelectorAll('.ftab').forEach(t=>{ if(t.dataset.file===window.activeFile) t.classList.add('modified'); });
+  }
+  updatePreview(); updateCursor(); window._saveCode?.();
+});
 editor.addEventListener('keydown',e=>{
   if(e.key==='Tab'){ e.preventDefault(); const s=editor.selectionStart; editor.value=editor.value.substring(0,s)+'  '+editor.value.substring(editor.selectionEnd); editor.selectionStart=editor.selectionEnd=s+2; }
 });
@@ -713,66 +872,135 @@ function updateCursor(){
 }
 
 function ins(before,after){
-  const s=editor.selectionStart,e=editor.selectionEnd;
-  const sel=editor.value.substring(s,e);
+  const s=editor.selectionStart,e=editor.selectionEnd,sel=editor.value.substring(s,e);
   editor.value=editor.value.substring(0,s)+before+sel+after+editor.value.substring(e);
   editor.focus(); editor.selectionStart=s+before.length; editor.selectionEnd=s+before.length+sel.length;
   updatePreview(); window._saveCode?.();
 }
 window.ins=ins;
 
-// ── VISTA PREVIA ──────────────────────────────────────────────────────────────
+// ── VISTA PREVIA RICA ─────────────────────────────────────────────────────────
 function updatePreview(){
-  const code=editor.value;
+  const code=editor.value; if(!code.trim()){ document.getElementById('prev-math').innerHTML=''; return; }
   let html='<div>';
-  const title=code.match(/\\title\{([^}]*)\}/);
-  const author=code.match(/\\author\{([^}]*)\}/);
-  if(title) html+=`<div class="doc-title">${clean(title[1])}</div>`;
-  if(author) html+=`<div class="doc-author">${clean(author[1])}</div>`;
-  const abs=code.match(/\\begin\{abstract\}([\s\S]*?)\\end\{abstract\}/);
-  if(abs) html+=`<div class="doc-abs">${abs[1].trim().substring(0,200)}${abs[1].length>200?'…':''}</div>`;
 
-  // Secciones
-  const secs=[...code.matchAll(/\\(chapter|section|subsection)\{([^}]*)\}/g)];
-  if(secs.length){
-    html+='<div class="section-label">Estructura</div>';
-    secs.forEach(m=>{ const l=m[1],t=m[2]; if(l==='chapter'||l==='section') html+=`<div class="doc-h1">${t}</div>`; else html+=`<div class="doc-h2">↳ ${t}</div>`; });
+  // Clase del documento
+  const docClass=code.match(/\\documentclass(?:\[([^\]]*)\])?\{([^}]+)\}/);
+  if(docClass){
+    const opts=docClass[1]?`[${docClass[1]}]`:'';
+    html+=`<div class="doc-class-badge">\\documentclass${opts}{${docClass[2]}}</div>`;
   }
 
-  // Figuras — mostrar imágenes cargadas del ZIP
-  const figs=[...code.matchAll(/\\begin\{figure\}[\s\S]*?\\includegraphics(?:\[.*?\])?\{([^}]+)\}[\s\S]*?(?:\\caption\{([^}]*)\})?[\s\S]*?\\end\{figure\}/g)];
+  // Título y autor
+  const title=code.match(/\\title\{([\s\S]*?)\}/);
+  const author=code.match(/\\author\{([\s\S]*?)\}/);
+  const date=code.match(/\\date\{([^}]*)\}/);
+  if(title) html+=`<div class="doc-title">${clean(title[1])}</div>`;
+  if(author) html+=`<div class="doc-author">${clean(author[1])}</div>`;
+  if(date&&date[1]&&date[1]!=='\\today') html+=`<div style="font-size:11px;color:var(--ink3);margin-bottom:6px">${date[1]}</div>`;
+
+  // Abstract
+  const abs=code.match(/\\begin\{abstract\}([\s\S]*?)\\end\{abstract\}/);
+  if(abs) html+=`<div class="doc-abs">${abs[1].trim().substring(0,300)}${abs[1].length>300?'…':''}</div>`;
+
+  // Keywords / IEEEkeywords
+  const kw=code.match(/\\begin\{(?:IEEEkeywords|keywords)\}([\s\S]*?)\\end\{(?:IEEEkeywords|keywords)\}/);
+  if(kw) html+=`<div style="font-size:11px;color:var(--ink3);margin-bottom:8px;font-style:italic">Palabras clave: ${kw[1].trim()}</div>`;
+
+  // Paquetes usados
+  const pkgs=[...code.matchAll(/\\usepackage(?:\[.*?\])?\{([^}]+)\}/g)].map(m=>m[1]);
+  if(pkgs.length){
+    html+=`<div class="sec-lbl">Paquetes</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">`;
+    pkgs.forEach(p=>html+=`<span class="file-list-badge">📦 ${p}</span>`);
+    html+='</div>';
+  }
+
+  // Estructura
+  const secs=[...code.matchAll(/\\(chapter|section|subsection|subsubsection)\*?\{([^}]*)\}/g)];
+  if(secs.length){
+    html+='<div class="sec-lbl">Estructura del documento</div>';
+    secs.forEach(m=>{
+      const l=m[1],t=m[2];
+      if(l==='chapter') html+=`<div class="doc-h1">▌ ${t}</div>`;
+      else if(l==='section') html+=`<div class="doc-h1">${t}</div>`;
+      else if(l==='subsection') html+=`<div class="doc-h2">↳ ${t}</div>`;
+      else html+=`<div class="doc-h3">⤷ ${t}</div>`;
+    });
+  }
+
+  // Figuras con imágenes reales
+  const figs=[...code.matchAll(/\\begin\{figure\}([\s\S]*?)\\end\{figure\}/g)];
   if(figs.length){
-    html+='<div class="section-label">Figuras</div>';
+    html+='<div class="sec-lbl">Figuras</div>';
     figs.forEach(m=>{
-      const fname=m[1].trim(), caption=m[2]||'';
-      if(window.imageMap&&window.imageMap[fname]){
-        html+=`<div class="prev-img-wrap"><img src="${window.imageMap[fname]}" alt="${fname}"><div class="prev-img-caption">${caption||fname}</div></div>`;
-      } else {
-        html+=`<div class="prev-img-placeholder">🖼 ${fname}<br><span style="font-size:10px">(carga el ZIP para ver la imagen)</span></div>`;
+      const block=m[1];
+      const igMatch=block.match(/\\includegraphics(?:\[.*?\])?\{([^}]+)\}/);
+      const capMatch=block.match(/\\caption\{([^}]*)\}/);
+      if(igMatch){
+        const fname=igMatch[1].trim().split('/').pop();
+        const cap=capMatch?capMatch[1]:'';
+        const src=window.imageBlobs?.[fname]||window.imageBlobs?.[igMatch[1].trim()];
+        if(src){
+          html+=`<div class="prev-fig"><img src="${src}" alt="${fname}"><div class="prev-fig-cap">${cap||fname}</div></div>`;
+        } else {
+          html+=`<div class="prev-fig-ph">🖼 ${fname}<br><span style="font-size:10px">${cap?cap:'(imagen no cargada)'}</span></div>`;
+        }
       }
     });
   }
 
-  // Ecuaciones
-  const dm=[...code.matchAll(/\\\[([\s\S]*?)\\\]/g),...code.matchAll(/\\begin\{equation[\*]?\}([\s\S]*?)\\end\{equation[\*]?\}/g)];
-  if(dm.length){ html+='<div class="section-label">Ecuaciones</div>'; dm.slice(0,4).forEach((_,i)=>html+=`<div class="eq-block" id="eq${i}"></div>`); }
-  const il=[...new Set([...code.matchAll(/\$([^$\n]{1,60})\$/g)].map(m=>m[1]))].slice(0,8);
-  if(il.length){ html+='<div class="section-label">Expresiones inline</div><div class="eq-inline-wrap">'; il.forEach((_,i)=>html+=`<span class="eq-pill" id="il${i}"></span>`); html+='</div>'; }
+  // Ecuaciones display
+  const dm=[...code.matchAll(/\\\[([\s\S]*?)\\\]/g),...code.matchAll(/\\begin\{equation[\*]?\}([\s\S]*?)\\end\{equation[\*]?\}/g),...code.matchAll(/\\begin\{align[\*]?\}([\s\S]*?)\\end\{align[\*]?\}/g)];
+  if(dm.length){
+    html+='<div class="sec-lbl">Ecuaciones</div>';
+    dm.slice(0,5).forEach((_,i)=>html+=`<div class="eq-block" id="eq${i}"></div>`);
+  }
 
-  const envs=[...new Set([...code.matchAll(/\\begin\{(\w+)\}/g)].map(m=>m[1]).filter(e=>!['document','abstract','equation','itemize','enumerate','tabular','table','figure','frame','columns','block','alertblock','thebibliography','IEEEkeywords'].includes(e)))];
-  if(envs.length){ html+='<div class="section-label">Entornos</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">'; envs.forEach(e=>html+=`<span class="env-pill">${e}</span>`); html+='</div>'; }
+  // Inline math
+  const il=[...new Set([...code.matchAll(/\$([^$\n]{1,80})\$/g)].map(m=>m[1]))].slice(0,10);
+  if(il.length){ html+='<div class="sec-lbl">Expresiones inline</div><div class="eq-inline-wrap">'; il.forEach((_,i)=>html+=`<span class="eq-pill" id="il${i}"></span>`); html+='</div>'; }
+
+  // Tablas (preview simple)
+  const tbls=[...code.matchAll(/\\begin\{tabular\}\{([^}]*)\}([\s\S]*?)\\end\{tabular\}/g)];
+  if(tbls.length){
+    html+='<div class="sec-lbl">Tablas</div>';
+    tbls.slice(0,2).forEach(m=>{
+      const rows=m[2].replace(/\\hline/g,'').split('\\\\').map(r=>r.trim()).filter(r=>r&&r!=='\n');
+      html+='<table class="prev-table">';
+      rows.slice(0,5).forEach((row,i)=>{
+        const cells=row.split('&').map(c=>c.trim());
+        html+=`<tr>${cells.map(c=>`<${i===0?'th':'td'}>${c.replace(/\\textbf\{([^}]*)\}/g,'<b>$1</b>').replace(/\\[a-z]+\{([^}]*)\}/g,'$1')}</${i===0?'th':'td'}>`).join('')}</tr>`;
+      });
+      html+='</table>';
+    });
+  }
+
+  // Entornos
+  const envs=[...new Set([...code.matchAll(/\\begin\{(\w+)\}/g)].map(m=>m[1]).filter(e=>!['document','abstract','figure','table','tabular','equation','align','itemize','enumerate','frame','IEEEkeywords','keywords','thebibliography'].includes(e)))];
+  if(envs.length){ html+='<div class="sec-lbl">Otros entornos</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">'; envs.forEach(e=>html+=`<span class="env-pill">${e}</span>`); html+='</div>'; }
+
+  // Bibliografía
+  const bibs=[...code.matchAll(/\\bibitem\{([^}]*)\}(.*)/g)];
+  if(bibs.length){
+    html+='<div class="sec-lbl">Bibliografía</div>';
+    bibs.slice(0,4).forEach(m=>html+=`<div style="font-size:11px;color:var(--ink3);margin-bottom:3px;padding-left:8px">[${m[1]}] ${clean(m[2]).substring(0,80)}</div>`);
+    if(bibs.length>4) html+=`<div style="font-size:10px;color:var(--ink3);padding-left:8px">+${bibs.length-4} referencias más</div>`;
+  }
+
   html+='</div>';
   document.getElementById('prev-math').innerHTML=html;
 
+  // Renderizar KaTeX
   if(typeof katex!=='undefined'){
-    dm.slice(0,4).forEach((m,i)=>{ const el=document.getElementById('eq'+i); if(el) try{katex.render(m[1].trim(),el,{displayMode:true,throwOnError:false})}catch(e){} });
+    dm.slice(0,5).forEach((m,i)=>{ const el=document.getElementById('eq'+i); if(el) try{katex.render(m[1].trim(),el,{displayMode:true,throwOnError:false})}catch(e){el.textContent=m[1].trim()} });
     il.forEach((expr,i)=>{ const el=document.getElementById('il'+i); if(el) try{katex.render(expr,el,{displayMode:false,throwOnError:false})}catch(e){el.textContent=expr} });
   }
+
   document.getElementById('line-count').textContent=code.split('\n').length+' líneas';
 }
 window.updatePreview=updatePreview;
 
-function clean(s){ return s.replace(/\\[a-zA-Z]+\{([^}]*)\}/g,'$1').replace(/\\\\/g,' ').replace(/\{|\}/g,''); }
+function clean(s){ return s.replace(/\\[a-zA-Z]+\{([^}]*)\}/g,'$1').replace(/\\\\/g,' ').replace(/\{|\}|\*/g,'').trim(); }
 
 function switchPreview(tab,btn){
   document.querySelectorAll('.ptab').forEach(b=>b.classList.remove('active'));
@@ -784,9 +1012,9 @@ window.switchPreview=switchPreview;
 
 function openOverleaf(){
   const form=document.createElement('form');
-  form.method='POST';form.action='https://www.overleaf.com/docs';form.target='_blank';
-  const inp=document.createElement('input');inp.type='hidden';inp.name='snip';inp.value=editor.value;
-  form.appendChild(inp);document.body.appendChild(form);form.submit();document.body.removeChild(form);
+  form.method='POST'; form.action='https://www.overleaf.com/docs'; form.target='_blank';
+  const inp=document.createElement('input'); inp.type='hidden'; inp.name='snip'; inp.value=editor.value;
+  form.appendChild(inp); document.body.appendChild(form); form.submit(); document.body.removeChild(form);
 }
 window.openOverleaf=openOverleaf;
 
