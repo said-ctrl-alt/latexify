@@ -19,6 +19,7 @@
   --red:#991B1B;--red-l:#FEE2E2;
   --statusbar:#0D1117;--statusbar-text:#6B7280;
   --editor-bg:#FAFAF8;--editor-color:#0D1117;
+  --img-panel:#F3F2EE;
 }
 [data-theme="dark"]{
   --ink:#E2E8F0;--ink2:#A0AEC0;--ink3:#718096;
@@ -29,22 +30,26 @@
   --red:#F87171;--red-l:#2D1515;
   --statusbar:#0D0F13;--statusbar-text:#4A5568;
   --editor-bg:#1E2128;--editor-color:#ABB2BF;
+  --img-panel:#13151A;
 }
 
 html,body{height:100%;overflow:hidden}
 body{font-family:'DM Sans',sans-serif;background:var(--paper2);color:var(--ink);display:flex;flex-direction:column;transition:background .25s,color .25s}
 
+/* TOPBAR */
 #topbar{display:flex;align-items:center;gap:8px;padding:0 12px;height:48px;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;min-height:48px;transition:background .25s,border-color .25s}
 .logo{font-family:'DM Mono',monospace;font-size:15px;font-weight:500;color:var(--ink);text-decoration:none;white-space:nowrap}
 .logo span{color:var(--teal-m)}
 #sep{flex:1}
-.tb-btn{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--paper2);color:var(--ink2);border:1px solid var(--border);border-radius:6px;padding:5px 11px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s,border-color .15s}
+.tb-btn{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--paper2);color:var(--ink2);border:1px solid var(--border);border-radius:6px;padding:5px 11px;cursor:pointer;white-space:nowrap;transition:background .15s,color .15s}
 .tb-btn:hover{background:var(--paper3);color:var(--ink)}
 .tb-btn.green{background:var(--teal);color:#fff;border-color:var(--teal)}
 .tb-btn.green:hover{background:var(--teal-m)}
 .tb-btn.green:disabled{background:#4A5568;border-color:#4A5568;cursor:not-allowed}
 .tb-btn.orange{background:var(--amber);color:#fff;border-color:var(--amber)}
 .tb-btn.orange:hover{background:var(--amber-m)}
+.tb-btn.purple{background:#553C9A;color:#fff;border-color:#553C9A}
+.tb-btn.purple:hover{background:#6B46C1}
 #theme-btn{font-size:17px;background:none;border:1px solid var(--border);border-radius:6px;padding:3px 8px;cursor:pointer;line-height:1.4;transition:border-color .2s,background .2s}
 #theme-btn:hover{background:var(--paper3)}
 .divv{width:1px;height:20px;background:var(--border)}
@@ -54,15 +59,34 @@ body{font-family:'DM Sans',sans-serif;background:var(--paper2);color:var(--ink);
 #compil-count{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);white-space:nowrap}
 #user-name{font-size:12px;color:var(--ink3);white-space:nowrap;max-width:120px;overflow:hidden;text-overflow:ellipsis}
 
+/* TOOLBAR2 */
 #toolbar2{display:flex;align-items:center;gap:4px;padding:4px 12px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0;flex-wrap:wrap;transition:background .25s}
 .cmd{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink2);background:var(--paper);border:1px solid var(--border);border-radius:4px;padding:3px 8px;cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
 .cmd:hover{background:var(--paper3);color:var(--ink)}
 select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--paper);color:var(--ink);border:1px solid var(--border);border-radius:6px;padding:4px 8px;cursor:pointer;transition:background .2s,color .2s}
 
+/* MAIN LAYOUT */
 #main{display:flex;flex:1;overflow:hidden;min-height:0}
 #editor-pane{display:flex;flex-direction:column;flex:1;min-width:0;border-right:1px solid var(--border)}
 #editor-head{display:flex;align-items:center;padding:4px 12px;background:var(--paper);border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:11px;color:var(--ink3);gap:8px;flex-shrink:0;transition:background .25s}
 #editor{flex:1;resize:none;width:100%;font-family:'DM Mono',monospace;font-size:13px;line-height:1.7;color:var(--editor-color);background:var(--editor-bg);border:none;outline:none;padding:14px;overflow-y:auto;tab-size:2;transition:background .25s,color .25s}
+
+/* IMAGE PANEL */
+#img-panel{width:180px;flex-shrink:0;display:none;flex-direction:column;background:var(--img-panel);border-right:1px solid var(--border);transition:background .25s}
+#img-panel.visible{display:flex}
+#img-panel-head{display:flex;align-items:center;justify-content:space-between;padding:6px 10px;border-bottom:1px solid var(--border);flex-shrink:0}
+#img-panel-title{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);text-transform:uppercase;letter-spacing:0.05em}
+#img-panel-close{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:16px;line-height:1;padding:0 2px}
+#img-panel-close:hover{color:var(--ink)}
+#img-grid{flex:1;overflow-y:auto;padding:8px;display:grid;grid-template-columns:1fr 1fr;gap:6px;align-content:start}
+.img-thumb{cursor:pointer;border-radius:6px;overflow:hidden;border:2px solid transparent;transition:border-color .15s,transform .15s;position:relative}
+.img-thumb:hover{border-color:var(--teal-m);transform:scale(1.03)}
+.img-thumb img{width:100%;height:60px;object-fit:cover;display:block}
+.img-thumb-name{font-size:9px;font-family:'DM Mono',monospace;color:var(--ink3);padding:3px 4px;text-overflow:ellipsis;overflow:hidden;white-space:nowrap;background:var(--paper2)}
+.img-thumb-tip{position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.55);color:#fff;font-size:9px;border-radius:3px;padding:1px 4px;pointer-events:none}
+#img-panel-empty{padding:20px 10px;text-align:center;font-size:12px;color:var(--ink3);line-height:1.6}
+
+/* PREVIEW */
 #preview-pane{display:flex;flex-direction:column;flex:1;min-width:0}
 #prev-tabs{display:flex;background:var(--paper);border-bottom:1px solid var(--border);flex-shrink:0;transition:background .25s}
 .ptab{font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink3);background:transparent;border:none;border-bottom:2px solid transparent;padding:8px 16px;cursor:pointer;transition:color .15s}
@@ -70,11 +94,13 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
 #prev-math{flex:1;overflow-y:auto;padding:14px;background:var(--paper);transition:background .25s}
 #prev-pdf{flex:1;border:none;background:var(--paper2);display:none}
 
+/* STATUS */
 #statusbar{display:flex;gap:16px;padding:3px 12px;background:var(--statusbar);color:var(--statusbar-text);font-size:10px;font-family:'DM Mono',monospace;flex-shrink:0;transition:background .25s}
 #statusbar span{white-space:nowrap}
 #status-ok{color:var(--teal-m)}
 #status-err{color:var(--red)}
 
+/* PREVIEW CONTENT */
 .doc-title{font-size:15px;font-weight:500;color:var(--ink);margin-bottom:4px}
 .doc-author{font-size:12px;color:var(--ink3);margin-bottom:10px}
 .doc-abs{background:var(--paper2);border-left:3px solid var(--teal-m);padding:8px 12px;font-size:12px;color:var(--ink2);line-height:1.6;margin-bottom:10px;border-radius:0 6px 6px 0}
@@ -85,7 +111,12 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
 .eq-pill{background:var(--paper2);border:1px solid var(--border);border-radius:4px;padding:3px 10px;font-size:12px;color:var(--ink)}
 .env-pill{background:var(--paper3);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:11px;font-family:'DM Mono',monospace;color:var(--ink2)}
 .section-label{font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace;letter-spacing:0.05em;text-transform:uppercase;margin-bottom:6px;margin-top:12px}
+.prev-img-wrap{margin:10px 0;text-align:center}
+.prev-img-wrap img{max-width:100%;max-height:200px;border-radius:6px;border:1px solid var(--border)}
+.prev-img-caption{font-size:11px;color:var(--ink3);margin-top:4px;font-style:italic}
+.prev-img-placeholder{background:var(--paper2);border:1px dashed var(--border);border-radius:6px;padding:16px;text-align:center;font-size:11px;color:var(--ink3);font-family:'DM Mono',monospace}
 
+/* MODAL */
 #upgrade-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center}
 #upgrade-modal.show{display:flex}
 .modal-box{background:var(--paper);border-radius:14px;padding:32px;max-width:400px;width:calc(100% - 32px);border:1px solid var(--border)}
@@ -99,14 +130,20 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
 .mbtn-sec:hover{background:var(--paper3)}
 .payment-info{background:var(--amber-l);border-radius:8px;padding:14px;font-size:13px;color:var(--amber-m);margin-bottom:20px;border:1px solid var(--border);line-height:1.6}
 
+/* SAVE */
 #save-ind{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);display:flex;align-items:center;gap:4px}
 .save-dot{width:6px;height:6px;border-radius:50%;background:#9CA3AF}
 .save-dot.saved{background:var(--teal-m)}
 .save-dot.saving{background:var(--amber-m);animation:blink .8s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
 
-@media(max-width:680px){
+/* ZIP DROP ZONE */
+#zip-dropzone{display:none;position:fixed;inset:0;background:rgba(11,110,94,0.18);z-index:150;border:4px dashed var(--teal-m);align-items:center;justify-content:center;font-size:20px;color:var(--teal);font-family:'DM Sans',sans-serif;font-weight:500;pointer-events:none}
+#zip-dropzone.show{display:flex}
+
+@media(max-width:768px){
   #preview-pane{display:none}
+  #img-panel{width:140px}
 }
 </style>
 </head>
@@ -130,7 +167,9 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
   <span id="compil-count">— / —</span>
   <span id="plan-badge" class="free">FREE</span>
   <span id="user-name">Cargando...</span>
-  <button id="theme-btn" onclick="toggleTheme()" title="Cambiar tema claro/oscuro">🌙</button>
+  <button id="theme-btn" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+  <button class="tb-btn purple" onclick="document.getElementById('zip-input').click()" title="Cargar imágenes desde ZIP">📦 Cargar ZIP</button>
+  <input type="file" id="zip-input" accept=".zip" style="display:none" onchange="handleZip(this)">
   <button class="tb-btn green" id="compile-btn" onclick="compilePDF()">⬡ Compilar PDF</button>
   <button class="tb-btn orange" onclick="openOverleaf()">↗ Overleaf</button>
   <button class="tb-btn" onclick="doLogout()">Salir</button>
@@ -165,6 +204,18 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
     </div>
     <textarea id="editor" spellcheck="false"></textarea>
   </div>
+
+  <!-- PANEL DE IMÁGENES -->
+  <div id="img-panel">
+    <div id="img-panel-head">
+      <span id="img-panel-title">Imágenes</span>
+      <button id="img-panel-close" onclick="closeImgPanel()" title="Cerrar panel">✕</button>
+    </div>
+    <div id="img-grid">
+      <div id="img-panel-empty">Carga un ZIP con imágenes para verlas aquí</div>
+    </div>
+  </div>
+
   <div id="preview-pane">
     <div id="prev-tabs">
       <button class="ptab active" onclick="switchPreview('math',this)">Vista previa</button>
@@ -180,6 +231,7 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
   <span id="status-ok"></span>
   <span id="status-err"></span>
   <span style="flex:1"></span>
+  <span id="img-count"></span>
   <span>LaTeX · UTF-8</span>
 </div>
 
@@ -195,10 +247,14 @@ select.tpl-sel{font-size:12px;font-family:'DM Sans',sans-serif;background:var(--
   </div>
 </div>
 
+<div id="zip-dropzone">📦 Suelta el ZIP aquí</div>
+
 <form id="compile-form" method="POST" action="https://latexonline.cc/compile" target="latex-frame" style="display:none">
   <input type="hidden" name="code" id="form-code">
 </form>
 
+<!-- JSZip -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 
 <script type="module">
@@ -268,7 +324,7 @@ window.compilePDF=async function(){
   userData.compilationsToday=newUsed; userData.compilationsDate=today;
   await updateDoc(doc(db,'users',currentUser.uid),{compilationsToday:newUsed,compilationsDate:today});
   updatePlanUI();
-  setTimeout(()=>{ document.getElementById('status-msg').textContent='PDF listo ✓'; document.getElementById('compile-btn').disabled=false; },3000);
+  setTimeout(()=>{ document.getElementById('status-msg').textContent='PDF listo ✓'; document.getElementById('compile-btn').disabled=false; },3500);
 };
 
 let saveTimer;
@@ -308,6 +364,89 @@ window.toggleTheme=toggleTheme;
   const s=localStorage.getItem('ltx-theme');
   if(s){ document.documentElement.setAttribute('data-theme',s); document.getElementById('theme-btn').textContent=s==='dark'?'☀️':'🌙'; }
 })();
+
+// ── IMÁGENES DEL ZIP ─────────────────────────────────────────────────────────
+window.imageMap = {}; // nombre → base64 dataURL
+
+async function handleZip(input){
+  const file = input.files[0];
+  if(!file) return;
+  if(!window.JSZip){ alert('Error: JSZip no cargó. Revisa tu conexión.'); return; }
+  document.getElementById('status-msg').textContent = 'Leyendo ZIP…';
+  try{
+    const zip = await JSZip.loadAsync(file);
+    const imgExts = /\.(png|jpg|jpeg|gif|svg|webp|bmp)$/i;
+    const entries = Object.values(zip.files).filter(f=>!f.dir && imgExts.test(f.name));
+    if(!entries.length){ alert('No se encontraron imágenes en el ZIP.\nFormatos soportados: PNG, JPG, GIF, SVG, WEBP.'); return; }
+
+    window.imageMap = {};
+    const grid = document.getElementById('img-grid');
+    grid.innerHTML = '';
+
+    for(const entry of entries){
+      const blob   = await entry.async('blob');
+      const url    = URL.createObjectURL(blob);
+      const fname  = entry.name.split('/').pop();
+      const ext    = fname.split('.').pop().toLowerCase();
+      const mime   = ext==='svg'?'image/svg+xml':ext==='jpg'||ext==='jpeg'?'image/jpeg':ext==='png'?'image/png':ext==='gif'?'image/gif':ext==='webp'?'image/webp':'image/png';
+      // Convertir a base64 para la vista previa
+      const b64 = await new Promise(res=>{ const r=new FileReader(); r.onload=e=>res(e.target.result); r.readAsDataURL(blob); });
+      window.imageMap[fname] = b64;
+
+      const thumb = document.createElement('div');
+      thumb.className = 'img-thumb';
+      thumb.title = `Clic para insertar ${fname}`;
+      thumb.innerHTML = `
+        <img src="${url}" alt="${fname}" loading="lazy">
+        <div class="img-thumb-name">${fname}</div>
+        <div class="img-thumb-tip">+ insertar</div>
+      `;
+      thumb.onclick = () => insertImage(fname);
+      grid.appendChild(thumb);
+    }
+
+    document.getElementById('img-panel').classList.add('visible');
+    document.getElementById('img-count').textContent = `${entries.length} imágenes cargadas`;
+    document.getElementById('status-msg').textContent = `ZIP cargado: ${entries.length} imagen(es)`;
+    updatePreview();
+  }catch(e){
+    document.getElementById('status-msg').textContent = 'Error al leer el ZIP';
+    console.error(e);
+  }
+  input.value='';
+}
+window.handleZip=handleZip;
+
+function insertImage(fname){
+  const editor = document.getElementById('editor');
+  const code = `\n\\begin{figure}[h]\n  \\centering\n  \\includegraphics[width=0.8\\linewidth]{${fname}}\n  \\caption{Descripción de la imagen}\n  \\label{fig:${fname.replace(/\.[^.]+$/,'')}}\n\\end{figure}\n`;
+  const s = editor.selectionStart;
+  editor.value = editor.value.substring(0,s) + code + editor.value.substring(editor.selectionEnd);
+  editor.focus();
+  editor.selectionStart = editor.selectionEnd = s + code.length;
+  updatePreview();
+  window._saveCode?.();
+  // Feedback visual en miniatura
+  const thumbs = document.querySelectorAll('.img-thumb');
+  thumbs.forEach(t=>{ if(t.querySelector('.img-thumb-name')?.textContent===fname){ t.style.borderColor='var(--teal-m)'; setTimeout(()=>t.style.borderColor='',1000); } });
+}
+window.insertImage=insertImage;
+
+function closeImgPanel(){
+  document.getElementById('img-panel').classList.remove('visible');
+}
+window.closeImgPanel=closeImgPanel;
+
+// Arrastrar ZIP al editor
+const body = document.body;
+body.addEventListener('dragover',e=>{ e.preventDefault(); if([...e.dataTransfer.items].some(i=>i.type==='application/zip'||i.type==='application/x-zip-compressed'||i.getAsFile()?.name.endsWith('.zip'))) document.getElementById('zip-dropzone').classList.add('show'); });
+body.addEventListener('dragleave',e=>{ if(!e.relatedTarget) document.getElementById('zip-dropzone').classList.remove('show'); });
+body.addEventListener('drop',e=>{
+  e.preventDefault();
+  document.getElementById('zip-dropzone').classList.remove('show');
+  const f=[...e.dataTransfer.files].find(f=>f.name.endsWith('.zip'));
+  if(f){ const dt=new DataTransfer(); dt.items.add(f); const inp=document.getElementById('zip-input'); inp.files=dt.files; handleZip(inp); }
+});
 
 // ── PLANTILLAS ───────────────────────────────────────────────────────────────
 window.TEMPLATES={
@@ -356,7 +495,7 @@ lab:`\\documentclass[12pt,a4paper]{article}
 \\usepackage[utf8]{inputenc}
 \\usepackage[T1]{fontenc}
 \\usepackage[spanish]{babel}
-\\usepackage{amsmath,booktabs,float}
+\\usepackage{amsmath,booktabs,float,graphicx}
 \\usepackage{geometry}
 \\geometry{margin=2.5cm}
 
@@ -443,7 +582,7 @@ Resumen de la tesis.
 beamer:`\\documentclass[aspectratio=169]{beamer}
 \\usepackage[utf8]{inputenc}
 \\usepackage[spanish]{babel}
-\\usepackage{amsmath}
+\\usepackage{amsmath,graphicx}
 \\usetheme{Madrid}
 \\usecolortheme{seahorse}
 
@@ -554,6 +693,7 @@ function loadTemplate(){
 }
 window.loadTemplate=loadTemplate;
 
+// ── EDITOR ────────────────────────────────────────────────────────────────────
 const editor=document.getElementById('editor');
 editor.value=TEMPLATES.article;
 updatePreview();
@@ -581,6 +721,7 @@ function ins(before,after){
 }
 window.ins=ins;
 
+// ── VISTA PREVIA ──────────────────────────────────────────────────────────────
 function updatePreview(){
   const code=editor.value;
   let html='<div>';
@@ -590,19 +731,39 @@ function updatePreview(){
   if(author) html+=`<div class="doc-author">${clean(author[1])}</div>`;
   const abs=code.match(/\\begin\{abstract\}([\s\S]*?)\\end\{abstract\}/);
   if(abs) html+=`<div class="doc-abs">${abs[1].trim().substring(0,200)}${abs[1].length>200?'…':''}</div>`;
+
+  // Secciones
   const secs=[...code.matchAll(/\\(chapter|section|subsection)\{([^}]*)\}/g)];
   if(secs.length){
     html+='<div class="section-label">Estructura</div>';
     secs.forEach(m=>{ const l=m[1],t=m[2]; if(l==='chapter'||l==='section') html+=`<div class="doc-h1">${t}</div>`; else html+=`<div class="doc-h2">↳ ${t}</div>`; });
   }
+
+  // Figuras — mostrar imágenes cargadas del ZIP
+  const figs=[...code.matchAll(/\\begin\{figure\}[\s\S]*?\\includegraphics(?:\[.*?\])?\{([^}]+)\}[\s\S]*?(?:\\caption\{([^}]*)\})?[\s\S]*?\\end\{figure\}/g)];
+  if(figs.length){
+    html+='<div class="section-label">Figuras</div>';
+    figs.forEach(m=>{
+      const fname=m[1].trim(), caption=m[2]||'';
+      if(window.imageMap&&window.imageMap[fname]){
+        html+=`<div class="prev-img-wrap"><img src="${window.imageMap[fname]}" alt="${fname}"><div class="prev-img-caption">${caption||fname}</div></div>`;
+      } else {
+        html+=`<div class="prev-img-placeholder">🖼 ${fname}<br><span style="font-size:10px">(carga el ZIP para ver la imagen)</span></div>`;
+      }
+    });
+  }
+
+  // Ecuaciones
   const dm=[...code.matchAll(/\\\[([\s\S]*?)\\\]/g),...code.matchAll(/\\begin\{equation[\*]?\}([\s\S]*?)\\end\{equation[\*]?\}/g)];
   if(dm.length){ html+='<div class="section-label">Ecuaciones</div>'; dm.slice(0,4).forEach((_,i)=>html+=`<div class="eq-block" id="eq${i}"></div>`); }
   const il=[...new Set([...code.matchAll(/\$([^$\n]{1,60})\$/g)].map(m=>m[1]))].slice(0,8);
   if(il.length){ html+='<div class="section-label">Expresiones inline</div><div class="eq-inline-wrap">'; il.forEach((_,i)=>html+=`<span class="eq-pill" id="il${i}"></span>`); html+='</div>'; }
+
   const envs=[...new Set([...code.matchAll(/\\begin\{(\w+)\}/g)].map(m=>m[1]).filter(e=>!['document','abstract','equation','itemize','enumerate','tabular','table','figure','frame','columns','block','alertblock','thebibliography','IEEEkeywords'].includes(e)))];
   if(envs.length){ html+='<div class="section-label">Entornos</div><div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">'; envs.forEach(e=>html+=`<span class="env-pill">${e}</span>`); html+='</div>'; }
   html+='</div>';
   document.getElementById('prev-math').innerHTML=html;
+
   if(typeof katex!=='undefined'){
     dm.slice(0,4).forEach((m,i)=>{ const el=document.getElementById('eq'+i); if(el) try{katex.render(m[1].trim(),el,{displayMode:true,throwOnError:false})}catch(e){} });
     il.forEach((expr,i)=>{ const el=document.getElementById('il'+i); if(el) try{katex.render(expr,el,{displayMode:false,throwOnError:false})}catch(e){el.textContent=expr} });
