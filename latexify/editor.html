@@ -378,52 +378,38 @@ async function compileWithTexlive(){
 
   try{
     const formData = new FormData();
-    formData.append('filecontents[]', mainCode);
-    formData.append('filename[]', 'document.tex');
-    formData.append('engine', 'pdflatex');
-    formData.append('return', 'pdf');
+    formData.append('code', mainCode);
 
-    // Agregar imágenes del proyecto si las hay
+    // Agregar imágenes y archivos extra del proyecto
     if(window.projectFiles){
       for(const [fname, content] of Object.entries(window.projectFiles)){
+        const shortName = fname.split('/').pop();
         if(/\.(png|jpg|jpeg|gif|svg|webp|bmp)$/i.test(fname) && content instanceof Uint8Array){
-          formData.append('filecontents[]', new Blob([content]));
-          formData.append('filename[]', fname.split('/').pop());
+          formData.append('files', new Blob([content]), shortName);
         } else if(/\.(cls|sty|bib)$/i.test(fname) && typeof content==='string'){
-          formData.append('filecontents[]', content);
-          formData.append('filename[]', fname.split('/').pop());
+          formData.append('files', new Blob([content], {type:'text/plain'}), shortName);
         }
       }
     }
 
-    const res = await fetch('https://texlive.net/cgi-bin/latexcgi', {
+    const res = await fetch('http://46.183.116.172:3000/compile', {
       method: 'POST',
       body: formData
     });
 
     if(res.ok){
       const blob = await res.blob();
-      if(blob.type==='application/pdf'){
-        const url = URL.createObjectURL(blob);
-        document.getElementById('prev-pdf').src = url;
-        document.getElementById('status-msg').textContent='PDF listo ✓';
-        document.getElementById('status-err').textContent='';
-      } else {
-        // texlive devuelve el log si hay error
-        const txt = await blob.text();
-        const errLine = txt.split('\n').find(l=>l.startsWith('!')||l.includes('Error'))||'Error de compilación';
-        document.getElementById('status-err').textContent=errLine.substring(0,80);
-        document.getElementById('status-msg').textContent='Error — revisa el código';
-        // Mostrar log en el iframe como texto
-        const logBlob = new Blob([txt],{type:'text/plain'});
-        document.getElementById('prev-pdf').src = URL.createObjectURL(logBlob);
-      }
+      const url = URL.createObjectURL(blob);
+      document.getElementById('prev-pdf').src = url;
+      document.getElementById('status-msg').textContent='PDF listo ✓';
+      document.getElementById('status-err').textContent='';
     } else {
-      throw new Error('HTTP '+res.status);
+      const data = await res.json();
+      document.getElementById('status-err').textContent = data.error?.substring(0,80)||'Error de compilación';
+      document.getElementById('status-msg').textContent='';
     }
   } catch(e){
-    // Fallback: abrir en Overleaf
-    document.getElementById('status-err').textContent='Error de red — intenta con Overleaf';
+    document.getElementById('status-err').textContent='Error de conexión con el compilador';
     document.getElementById('status-msg').textContent='';
     console.error('Compile error:',e);
   }
