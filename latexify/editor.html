@@ -127,6 +127,33 @@ select.tpl-sel{font-size:11px;font-family:'DM Sans',sans-serif;background:var(--
 .prev-table th{background:var(--paper2);font-weight:500;color:var(--ink)}
 .file-list-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-family:'DM Mono',monospace;background:var(--paper2);border:1px solid var(--border);border-radius:4px;padding:2px 7px;color:var(--ink3);margin:2px}
 
+/* ── DOCUMENT PREVIEW PAGE ── */
+.prev-page{background:var(--paper);min-height:100%}
+.prev-doc-header{display:flex;flex-wrap:wrap;gap:4px;padding:8px 12px;background:var(--paper2);border-bottom:1px solid var(--border);align-items:center}
+.prev-body{padding:16px 20px;font-family:'DM Sans',sans-serif;font-size:13px;line-height:1.7;color:var(--ink)}
+.prev-maketitle{text-align:center;margin:12px 0 20px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.prev-doc-title{font-size:18px;font-weight:500;color:var(--ink);margin-bottom:6px;line-height:1.3}
+.prev-doc-subtitle{font-size:14px;color:var(--ink2);margin-bottom:6px;font-style:italic}
+.prev-doc-author{font-size:13px;color:var(--ink2);margin-bottom:4px}
+.prev-doc-date{font-size:12px;color:var(--ink3)}
+.prev-h-chapter{font-size:17px;font-weight:500;color:var(--ink);margin:18px 0 8px;padding-bottom:6px;border-bottom:2px solid var(--teal-m)}
+.prev-h-section{font-size:15px;font-weight:500;color:var(--ink);margin:14px 0 6px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.prev-h-subsection{font-size:13px;font-weight:500;color:var(--ink2);margin:10px 0 4px}
+.prev-h-subsubsection{font-size:12px;font-weight:500;color:var(--ink3);margin:8px 0 4px;font-style:italic}
+.prev-abstract{background:var(--paper2);border-left:3px solid var(--teal-m);border-radius:0 6px 6px 0;padding:10px 14px;margin:10px 0;font-size:12px}
+.prev-abstract-title{font-size:11px;font-weight:500;color:var(--teal);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;font-family:'DM Mono',monospace}
+.prev-abstract-body{color:var(--ink2);line-height:1.6}
+.prev-para{margin:4px 0;color:var(--ink2);font-size:13px;line-height:1.7}
+.prev-list{margin:6px 0 6px 20px;color:var(--ink2);font-size:13px}
+.prev-list li{margin:2px 0;line-height:1.6}
+.prev-frame{background:var(--paper2);border:1px solid var(--border);border-radius:6px;padding:12px;margin:8px 0}
+.prev-frame-title{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.prev-frame-item{font-size:12px;color:var(--ink2);padding:2px 0 2px 8px}
+.prev-bib{margin:6px 0}
+.prev-bib-item{font-size:12px;color:var(--ink3);margin:4px 0;padding-left:8px;line-height:1.5}
+.prev-bib-key{font-family:'DM Mono',monospace;color:var(--teal);font-size:11px;margin-right:6px}
+.prev-table-cap{font-size:12px;color:var(--ink3);text-align:center;font-style:italic;margin:6px 0 2px}
+
 /* MODAL */
 #upgrade-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center}
 #upgrade-modal.show{display:flex}
@@ -879,122 +906,251 @@ function ins(before,after){
 }
 window.ins=ins;
 
-// ── VISTA PREVIA RICA ─────────────────────────────────────────────────────────
-function updatePreview(){
-  const code=editor.value; if(!code.trim()){ document.getElementById('prev-math').innerHTML=''; return; }
-  let html='<div>';
+// ── RENDERIZADOR LaTeX → HTML ─────────────────────────────────────────────────
+// Convierte inline LaTeX a HTML (formato, math)
+function inlineToHtml(s){
+  if(!s) return '';
+  // Escapar HTML primero
+  s=s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // Comentarios LaTeX
+  s=s.replace(/(?<!\\)%.*$/gm,'');
+  // Formato
+  s=s.replace(/\\textbf\{([^}]*)\}/g,'<strong>$1</strong>');
+  s=s.replace(/\\textit\{([^}]*)\}/g,'<em>$1</em>');
+  s=s.replace(/\\emph\{([^}]*)\}/g,'<em>$1</em>');
+  s=s.replace(/\\underline\{([^}]*)\}/g,'<u>$1</u>');
+  s=s.replace(/\\texttt\{([^}]*)\}/g,'<code style="font-family:\'DM Mono\',monospace;font-size:0.9em">$1</code>');
+  s=s.replace(/\\textsc\{([^}]*)\}/g,'<span style="font-variant:small-caps">$1</span>');
+  s=s.replace(/\\textsuperscript\{([^}]*)\}/g,'<sup>$1</sup>');
+  s=s.replace(/\\textsubscript\{([^}]*)\}/g,'<sub>$1</sub>');
+  // Math inline con KaTeX
+  s=s.replace(/\$([^$\n]+?)\$/g,(m,expr)=>{
+    try{ return katex.renderToString(expr,{throwOnError:false,displayMode:false}); }catch(e){ return `<code>${expr}</code>`; }
+  });
+  // Comandos de texto especiales
+  s=s.replace(/\\LaTeX/g,'L<sup style="font-size:0.7em">A</sup>T<sub style="font-size:0.7em">E</sub>X');
+  s=s.replace(/\\TeX/g,'T<sub style="font-size:0.7em">E</sub>X');
+  s=s.replace(/\\today/g,new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'}));
+  s=s.replace(/\\newline|\\\\(?!\[)/g,'<br>');
+  s=s.replace(/\\ldots|\\dots/g,'…');
+  s=s.replace(/``|''/g,'"');
+  s=s.replace(/`|'/g,"'");
+  s=s.replace(/---/g,'—').replace(/--/g,'–');
+  s=s.replace(/\\%/g,'%').replace(/\\&/g,'&amp;').replace(/\\\$/g,'$');
+  // Quitar comandos desconocidos pero preservar su contenido
+  s=s.replace(/\\[a-zA-Z]+\*?\{([^}]*)\}/g,'$1');
+  s=s.replace(/\\[a-zA-Z]+\s*/g,'');
+  s=s.replace(/\{|\}/g,'');
+  return s;
+}
 
-  // Clase del documento
-  const docClass=code.match(/\\documentclass(?:\[([^\]]*)\])?\{([^}]+)\}/);
-  if(docClass){
-    const opts=docClass[1]?`[${docClass[1]}]`:'';
-    html+=`<div class="doc-class-badge">\\documentclass${opts}{${docClass[2]}}</div>`;
-  }
+// Renderiza un bloque de código LaTeX a HTML de documento
+function renderLatexBody(code){
+  // Extraer sólo el body del documento
+  const bodyMatch=code.match(/\\begin\{document\}([\s\S]*?)(?:\\end\{document\}|$)/);
+  const body=bodyMatch?bodyMatch[1]:code;
 
-  // Título y autor
-  const title=code.match(/\\title\{([\s\S]*?)\}/);
-  const author=code.match(/\\author\{([\s\S]*?)\}/);
-  const date=code.match(/\\date\{([^}]*)\}/);
-  if(title) html+=`<div class="doc-title">${clean(title[1])}</div>`;
-  if(author) html+=`<div class="doc-author">${clean(author[1])}</div>`;
-  if(date&&date[1]&&date[1]!=='\\today') html+=`<div style="font-size:11px;color:var(--ink3);margin-bottom:6px">${date[1]}</div>`;
+  // Quitar comentarios
+  const lines=body.split('\n').map(l=>l.replace(/(?<!\\)%.*$/,''));
+  let html=''; let i=0; let eqIdx=0;
 
-  // Abstract
-  const abs=code.match(/\\begin\{abstract\}([\s\S]*?)\\end\{abstract\}/);
-  if(abs) html+=`<div class="doc-abs">${abs[1].trim().substring(0,300)}${abs[1].length>300?'…':''}</div>`;
+  while(i<lines.length){
+    const line=lines[i].trim();
 
-  // Keywords / IEEEkeywords
-  const kw=code.match(/\\begin\{(?:IEEEkeywords|keywords)\}([\s\S]*?)\\end\{(?:IEEEkeywords|keywords)\}/);
-  if(kw) html+=`<div style="font-size:11px;color:var(--ink3);margin-bottom:8px;font-style:italic">Palabras clave: ${kw[1].trim()}</div>`;
+    // Saltar líneas vacías (párrafos)
+    if(!line){ html+='<div style="height:6px"></div>'; i++; continue; }
 
-  // Paquetes usados
-  const pkgs=[...code.matchAll(/\\usepackage(?:\[.*?\])?\{([^}]+)\}/g)].map(m=>m[1]);
-  if(pkgs.length){
-    html+=`<div class="sec-lbl">Paquetes</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">`;
-    pkgs.forEach(p=>html+=`<span class="file-list-badge">📦 ${p}</span>`);
-    html+='</div>';
-  }
+    // \maketitle
+    if(line.match(/^\\maketitle/)){
+      const title=code.match(/\\title\{([\s\S]*?)\}/);
+      const author=code.match(/\\author\{([\s\S]*?)\}/);
+      const subtitle=code.match(/\\subtitle\{([^}]*)\}/);
+      const date=code.match(/\\date\{([^}]*)\}/);
+      html+='<div class="prev-maketitle">';
+      if(title) html+=`<div class="prev-doc-title">${inlineToHtml(title[1])}</div>`;
+      if(subtitle) html+=`<div class="prev-doc-subtitle">${inlineToHtml(subtitle[1])}</div>`;
+      if(author) html+=`<div class="prev-doc-author">${inlineToHtml(author[1])}</div>`;
+      if(date) html+=`<div class="prev-doc-date">${inlineToHtml(date[1])}</div>`;
+      html+='</div>';
+      i++; continue;
+    }
 
-  // Estructura
-  const secs=[...code.matchAll(/\\(chapter|section|subsection|subsubsection)\*?\{([^}]*)\}/g)];
-  if(secs.length){
-    html+='<div class="sec-lbl">Estructura del documento</div>';
-    secs.forEach(m=>{
-      const l=m[1],t=m[2];
-      if(l==='chapter') html+=`<div class="doc-h1">▌ ${t}</div>`;
-      else if(l==='section') html+=`<div class="doc-h1">${t}</div>`;
-      else if(l==='subsection') html+=`<div class="doc-h2">↳ ${t}</div>`;
-      else html+=`<div class="doc-h3">⤷ ${t}</div>`;
-    });
-  }
+    // \tableofcontents
+    if(line.match(/^\\tableofcontents/)){
+      i++; continue; // skip en preview
+    }
 
-  // Figuras con imágenes reales
-  const figs=[...code.matchAll(/\\begin\{figure\}([\s\S]*?)\\end\{figure\}/g)];
-  if(figs.length){
-    html+='<div class="sec-lbl">Figuras</div>';
-    figs.forEach(m=>{
-      const block=m[1];
-      const igMatch=block.match(/\\includegraphics(?:\[.*?\])?\{([^}]+)\}/);
-      const capMatch=block.match(/\\caption\{([^}]*)\}/);
+    // Chapter / section
+    const secMatch=line.match(/^\\(chapter|section|subsection|subsubsection)\*?\{([\s\S]*?)\}/);
+    if(secMatch){
+      const lvl=secMatch[1], title=secMatch[2];
+      const tag={chapter:'prev-h-chapter',section:'prev-h-section',subsection:'prev-h-subsection',subsubsection:'prev-h-subsubsection'}[lvl];
+      html+=`<div class="${tag}">${inlineToHtml(title)}</div>`;
+      i++; continue;
+    }
+
+    // Abstract
+    if(line.match(/^\\begin\{abstract\}/)){
+      let content=''; i++;
+      while(i<lines.length&&!lines[i].trim().match(/^\\end\{abstract\}/)){content+=lines[i]+'\n';i++;}
+      html+=`<div class="prev-abstract"><div class="prev-abstract-title">Resumen</div><div class="prev-abstract-body">${inlineToHtml(content.trim())}</div></div>`;
+      i++; continue;
+    }
+
+    // itemize
+    if(line.match(/^\\begin\{itemize\}/)){
+      html+='<ul class="prev-list">'; i++;
+      while(i<lines.length&&!lines[i].trim().match(/^\\end\{itemize\}/)){
+        const itemLine=lines[i].trim();
+        if(itemLine.startsWith('\\item')){ html+=`<li>${inlineToHtml(itemLine.replace(/^\\item\s*/,''))}</li>`; }
+        i++;
+      }
+      html+='</ul>'; i++; continue;
+    }
+
+    // enumerate
+    if(line.match(/^\\begin\{enumerate\}/)){
+      html+='<ol class="prev-list">'; i++;
+      while(i<lines.length&&!lines[i].trim().match(/^\\end\{enumerate\}/)){
+        const itemLine=lines[i].trim();
+        if(itemLine.startsWith('\\item')){ html+=`<li>${inlineToHtml(itemLine.replace(/^\\item\s*/,''))}</li>`; }
+        i++;
+      }
+      html+='</ol>'; i++; continue;
+    }
+
+    // description
+    if(line.match(/^\\begin\{description\}/)){
+      html+='<dl class="prev-list">'; i++;
+      while(i<lines.length&&!lines[i].trim().match(/^\\end\{description\}/)){
+        const dl=lines[i].trim().match(/^\\item\[([^\]]*)\](.*)/);
+        if(dl){ html+=`<dt><strong>${inlineToHtml(dl[1])}</strong></dt><dd>${inlineToHtml(dl[2])}</dd>`; }
+        i++;
+      }
+      html+='</dl>'; i++; continue;
+    }
+
+    // figure
+    if(line.match(/^\\begin\{figure/)){
+      let figContent=''; i++;
+      while(i<lines.length&&!lines[i].trim().match(/^\\end\{figure/)){figContent+=lines[i]+'\n';i++;}
+      const igMatch=figContent.match(/\\includegraphics(?:\[.*?\])?\{([^}]+)\}/);
+      const capMatch=figContent.match(/\\caption\{([^}]*)\}/);
       if(igMatch){
         const fname=igMatch[1].trim().split('/').pop();
         const cap=capMatch?capMatch[1]:'';
         const src=window.imageBlobs?.[fname]||window.imageBlobs?.[igMatch[1].trim()];
         if(src){
-          html+=`<div class="prev-fig"><img src="${src}" alt="${fname}"><div class="prev-fig-cap">${cap||fname}</div></div>`;
+          html+=`<div class="prev-fig"><img src="${src}" alt="${fname}"><div class="prev-fig-cap">${inlineToHtml(cap)||fname}</div></div>`;
         } else {
-          html+=`<div class="prev-fig-ph">🖼 ${fname}<br><span style="font-size:10px">${cap?cap:'(imagen no cargada)'}</span></div>`;
+          html+=`<div class="prev-fig-ph">🖼 <strong>${fname}</strong>${cap?'<br><em>'+inlineToHtml(cap)+'</em>':''}<br><span style="font-size:10px;opacity:.7">Carga el ZIP para ver la imagen</span></div>`;
         }
       }
-    });
+      i++; continue;
+    }
+
+    // table / tabular
+    if(line.match(/^\\begin\{table/)){
+      let tblContent=''; i++;
+      while(i<lines.length&&!lines[i].trim().match(/^\\end\{table/)){tblContent+=lines[i]+'\n';i++;}
+      const capMatch=tblContent.match(/\\caption\{([^}]*)\}/);
+      const tabMatch=tblContent.match(/\\begin\{tabular\}\{([^}]*)\}([\s\S]*?)\\end\{tabular\}/);
+      if(capMatch) html+=`<div class="prev-table-cap">Tabla: ${inlineToHtml(capMatch[1])}</div>`;
+      if(tabMatch){
+        const rows=tabMatch[2].replace(/\\hline|\\toprule|\\midrule|\\bottomrule|\\cline\{[^}]*\}/g,'').split('\\\\').map(r=>r.trim()).filter(r=>r&&!/^[\s\n]*$/.test(r));
+        html+='<div style="overflow-x:auto"><table class="prev-table">';
+        rows.slice(0,10).forEach((row,ri)=>{
+          const cells=row.split('&').map(c=>inlineToHtml(c.trim()));
+          html+=`<tr>${cells.map(c=>`<${ri===0?'th':'td'}>${c}</${ri===0?'th':'td'}>`).join('')}</tr>`;
+        });
+        html+='</table></div>';
+      }
+      i++; continue;
+    }
+
+    // equation / align display
+    if(line.match(/^\\begin\{(equation|align|gather|multline)[\*]?\}/)){
+      let eqContent=''; const envName=line.match(/\\begin\{([^}]*)\}/)[1]; i++;
+      while(i<lines.length&&!lines[i].trim().match(new RegExp(`^\\\\end\\{${envName.replace('*','\\*')}\\}`))){eqContent+=lines[i]+'\n';i++;}
+      const id=`deq${eqIdx++}`;
+      html+=`<div class="eq-block" id="${id}"></div>`;
+      setTimeout(()=>{ const el=document.getElementById(id); if(el&&typeof katex!=='undefined') try{katex.render(eqContent.trim(),el,{displayMode:true,throwOnError:false})}catch(e){el.textContent=eqContent.trim();} },0);
+      i++; continue;
+    }
+
+    // display math \[ \]
+    if(line.match(/^\\\[/)){
+      let eqContent=line.replace('\\[',''); i++;
+      while(i<lines.length&&!lines[i].trim().match(/\\\]/)){eqContent+=lines[i]+'\n';i++;}
+      eqContent=eqContent.replace('\\]','');
+      const id=`deq${eqIdx++}`;
+      html+=`<div class="eq-block" id="${id}"></div>`;
+      setTimeout(()=>{ const el=document.getElementById(id); if(el&&typeof katex!=='undefined') try{katex.render(eqContent.trim(),el,{displayMode:true,throwOnError:false})}catch(e){el.textContent=eqContent.trim();} },0);
+      i++; continue;
+    }
+
+    // Bibliografía
+    if(line.match(/^\\begin\{thebibliography\}/)){
+      html+='<div class="prev-h-section">Referencias</div><div class="prev-bib">'; i++;
+      while(i<lines.length&&!lines[i].trim().match(/^\\end\{thebibliography\}/)){
+        const bibLine=lines[i].trim();
+        const bibMatch=bibLine.match(/^\\bibitem(?:\[.*?\])?\{([^}]*)\}(.*)/);
+        if(bibMatch){ html+=`<div class="prev-bib-item"><span class="prev-bib-key">[${bibMatch[1]}]</span> ${inlineToHtml(bibMatch[2])}</div>`; }
+        else if(bibLine&&!bibLine.startsWith('\\')){ html+=`<span>${inlineToHtml(bibLine)} </span>`; }
+        i++;
+      }
+      html+='</div>'; i++; continue;
+    }
+
+    // Beamer frames
+    if(line.match(/^\\begin\{frame\}/)){
+      const ftitle=line.match(/\\begin\{frame\}\{([^}]*)\}/);
+      html+=`<div class="prev-frame">`; if(ftitle) html+=`<div class="prev-frame-title">${inlineToHtml(ftitle[1])}</div>`; i++;
+      while(i<lines.length&&!lines[i].trim().match(/^\\end\{frame\}/)){
+        const fl=lines[i].trim();
+        if(fl.startsWith('\\item')) html+=`<div class="prev-frame-item">• ${inlineToHtml(fl.replace(/^\\item\s*/,''))}</div>`;
+        i++;
+      }
+      html+='</div>'; i++; continue;
+    }
+
+    // Ignorar comandos de configuración
+    if(line.match(/^\\(documentclass|usepackage|geometry|pagestyle|setlength|renewcommand|newcommand|definecolor|bibliographystyle|frontmatter|mainmatter|backmatter|tableofcontents|listoffigures|listoftables|clearpage|newpage|vspace|hspace|label|index)/)){
+      i++; continue;
+    }
+
+    // Ignorar \end{...} solos
+    if(line.match(/^\\end\{/)||line.match(/^\\begin\{document\}/)){i++;continue;}
+
+    // Texto normal — párrafo
+    if(line){
+      html+=`<p class="prev-para">${inlineToHtml(line)}</p>`;
+    }
+    i++;
   }
+  return html;
+}
 
-  // Ecuaciones display
-  const dm=[...code.matchAll(/\\\[([\s\S]*?)\\\]/g),...code.matchAll(/\\begin\{equation[\*]?\}([\s\S]*?)\\end\{equation[\*]?\}/g),...code.matchAll(/\\begin\{align[\*]?\}([\s\S]*?)\\end\{align[\*]?\}/g)];
-  if(dm.length){
-    html+='<div class="sec-lbl">Ecuaciones</div>';
-    dm.slice(0,5).forEach((_,i)=>html+=`<div class="eq-block" id="eq${i}"></div>`);
+function updatePreview(){
+  const code=editor.value; if(!code.trim()){ document.getElementById('prev-math').innerHTML=''; return; }
+
+  // Cabecera del documento
+  const docClass=code.match(/\\documentclass(?:\[([^\]]*)\])?\{([^}]+)\}/);
+  let header='<div class="prev-doc-header">';
+  if(docClass){
+    const opts=docClass[1]?`[${docClass[1]}]`:'';
+    header+=`<span class="doc-class-badge">\\documentclass${opts}{${docClass[2]}}</span>`;
   }
+  // Paquetes
+  const pkgs=[...code.matchAll(/\\usepackage(?:\[.*?\])?\{([^}]+)\}/g)].map(m=>m[1]);
+  if(pkgs.length) header+=pkgs.map(p=>`<span class="file-list-badge">📦 ${p}</span>`).join('');
+  header+='</div>';
 
-  // Inline math
-  const il=[...new Set([...code.matchAll(/\$([^$\n]{1,80})\$/g)].map(m=>m[1]))].slice(0,10);
-  if(il.length){ html+='<div class="sec-lbl">Expresiones inline</div><div class="eq-inline-wrap">'; il.forEach((_,i)=>html+=`<span class="eq-pill" id="il${i}"></span>`); html+='</div>'; }
+  // Cuerpo renderizado
+  const body=renderLatexBody(code);
 
-  // Tablas (preview simple)
-  const tbls=[...code.matchAll(/\\begin\{tabular\}\{([^}]*)\}([\s\S]*?)\\end\{tabular\}/g)];
-  if(tbls.length){
-    html+='<div class="sec-lbl">Tablas</div>';
-    tbls.slice(0,2).forEach(m=>{
-      const rows=m[2].replace(/\\hline/g,'').split('\\\\').map(r=>r.trim()).filter(r=>r&&r!=='\n');
-      html+='<table class="prev-table">';
-      rows.slice(0,5).forEach((row,i)=>{
-        const cells=row.split('&').map(c=>c.trim());
-        html+=`<tr>${cells.map(c=>`<${i===0?'th':'td'}>${c.replace(/\\textbf\{([^}]*)\}/g,'<b>$1</b>').replace(/\\[a-z]+\{([^}]*)\}/g,'$1')}</${i===0?'th':'td'}>`).join('')}</tr>`;
-      });
-      html+='</table>';
-    });
-  }
-
-  // Entornos
-  const envs=[...new Set([...code.matchAll(/\\begin\{(\w+)\}/g)].map(m=>m[1]).filter(e=>!['document','abstract','figure','table','tabular','equation','align','itemize','enumerate','frame','IEEEkeywords','keywords','thebibliography'].includes(e)))];
-  if(envs.length){ html+='<div class="sec-lbl">Otros entornos</div><div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:8px">'; envs.forEach(e=>html+=`<span class="env-pill">${e}</span>`); html+='</div>'; }
-
-  // Bibliografía
-  const bibs=[...code.matchAll(/\\bibitem\{([^}]*)\}(.*)/g)];
-  if(bibs.length){
-    html+='<div class="sec-lbl">Bibliografía</div>';
-    bibs.slice(0,4).forEach(m=>html+=`<div style="font-size:11px;color:var(--ink3);margin-bottom:3px;padding-left:8px">[${m[1]}] ${clean(m[2]).substring(0,80)}</div>`);
-    if(bibs.length>4) html+=`<div style="font-size:10px;color:var(--ink3);padding-left:8px">+${bibs.length-4} referencias más</div>`;
-  }
-
-  html+='</div>';
-  document.getElementById('prev-math').innerHTML=html;
-
-  // Renderizar KaTeX
-  if(typeof katex!=='undefined'){
-    dm.slice(0,5).forEach((m,i)=>{ const el=document.getElementById('eq'+i); if(el) try{katex.render(m[1].trim(),el,{displayMode:true,throwOnError:false})}catch(e){el.textContent=m[1].trim()} });
-    il.forEach((expr,i)=>{ const el=document.getElementById('il'+i); if(el) try{katex.render(expr,el,{displayMode:false,throwOnError:false})}catch(e){el.textContent=expr} });
-  }
+  document.getElementById('prev-math').innerHTML=
+    `<div class="prev-page">${header}<div class="prev-body">${body}</div></div>`;
 
   document.getElementById('line-count').textContent=code.split('\n').length+' líneas';
 }
