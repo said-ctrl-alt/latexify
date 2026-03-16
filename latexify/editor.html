@@ -394,7 +394,8 @@ async function compileWithTexlive(){
 
     const res = await fetch('https://latexify-co.duckdns.org/compile', {
       method: 'POST',
-      body: formData
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ code: mainCode })
     });
 
     if(res.ok){
