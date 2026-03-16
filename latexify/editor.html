@@ -60,22 +60,29 @@ select.tpl-sel{font-size:11px;font-family:'DM Sans',sans-serif;background:var(--
 /* MAIN */
 #main{display:flex;flex:1;overflow:hidden;min-height:0}
 
-/* FILE TREE */
-#file-tree{width:160px;flex-shrink:0;display:flex;flex-direction:column;background:var(--tree-bg);border-right:1px solid var(--border);transition:background .2s}
-#tree-head{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-bottom:1px solid var(--border);flex-shrink:0}
-#tree-title{font-size:10px;font-family:'DM Mono',monospace;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
-#tree-list{flex:1;overflow-y:auto;padding:4px 0}
-.tree-section{font-size:9px;font-family:'DM Mono',monospace;color:var(--ink3);padding:6px 8px 2px;text-transform:uppercase;letter-spacing:.06em}
-.tree-item{display:flex;align-items:center;gap:5px;padding:4px 8px;cursor:pointer;font-size:11px;font-family:'DM Mono',monospace;color:var(--ink2);transition:background .1s;border-radius:4px;margin:1px 4px;overflow:hidden}
+/* FILE TREE - VS Code style */
+#file-tree{width:200px;flex-shrink:0;display:flex;flex-direction:column;background:var(--tree-bg);border-right:1px solid var(--border);transition:background .2s}
+#tree-head{flex-shrink:0}
+#tree-project-bar{display:flex;align-items:center;justify-content:space-between;padding:6px 8px 2px;background:var(--tree-bg);border-bottom:1px solid var(--border)}
+#tree-project-name{font-size:11px;font-family:'DM Mono',monospace;color:var(--ink);font-weight:500;text-transform:uppercase;letter-spacing:.04em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1}
+#tree-project-actions{display:flex;gap:4px;flex-shrink:0}
+.tree-action-btn{background:none;border:none;color:var(--ink3);cursor:pointer;font-size:14px;padding:2px 4px;border-radius:3px;line-height:1}
+.tree-action-btn:hover{background:var(--paper3);color:var(--ink)}
+#tree-list{flex:1;overflow-y:auto;padding:2px 0}
+.tree-section-header{display:flex;align-items:center;gap:4px;padding:4px 6px 2px;cursor:pointer;user-select:none}
+.tree-section-arrow{font-size:9px;color:var(--ink3);transition:transform .15s}
+.tree-section-arrow.open{transform:rotate(90deg)}
+.tree-section-label{font-size:10px;font-family:'DM Sans',sans-serif;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:.06em}
+.tree-section-content{}
+.tree-item{display:flex;align-items:center;gap:5px;padding:3px 8px 3px 16px;cursor:pointer;font-size:12px;font-family:'DM Mono',monospace;color:var(--ink2);transition:background .1s;overflow:hidden}
 .tree-item:hover{background:var(--paper3);color:var(--ink)}
 .tree-item.active{background:var(--teal-l);color:var(--teal)}
-.tree-item.img-item{cursor:default;color:var(--ink3)}
-.tree-item.img-item:hover{background:transparent}
-.tree-icon{font-size:12px;flex-shrink:0}
-.tree-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
-.tree-empty{font-size:11px;color:var(--ink3);padding:12px 8px;text-align:center;line-height:1.6}
-.img-preview-thumb{width:100%;margin-top:4px;border-radius:4px;overflow:hidden;border:1px solid var(--border)}
-.img-preview-thumb img{width:100%;height:50px;object-fit:cover;display:block}
+.tree-icon{font-size:13px;flex-shrink:0;width:16px;text-align:center}
+.tree-name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tree-empty{font-size:11px;color:var(--ink3);padding:16px 10px;text-align:center;line-height:1.7}
+.img-thumb-wrap{padding:4px 8px 4px 24px}
+.img-thumb-wrap img{width:100%;height:45px;object-fit:cover;border-radius:4px;border:1px solid var(--border);cursor:pointer;transition:opacity .15s}
+.img-thumb-wrap img:hover{opacity:.8}
 
 /* EDITOR PANE */
 #editor-pane{display:flex;flex-direction:column;flex:1;min-width:0;border-right:1px solid var(--border)}
@@ -187,12 +194,21 @@ select.tpl-sel{font-size:11px;font-family:'DM Sans',sans-serif;background:var(--
   <a href="index.html" class="logo">LaTeX<span>ify</span></a>
   <div class="divv"></div>
   <select class="tpl-sel" id="tpl-sel">
-    <option value="article">Artículo científico</option>
-    <option value="lab">Reporte de laboratorio</option>
-    <option value="thesis">🔒 Tesis (Premium)</option>
-    <option value="beamer">🔒 Beamer (Premium)</option>
-    <option value="ieee">🔒 IEEE (Premium)</option>
-    <option value="apa">🔒 APA (Premium)</option>
+    <optgroup label="— Gratis —">
+      <option value="article">Artículo científico</option>
+      <option value="lab">Reporte de laboratorio</option>
+    </optgroup>
+    <optgroup label="— Premium —">
+      <option value="thesis">🔒 Tesis</option>
+      <option value="beamer">🔒 Beamer</option>
+      <option value="ieee">🔒 IEEE</option>
+      <option value="apa">🔒 APA 7</option>
+      <option value="icontec">🔒 Icontec</option>
+      <option value="elsevier">🔒 Elsevier</option>
+      <option value="ingenieria">🔒 Informe técnico</option>
+      <option value="monografia">🔒 Monografía</option>
+      <option value="propuesta">🔒 Propuesta investigación</option>
+    </optgroup>
   </select>
   <button class="tb-btn" onclick="loadTemplate()">Cargar plantilla</button>
   <div class="divv"></div>
@@ -202,6 +218,7 @@ select.tpl-sel{font-size:11px;font-family:'DM Sans',sans-serif;background:var(--
   <span id="plan-badge" class="free">FREE</span>
   <span id="user-name">Cargando...</span>
   <button id="theme-btn" onclick="toggleTheme()" title="Cambiar tema">🌙</button>
+  <button class="tb-btn" onclick="openProfile()" id="profile-btn" title="Mi perfil">👤</button>
   <button class="tb-btn purple" onclick="document.getElementById('zip-input').click()" title="Cargar proyecto ZIP completo">📦 Cargar proyecto ZIP</button>
   <input type="file" id="zip-input" accept=".zip" style="display:none" onchange="handleZip(this)">
   <button class="tb-btn green" id="compile-btn" onclick="compilePDF()">⬡ Compilar PDF</button>
@@ -231,16 +248,34 @@ select.tpl-sel{font-size:11px;font-family:'DM Sans',sans-serif;background:var(--
 
 <div id="main">
 
-  <!-- ÁRBOL DE ARCHIVOS -->
+  <!-- ÁRBOL DE ARCHIVOS VS Code style -->
   <div id="file-tree">
     <div id="tree-head">
-      <span id="tree-title">Proyecto</span>
-      <span style="font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace" id="tree-filecount"></span>
+      <div id="tree-project-bar">
+        <span id="tree-project-name">LATEXIFY</span>
+        <div id="tree-project-actions">
+          <button class="tree-action-btn" onclick="openNewMenu(event)" title="Nuevo archivo / plantilla" style="font-size:16px;font-weight:500;color:var(--teal-m)">+</button>
+          <button class="tree-action-btn" onclick="document.getElementById('zip-input').click()" title="Cargar ZIP">📦</button>
+          <button class="tree-action-btn" onclick="collapseAll()" title="Colapsar todo">⊟</button>
+        </div>
+      </div>
     </div>
     <div id="tree-list">
-      <div class="tree-empty" id="tree-empty">Carga un ZIP para ver los archivos del proyecto</div>
+      <div class="tree-empty" id="tree-empty">Carga un ZIP o usa el botón + para empezar</div>
     </div>
   </div>
+
+  <!-- MENÚ + CONTEXTUAL -->
+  <div id="new-menu" style="display:none;position:fixed;background:var(--paper);border:1px solid var(--border);border-radius:8px;box-shadow:0 8px 24px rgba(0,0,0,0.15);z-index:300;min-width:200px;overflow:hidden">
+    <div style="padding:4px 0">
+      <div class="new-menu-item" onclick="newBlankDoc()">📄 Documento en blanco</div>
+      <div class="new-menu-item" onclick="document.getElementById('tex-input').click();closeNewMenu()">📂 Subir archivo .tex</div>
+      <div class="new-menu-item" onclick="document.getElementById('zip-input').click();closeNewMenu()">📦 Subir proyecto ZIP</div>
+      <div style="height:1px;background:var(--border);margin:4px 0"></div>
+      <div class="new-menu-item" onclick="openGallery();closeNewMenu()">🎨 Galería de plantillas</div>
+    </div>
+  </div>
+  <input type="file" id="tex-input" accept=".tex,.bib,.cls,.sty" style="display:none" onchange="handleTexFile(this)">
 
   <!-- EDITOR -->
   <div id="editor-pane">
@@ -294,6 +329,103 @@ select.tpl-sel{font-size:11px;font-family:'DM Sans',sans-serif;background:var(--
 
 <div id="zip-drop">📦 Suelta el proyecto ZIP aquí</div>
 
+<!-- Banner vencimiento Premium -->
+<div id="premium-banner" style="display:none;position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:#92400E;color:#FEF3C7;padding:10px 20px;border-radius:8px;font-size:13px;font-family:'DM Sans',sans-serif;z-index:150;display:flex;gap:12px;align-items:center;box-shadow:0 4px 20px rgba(0,0,0,0.3)">
+  <span>⚠️ Tu plan Premium vence en <strong id="banner-days"></strong> días</span>
+  <a href="index.html#payment" style="color:#FEF3C7;font-weight:500;text-decoration:underline">Renovar →</a>
+  <button onclick="document.getElementById('premium-banner').style.display='none'" style="background:none;border:none;color:#FEF3C7;cursor:pointer;font-size:16px;line-height:1">✕</button>
+</div>
+
+<!-- Modal Galería de Plantillas -->
+<div id="gallery-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:250;align-items:flex-start;justify-content:center;padding:40px 16px;overflow-y:auto">
+  <div style="background:var(--paper);border-radius:14px;width:100%;max-width:860px;border:1px solid var(--border);overflow:hidden">
+    <!-- Header -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)">
+      <div>
+        <div style="font-size:16px;font-weight:500;color:var(--ink)">Galería de plantillas</div>
+        <div style="font-size:12px;color:var(--ink3);margin-top:2px">Elige una plantilla para empezar tu documento</div>
+      </div>
+      <button onclick="closeGallery()" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:22px;line-height:1">✕</button>
+    </div>
+    <!-- Tabs categorías -->
+    <div id="gallery-tabs" style="display:flex;overflow-x:auto;border-bottom:1px solid var(--border);background:var(--paper2);scrollbar-width:none">
+      <button class="gtab active" onclick="filterGallery('all',this)">Todas</button>
+      <button class="gtab" onclick="filterGallery('gratis',this)">⭐ Gratis</button>
+      <button class="gtab" onclick="filterGallery('colombia',this)">🇨🇴 Colombia</button>
+      <button class="gtab" onclick="filterGallery('internacional',this)">🌍 Internacional</button>
+      <button class="gtab" onclick="filterGallery('cv',this)">👤 CV / Hoja de vida</button>
+      <button class="gtab" onclick="filterGallery('poster',this)">🖼 Posters</button>
+      <button class="gtab" onclick="filterGallery('libro',this)">📚 Libros</button>
+      <button class="gtab" onclick="filterGallery('legal',this)">⚖️ Legal</button>
+    </div>
+    <!-- Search -->
+    <div style="padding:10px 16px;border-bottom:1px solid var(--border)">
+      <input type="text" id="gallery-search" placeholder="Buscar plantilla..." oninput="searchGallery()" style="width:100%;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:var(--paper2);border:1px solid var(--border);border-radius:6px;padding:7px 12px;outline:none">
+    </div>
+    <!-- Grid -->
+    <div id="gallery-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;padding:16px;max-height:520px;overflow-y:auto"></div>
+  </div>
+</div>
+
+<style>
+.gtab{font-size:12px;font-family:'DM Sans',sans-serif;color:var(--ink3);background:transparent;border:none;border-bottom:2px solid transparent;padding:8px 14px;cursor:pointer;white-space:nowrap;transition:color .15s}
+.gtab:hover{color:var(--ink)}
+.gtab.active{color:var(--ink);border-bottom-color:var(--teal-m)}
+.new-menu-item{padding:8px 16px;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--ink2);cursor:pointer;transition:background .1s;white-space:nowrap}
+.new-menu-item:hover{background:var(--paper2);color:var(--ink)}
+.tpl-card{background:var(--paper2);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:all .15s;display:flex;flex-direction:column}
+.tpl-card:hover{border-color:var(--teal-m);transform:translateY(-2px)}
+.tpl-card-preview{height:110px;display:flex;align-items:center;justify-content:center;font-size:11px;font-family:'DM Mono',monospace;color:var(--ink3);background:var(--paper);border-bottom:1px solid var(--border);padding:8px;line-height:1.5;overflow:hidden;position:relative}
+.tpl-card-preview pre{font-size:9px;color:var(--ink3);overflow:hidden;width:100%;line-height:1.4}
+.tpl-card-body{padding:10px}
+.tpl-card-name{font-size:13px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.tpl-card-desc{font-size:11px;color:var(--ink3);line-height:1.4;margin-bottom:8px}
+.tpl-card-footer{display:flex;align-items:center;justify-content:space-between}
+.tpl-badge-free{font-size:10px;font-family:'DM Mono',monospace;background:var(--teal-l);color:var(--teal);padding:2px 7px;border-radius:4px}
+.tpl-badge-pro{font-size:10px;font-family:'DM Mono',monospace;background:var(--amber-l);color:var(--amber);padding:2px 7px;border-radius:4px}
+.tpl-use-btn{font-size:11px;font-family:'DM Sans',sans-serif;background:var(--teal);color:#fff;border:none;border-radius:5px;padding:4px 10px;cursor:pointer;transition:background .15s}
+.tpl-use-btn:hover{background:var(--teal-m)}
+.tpl-use-btn.locked{background:var(--amber);cursor:pointer}
+.tpl-use-btn.locked:hover{background:var(--amber-m)}
+</style>
+<div id="profile-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;align-items:center;justify-content:center">
+  <div class="modal-box" style="max-width:480px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+      <h2 style="font-size:16px">Mi perfil</h2>
+      <button onclick="closeProfile()" style="background:none;border:none;color:var(--ink3);cursor:pointer;font-size:20px">✕</button>
+    </div>
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+      <div id="profile-avatar" style="width:52px;height:52px;border-radius:50%;background:var(--teal-l);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:500;color:var(--teal);font-family:'DM Mono',monospace"></div>
+      <div>
+        <div id="profile-name" style="font-size:15px;font-weight:500;color:var(--ink)"></div>
+        <div id="profile-email" style="font-size:12px;color:var(--ink3)"></div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:20px">
+      <div style="background:var(--paper2);border-radius:8px;padding:12px">
+        <div style="font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace;text-transform:uppercase;margin-bottom:4px">Plan</div>
+        <div id="profile-plan" style="font-size:15px;font-weight:500;color:var(--ink)"></div>
+      </div>
+      <div style="background:var(--paper2);border-radius:8px;padding:12px">
+        <div style="font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace;text-transform:uppercase;margin-bottom:4px">Compilaciones hoy</div>
+        <div id="profile-compil" style="font-size:15px;font-weight:500;color:var(--ink)"></div>
+      </div>
+      <div style="background:var(--paper2);border-radius:8px;padding:12px">
+        <div style="font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace;text-transform:uppercase;margin-bottom:4px">Premium vence</div>
+        <div id="profile-expiry" style="font-size:13px;font-weight:500;color:var(--ink)"></div>
+      </div>
+      <div style="background:var(--paper2);border-radius:8px;padding:12px">
+        <div style="font-size:10px;color:var(--ink3);font-family:'DM Mono',monospace;text-transform:uppercase;margin-bottom:4px">Miembro desde</div>
+        <div id="profile-since" style="font-size:13px;font-weight:500;color:var(--ink)"></div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px">
+      <a href="index.html#payment" class="mbtn mbtn-primary" style="text-align:center;flex:1">Renovar Premium</a>
+      <button onclick="doLogout()" class="mbtn mbtn-sec">Cerrar sesión</button>
+    </div>
+  </div>
+</div>
+
 <form id="compile-form" method="POST" action="https://latexonline.cc/compile" target="latex-frame" style="display:none">
   <input type="hidden" name="code" id="form-code">
 </form>
@@ -336,9 +468,44 @@ function updatePlanUI(){
   const today=new Date().toDateString();
   let used=userData.compilationsToday||0;
   if(userData.compilationsDate!==today) used=0;
-  if(userData.premium){ badge.textContent='PREMIUM'; badge.className='premium'; document.getElementById('compil-count').textContent='∞ compil.'; }
-  else{ badge.textContent='FREE'; badge.className='free'; document.getElementById('compil-count').textContent=`${used}/${FREE_LIMIT} hoy`; }
+  if(userData.premium){
+    badge.textContent='PREMIUM'; badge.className='premium';
+    document.getElementById('compil-count').textContent='∞ compil.';
+    // Verificar vencimiento — mostrar banner si quedan ≤3 días
+    if(userData.premiumExpiry){
+      try{
+        const expiry=new Date(userData.premiumExpiry);
+        const daysLeft=Math.ceil((expiry-new Date())/(1000*60*60*24));
+        if(daysLeft<=3&&daysLeft>0){
+          document.getElementById('banner-days').textContent=daysLeft;
+          document.getElementById('premium-banner').style.display='flex';
+        }
+      }catch(e){}
+    }
+  }else{
+    badge.textContent='FREE'; badge.className='free';
+    document.getElementById('compil-count').textContent=`${used}/${FREE_LIMIT} hoy`;
+  }
 }
+
+window.openProfile=function(){
+  if(!userData||!currentUser) return;
+  const u=userData;
+  const name=currentUser.displayName||u.name||'Usuario';
+  document.getElementById('profile-avatar').textContent=name.charAt(0).toUpperCase();
+  document.getElementById('profile-name').textContent=name;
+  document.getElementById('profile-email').textContent=currentUser.email;
+  document.getElementById('profile-plan').textContent=u.premium?'PREMIUM ★':'Gratuito';
+  document.getElementById('profile-plan').style.color=u.premium?'var(--amber)':'var(--ink3)';
+  const today=new Date().toDateString();
+  let used=u.compilationsToday||0;
+  if(u.compilationsDate!==today) used=0;
+  document.getElementById('profile-compil').textContent=u.premium?`${used} (ilimitadas)`:used+' / 5';
+  document.getElementById('profile-expiry').textContent=u.premiumExpiry||'—';
+  document.getElementById('profile-since').textContent=u.createdAt?new Date(u.createdAt.seconds*1000).toLocaleDateString('es-CO'):'—';
+  document.getElementById('profile-modal').style.display='flex';
+};
+window.closeProfile=function(){ document.getElementById('profile-modal').style.display='none'; };
 
 window.doLogout=async function(){ await signOut(auth); window.location.href='login.html'; };
 
@@ -487,7 +654,9 @@ async function handleZip(input){
     }
 
     const total=Object.keys(window.projectFiles).length;
-    const imgs=Object.keys(window.imageBlobs).length;
+    const imgs=Object.keys(window.imageBlobs).length/2|0;
+    const zipName=file.name.replace('.zip','').toUpperCase();
+    document.getElementById('tree-project-name').textContent=zipName;
     document.getElementById('status-msg').textContent=`Proyecto cargado: ${total} archivos, ${imgs} imágenes`;
     document.getElementById('project-info').textContent=`${texFiles.length} .tex · ${imgs} imgs`;
     updatePreview();
@@ -525,7 +694,504 @@ function blobToDataUrl(blob){
   return new Promise(res=>{ const r=new FileReader(); r.onload=e=>res(e.target.result); r.readAsDataURL(blob); });
 }
 
-// ── ÁRBOL DE ARCHIVOS ─────────────────────────────────────────────────────────
+// ── BOTÓN + MENÚ ──────────────────────────────────────────────────────────────
+function openNewMenu(e){
+  const menu=document.getElementById('new-menu');
+  const btn=e.currentTarget;
+  const rect=btn.getBoundingClientRect();
+  menu.style.top=(rect.bottom+4)+'px';
+  menu.style.left=rect.left+'px';
+  menu.style.display='block';
+  setTimeout(()=>document.addEventListener('click',closeNewMenuOutside,{once:true}),10);
+}
+function closeNewMenu(){ document.getElementById('new-menu').style.display='none'; }
+function closeNewMenuOutside(e){ if(!document.getElementById('new-menu').contains(e.target)) closeNewMenu(); }
+window.openNewMenu=openNewMenu; window.closeNewMenu=closeNewMenu;
+
+function newBlankDoc(){
+  closeNewMenu();
+  const name='documento.tex';
+  const blank=`\\documentclass[12pt,a4paper]{article}\n\\usepackage[utf8]{inputenc}\n\\usepackage[spanish]{babel}\n\\usepackage{amsmath}\n\n\\title{Nuevo Documento}\n\\author{Autor}\n\\date{\\today}\n\n\\begin{document}\n\\maketitle\n\n\\section{Introducción}\nEscribe aquí tu contenido.\n\n\\end{document}`;
+  window.projectFiles[name]=blank;
+  if(!window.mainTexFile) window.mainTexFile=name;
+  buildFileTree(); buildFileTabs(Object.keys(window.projectFiles).filter(f=>TEX_EXTS.test(f)));
+  openFile(name);
+  document.getElementById('tree-project-name').textContent='NUEVO PROYECTO';
+}
+window.newBlankDoc=newBlankDoc;
+
+function handleTexFile(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    window.projectFiles[file.name]=e.target.result;
+    if(!window.mainTexFile) window.mainTexFile=file.name;
+    buildFileTree(); buildFileTabs(Object.keys(window.projectFiles).filter(f=>TEX_EXTS.test(f)));
+    openFile(file.name);
+    document.getElementById('tree-project-name').textContent=file.name.replace('.tex','').toUpperCase();
+  };
+  reader.readAsText(file);
+  input.value='';
+}
+window.handleTexFile=handleTexFile;
+
+// ── GALERÍA DE PLANTILLAS ─────────────────────────────────────────────────────
+const GALLERY_TEMPLATES = [
+  // GRATIS
+  {id:'article', name:'Artículo científico', desc:'Estructura básica para artículos académicos con abstract y referencias.', cat:'gratis', free:true, preview:'\\documentclass{article}\n\\title{Artículo}\n\\author{Autor}\n\\begin{document}\n\\maketitle\n\\section{Intro}...'},
+  {id:'lab', name:'Reporte de laboratorio', desc:'Plantilla para reportes con objetivos, materiales, procedimiento y tablas.', cat:'gratis', free:true, preview:'\\documentclass{article}\n\\title{Reporte Lab}\n% Práctica No. 1\n\\begin{document}\n\\maketitle\n\\section{Objetivo}...'},
+  // COLOMBIA
+  {id:'icontec', name:'Normas Icontec', desc:'Documento con márgenes Icontec, interlineado doble y portada oficial.', cat:'colombia', free:false, preview:'\\documentclass[12pt]{article}\n% Márgenes Icontec\n% 4cm izq, 2cm der\n% Interlineado doble\n\\begin{titlepage}...'},
+  {id:'thesis', name:'Tesis universitaria', desc:'Tesis con portada, tabla de contenidos, capítulos y bibliografía.', cat:'colombia', free:false, preview:'\\documentclass[12pt]{book}\n\\frontmatter\n\\tableofcontents\n\\mainmatter\n\\chapter{Introducción}...'},
+  {id:'monografia', name:'Monografía', desc:'Monografía universitaria con dedicatoria, agradecimientos y cuerpo completo.', cat:'colombia', free:false, preview:'\\documentclass[12pt]{article}\n% Monografía universitaria\n\\onehalfspacing\n\\begin{titlepage}...'},
+  {id:'propuesta', name:'Propuesta de investigación', desc:'Propuesta con cronograma, presupuesto y objetivos específicos.', cat:'colombia', free:false, preview:'\\documentclass[12pt]{article}\n% Propuesta de investigación\n\\definecolor{titleblue}...\n\\begin{titlepage}...'},
+  // INTERNACIONAL
+  {id:'ieee', name:'IEEE Conference', desc:'Formato IEEE para conferencias con columnas dobles y abstract.', cat:'internacional', free:false, preview:'\\documentclass[conference]{IEEEtran}\n\\title{Paper Title}\n\\begin{abstract}Abstract...\\end{abstract}\n\\begin{IEEEkeywords}...'},
+  {id:'elsevier', name:'Elsevier Journal', desc:'Formato Elsevier con frontmatter, affiliations y keywords.', cat:'internacional', free:false, preview:'\\documentclass{elsarticle}\n\\begin{frontmatter}\n\\title{Title}\n\\author{Author}...'},
+  {id:'apa', name:'APA 7 Report', desc:'Reporte en formato APA 7 para trabajos universitarios.', cat:'internacional', free:false, preview:'\\documentclass[stu,12pt]{apa7}\n\\title{Título}\n\\author{Autor}\n\\course{Curso}...'},
+  {id:'ingenieria', name:'Informe técnico IEEE', desc:'Informe de ingeniería con encabezado, siunitx y formato profesional.', cat:'internacional', free:false, preview:'\\documentclass[12pt]{report}\n\\pagestyle{fancy}\n\\usepackage{siunitx}\n\\chapter{Introducción}...'},
+  // CV
+  {id:'cv_academico', name:'CV Académico', desc:'Hoja de vida académica con educación, publicaciones y proyectos.', cat:'cv', free:false, preview:'\\documentclass[11pt]{article}\n% CV Académico\n\\name{Nombre Apellido}\n\\address{Ciudad, País}...'},
+  {id:'cv_moderno', name:'CV Moderno', desc:'Currículum vitae moderno con sidebar y timeline de experiencia.', cat:'cv', free:false, preview:'\\documentclass{moderncv}\n\\moderncvtheme{classic}\n\\name{Nombre}{Apellido}\n\\email{correo@...}'},
+  // POSTERS
+  {id:'poster_cientifico', name:'Poster científico A0', desc:'Poster para congresos científicos en formato A0 con columnas.', cat:'poster', free:false, preview:'\\documentclass[a0paper]{baposter}\n\\begin{poster}{}\n\\headerbox{Abstract}{...}\n\\headerbox{Methods}{...}'},
+  {id:'poster_beamer', name:'Poster Beamer', desc:'Poster basado en Beamer con colores y secciones definidos.', cat:'poster', free:false, preview:'\\documentclass[portrait]{beamerposter}\n\\usetheme{confposter}\n\\begin{frame}{}...'},
+  // LIBROS
+  {id:'libro', name:'Libro / Manual técnico', desc:'Libro completo con partes, capítulos, índice y bibliografía extensa.', cat:'libro', free:false, preview:'\\documentclass[12pt]{book}\n\\frontmatter\n\\tableofcontents\n\\listoffigures\n\\mainmatter\n\\part{Parte I}...'},
+  {id:'beamer', name:'Presentación Beamer', desc:'Presentación con diapositivas, tema Madrid y tabla de contenidos.', cat:'libro', free:false, preview:'\\documentclass[aspectratio=169]{beamer}\n\\usetheme{Madrid}\n\\begin{frame}\\titlepage\\end{frame}...'},
+  // LEGAL
+  {id:'contrato', name:'Contrato académico', desc:'Contrato de prestación de servicios académicos o investigación.', cat:'legal', free:false, preview:'\\documentclass[12pt]{article}\n% CONTRATO DE PRESTACIÓN\n% DE SERVICIOS\n\\begin{document}\n\\begin{center}\\textbf{CONTRATO}...'},
+  {id:'acta', name:'Acta de reunión', desc:'Acta formal de reunión académica con asistentes y compromisos.', cat:'legal', free:false, preview:'\\documentclass[12pt]{article}\n% ACTA No. XXX\n% Fecha: \\today\n\\begin{document}\n\\section*{Asistentes}...'},
+];
+
+// Plantillas extra sin código propio (usan código genérico)
+const EXTRA_TEMPLATES = {
+  cv_academico: `\\documentclass[11pt,a4paper]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[spanish]{babel}
+\\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\\usepackage{hyperref,enumitem,titlesec,xcolor}
+\\definecolor{cvblue}{RGB}{11,110,94}
+\\titleformat{\\section}{\\large\\bfseries\\color{cvblue}}{}{0em}{}[\\titlerule]
+
+\\begin{document}
+\\begin{center}
+{\\LARGE\\textbf{Nombre Apellido}}\\\\[4pt]
+{\\large Cargo / Especialidad}\\\\[4pt]
+correo@email.com $\\cdot$ +57 300 000 0000 $\\cdot$ Ciudad, Colombia\\\\
+\\href{https://linkedin.com/in/usuario}{LinkedIn} $\\cdot$ \\href{https://orcid.org/0000-0000}{ORCID}
+\\end{center}
+\\vspace{6pt}
+
+\\section{Formación Académica}
+\\textbf{Doctor en Nombre del Área} \\hfill 2018--2022\\\\
+Universidad Nacional de Colombia, Bogotá\\\\[4pt]
+\\textbf{Maestría en Nombre del Área} \\hfill 2015--2017\\\\
+Universidad de los Andes, Bogotá
+
+\\section{Experiencia}
+\\textbf{Cargo / Posición} \\hfill 2022--Presente\\\\
+\\textit{Institución / Empresa}, Ciudad\\\\
+\\begin{itemize}[noitemsep]
+  \\item Actividad principal desarrollada.
+  \\item Logro o resultado destacado.
+\\end{itemize}
+
+\\section{Publicaciones}
+\\begin{enumerate}[noitemsep]
+  \\item Apellido, N. (2023). Título del artículo. \\textit{Revista}, \\textbf{10}(2), 100--115. DOI: ...
+  \\item Apellido, N. (2022). Título del artículo. \\textit{Revista}, \\textbf{8}(1), 50--65.
+\\end{enumerate}
+
+\\section{Habilidades}
+\\textbf{Idiomas:} Español (nativo), Inglés (C1), Francés (B1)\\\\
+\\textbf{Software:} MATLAB, Python, R, LaTeX, SPSS\\\\
+\\textbf{Áreas:} Nombre del área 1, Nombre del área 2
+
+\\section{Proyectos de Investigación}
+\\textbf{Nombre del Proyecto} \\hfill 2021--2023\\\\
+\\textit{Rol: Investigador Principal} $\\cdot$ Financiado por: Entidad\\\\
+Descripción breve del proyecto y sus resultados.
+
+\\end{document}`,
+
+cv_moderno: `\\documentclass[11pt]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[spanish]{babel}
+\\usepackage[left=1.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm]{geometry}
+\\usepackage{hyperref,xcolor,graphicx,array,tabularx}
+\\definecolor{sidebar}{RGB}{11,110,94}
+\\definecolor{light}{RGB}{224,242,238}
+
+\\begin{document}
+\\noindent
+\\begin{minipage}[t]{0.32\\textwidth}
+\\colorbox{sidebar}{\\begin{minipage}{\\textwidth}
+\\vspace{10pt}
+\\centering
+\\color{white}
+{\\Large\\textbf{Nombre}}\\\\{\\Large\\textbf{Apellido}}\\\\[6pt]
+{\\small Desarrollador / Investigador}\\\\[12pt]
+{\\footnotesize\\textbf{CONTACTO}}\\\\[4pt]
+{\\footnotesize correo@email.com\\\\+57 300 000 0000\\\\Ciudad, Colombia}\\\\[12pt]
+{\\footnotesize\\textbf{HABILIDADES}}\\\\[4pt]
+{\\footnotesize Python $\\bullet$ LaTeX $\\bullet$ R\\\\MATLAB $\\bullet$ Git $\\bullet$ SQL}\\\\[12pt]
+{\\footnotesize\\textbf{IDIOMAS}}\\\\[4pt]
+{\\footnotesize Español: Nativo\\\\Inglés: C1\\\\Francés: B1}\\\\[10pt]
+\\end{minipage}}
+\\end{minipage}\\hfill
+\\begin{minipage}[t]{0.65\\textwidth}
+\\vspace{0pt}
+{\\large\\textbf{\\color{sidebar}EXPERIENCIA}}\\\\[-6pt]
+\\rule{\\linewidth}{1.5pt}\\\\[4pt]
+\\textbf{Cargo Principal} \\hfill 2022--Presente\\\\
+\\textit{Empresa/Institución}, Ciudad\\\\
+\\begin{itemize}\\setlength\\itemsep{1pt}
+  \\item Logro o responsabilidad principal.
+  \\item Segundo logro destacado.
+\\end{itemize}\\vspace{6pt}
+{\\large\\textbf{\\color{sidebar}EDUCACIÓN}}\\\\[-6pt]
+\\rule{\\linewidth}{1.5pt}\\\\[4pt]
+\\textbf{Título Académico} \\hfill 2018--2022\\\\
+\\textit{Universidad}, Ciudad\\\\[4pt]
+\\textbf{Pregrado en Área} \\hfill 2013--2017\\\\
+\\textit{Universidad}, Ciudad\\\\[6pt]
+{\\large\\textbf{\\color{sidebar}PROYECTOS}}\\\\[-6pt]
+\\rule{\\linewidth}{1.5pt}\\\\[4pt]
+\\textbf{Nombre del Proyecto}\\\\
+\\textit{Descripción breve del proyecto y tecnologías usadas.}\\\\
+\\href{https://github.com/usuario/proyecto}{github.com/usuario/proyecto}
+\\end{minipage}
+\\end{document}`,
+
+poster_cientifico: `\\documentclass[a0paper,portrait]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[spanish]{babel}
+\\usepackage[margin=2cm]{geometry}
+\\usepackage{amsmath,graphicx,multicol,xcolor,tcolorbox}
+\\definecolor{posterblue}{RGB}{11,110,94}
+\\tcbuselibrary{skins}
+
+\\begin{document}
+% TÍTULO
+\\begin{tcolorbox}[colback=posterblue,coltext=white,arc=8pt,boxrule=0pt,
+  title={},halign=center,valign=center]
+{\\fontsize{48}{56}\\selectfont\\textbf{Título del Poster Científico}}\\\\[8pt]
+{\\Large Nombre Autor$^1$, Nombre Co-autor$^2$}\\\\[4pt]
+{\\normalsize $^1$Departamento, Universidad 1 $\\quad$ $^2$Departamento, Universidad 2}\\\\
+{\\normalsize \\texttt{correo@universidad.edu.co}}
+\\end{tcolorbox}
+\\vspace{12pt}
+
+\\begin{multicols}{3}
+
+\\begin{tcolorbox}[colback=white,colframe=posterblue,title=\\textbf{Introducción},
+  fonttitle=\\color{white},colbacktitle=posterblue,arc=6pt]
+Contexto del problema de investigación. Motivación y relevancia del trabajo.
+La ecuación fundamental es:
+\\[ E = mc^2 \\]
+\\end{tcolorbox}
+
+\\begin{tcolorbox}[colback=white,colframe=posterblue,title=\\textbf{Objetivos},
+  fonttitle=\\color{white},colbacktitle=posterblue,arc=6pt]
+\\begin{enumerate}
+  \\item Primer objetivo específico del estudio.
+  \\item Segundo objetivo de la investigación.
+  \\item Tercer objetivo a evaluar.
+\\end{enumerate}
+\\end{tcolorbox}
+
+\\begin{tcolorbox}[colback=white,colframe=posterblue,title=\\textbf{Metodología},
+  fonttitle=\\color{white},colbacktitle=posterblue,arc=6pt]
+Descripción del método utilizado. Datos recolectados y análisis estadístico aplicado.
+\\end{tcolorbox}
+
+\\begin{tcolorbox}[colback=white,colframe=posterblue,title=\\textbf{Resultados},
+  fonttitle=\\color{white},colbacktitle=posterblue,arc=6pt]
+Principales hallazgos del estudio. Incluir figura o tabla:
+\\[ \\bar{x} = \\frac{1}{n}\\sum_{i=1}^{n} x_i = 3.14 \\pm 0.01 \\]
+\\end{tcolorbox}
+
+\\begin{tcolorbox}[colback=white,colframe=posterblue,title=\\textbf{Conclusiones},
+  fonttitle=\\color{white},colbacktitle=posterblue,arc=6pt]
+\\begin{itemize}
+  \\item Primera conclusión derivada de los resultados.
+  \\item Segunda conclusión con implicación práctica.
+  \\item Trabajo futuro propuesto.
+\\end{itemize}
+\\end{tcolorbox}
+
+\\begin{tcolorbox}[colback=white,colframe=posterblue,title=\\textbf{Referencias},
+  fonttitle=\\color{white},colbacktitle=posterblue,arc=6pt]
+{\\small
+[1] Autor, N. (2024). Título. \\textit{Revista}, \\textbf{10}(2), 100--115.\\\\
+[2] Autor, N. (2023). Título. \\textit{Journal}, \\textbf{8}(1), 50--65.
+}
+\\end{tcolorbox}
+
+\\end{multicols}
+\\end{document}`,
+
+contrato: `\\documentclass[12pt,a4paper]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[spanish]{babel}
+\\usepackage[margin=3cm]{geometry}
+\\usepackage{setspace}
+\\onehalfspacing
+
+\\begin{document}
+\\begin{center}
+{\\Large\\textbf{CONTRATO DE PRESTACIÓN DE SERVICIOS ACADÉMICOS}}\\\\[0.5cm]
+{\\large No. XXXX-\\the\\year}
+\\end{center}
+\\vspace{1cm}
+
+Entre los suscritos, \\textbf{[NOMBRE COMPLETO CONTRATANTE]}, identificado con C.C. No. XXXXXXXX, actuando en calidad de \\textbf{CONTRATANTE}, y \\textbf{[NOMBRE COMPLETO CONTRATISTA]}, identificado con C.C. No. XXXXXXXX, actuando en calidad de \\textbf{CONTRATISTA}, se celebra el presente contrato de prestación de servicios, regido por las siguientes cláusulas:
+
+\\vspace{0.5cm}
+\\textbf{CLÁUSULA PRIMERA — OBJETO:}
+El CONTRATISTA se compromete a prestar los siguientes servicios académicos: [descripción detallada del servicio].
+
+\\textbf{CLÁUSULA SEGUNDA — DURACIÓN:}
+El presente contrato tendrá una vigencia de [número] meses, contados a partir del \\today.
+
+\\textbf{CLÁUSULA TERCERA — VALOR:}
+El valor total del contrato es de \\$[VALOR] ([VALOR EN LETRAS] pesos colombianos M/CTE).
+
+\\textbf{CLÁUSULA CUARTA — FORMA DE PAGO:}
+El pago se realizará de la siguiente manera: [describir forma de pago].
+
+\\textbf{CLÁUSULA QUINTA — OBLIGACIONES DEL CONTRATISTA:}
+\\begin{enumerate}
+  \\item Cumplir con las actividades establecidas en el objeto del contrato.
+  \\item Entregar informes de avance cuando sean requeridos.
+  \\item Guardar confidencialidad sobre la información del contratante.
+\\end{enumerate}
+
+\\textbf{CLÁUSULA SEXTA — OBLIGACIONES DEL CONTRATANTE:}
+\\begin{enumerate}
+  \\item Suministrar la información necesaria para el desarrollo del objeto contractual.
+  \\item Realizar los pagos en los términos pactados.
+\\end{enumerate}
+
+\\textbf{CLÁUSULA SÉPTIMA — CLÁUSULA PENAL:}
+En caso de incumplimiento, la parte infractora pagará una sanción equivalente al 10\\% del valor del contrato.
+
+\\vspace{1.5cm}
+\\noindent Para constancia se firma en [Ciudad], a los \\today.
+
+\\vspace{2cm}
+\\noindent\\begin{tabular}{p{6cm}p{2cm}p{6cm}}
+\\rule{6cm}{0.4pt} & & \\rule{6cm}{0.4pt}\\\\
+\\textbf{CONTRATANTE} & & \\textbf{CONTRATISTA}\\\\
+C.C. No. XXXXXXXX & & C.C. No. XXXXXXXX
+\\end{tabular}
+
+\\end{document}`,
+
+acta: `\\documentclass[12pt,a4paper]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[spanish]{babel}
+\\usepackage[margin=2.5cm]{geometry}
+\\usepackage{booktabs,array}
+
+\\begin{document}
+\\begin{center}
+{\\Large\\textbf{ACTA DE REUNIÓN}}\\\\[0.3cm]
+{\\large\\textbf{No. XXX}}\\\\[0.2cm]
+{\\normalsize Fecha: \\today $\\quad$ Hora: 00:00 h $\\quad$ Lugar: [Lugar]}
+\\end{center}
+\\rule{\\linewidth}{0.5pt}
+\\vspace{0.5cm}
+
+\\textbf{ASISTENTES:}\\\\[0.3cm]
+\\begin{tabular}{@{}lll@{}}
+\\toprule
+\\textbf{Nombre} & \\textbf{Cargo} & \\textbf{Firma} \\\\
+\\midrule
+Nombre Apellido & Director & \\rule{3cm}{0.3pt} \\\\
+Nombre Apellido & Investigador & \\rule{3cm}{0.3pt} \\\\
+Nombre Apellido & Estudiante & \\rule{3cm}{0.3pt} \\\\
+\\bottomrule
+\\end{tabular}
+
+\\vspace{0.8cm}
+\\textbf{ORDEN DEL DÍA:}
+\\begin{enumerate}
+  \\item Verificación del quórum y lectura del acta anterior.
+  \\item Primer punto a tratar.
+  \\item Segundo punto a tratar.
+  \\item Compromisos y cierre.
+\\end{enumerate}
+
+\\vspace{0.5cm}
+\\textbf{DESARROLLO:}
+
+\\textbf{Punto 1.} Se verificó el quórum con la asistencia de los participantes listados.
+
+\\textbf{Punto 2.} [Descripción de lo tratado en el segundo punto].
+
+\\textbf{Punto 3.} [Descripción de lo tratado en el tercer punto].
+
+\\vspace{0.5cm}
+\\textbf{COMPROMISOS:}\\\\[0.3cm]
+\\begin{tabular}{@{}p{5cm}p{4cm}p{3cm}@{}}
+\\toprule
+\\textbf{Compromiso} & \\textbf{Responsable} & \\textbf{Fecha límite} \\\\
+\\midrule
+Primer compromiso adquirido & Nombre Apellido & DD/MM/AAAA \\\\
+Segundo compromiso adquirido & Nombre Apellido & DD/MM/AAAA \\\\
+\\bottomrule
+\\end{tabular}
+
+\\vspace{1cm}
+\\noindent Sin más asuntos que tratar, se da por terminada la reunión a las 00:00 horas.
+
+\\vspace{1.5cm}
+\\noindent\\textbf{Firma del Secretario:} \\rule{5cm}{0.4pt} $\\quad$ \\textbf{Firma del Presidente:} \\rule{5cm}{0.4pt}
+
+\\end{document}`,
+
+libro: `\\documentclass[12pt,a4paper]{book}
+\\usepackage[utf8]{inputenc}
+\\usepackage[T1]{fontenc}
+\\usepackage[spanish]{babel}
+\\usepackage[left=3cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+\\usepackage{amsmath,graphicx,hyperref,fancyhdr,setspace}
+\\onehalfspacing
+\\pagestyle{fancy}
+\\fancyhf{}
+\\fancyhead[LE,RO]{\\thepage}
+\\fancyhead[LO]{\\rightmark}
+\\fancyhead[RE]{\\leftmark}
+
+\\begin{document}
+
+\\begin{titlepage}
+\\centering
+\\vspace*{2cm}
+{\\Huge\\textbf{Título del Libro}}\\\\[0.5cm]
+{\\Large Subtítulo descriptivo}\\\\[2cm]
+{\\large\\textit{Nombre del Autor}}\\\\[1cm]
+\\rule{8cm}{0.5pt}\\\\[1cm]
+{\\normalsize Editorial / Institución}\\\\
+{\\normalsize Ciudad, \\the\\year}
+\\end{titlepage}
+
+\\frontmatter
+\\chapter*{Prólogo}
+Presentación del libro y su propósito.
+
+\\chapter*{Prefacio}
+Contexto y motivación del autor.
+
+\\tableofcontents
+\\listoffigures
+\\listoftables
+
+\\mainmatter
+
+\\part{Primera Parte: Fundamentos}
+
+\\chapter{Introducción}
+\\section{Contexto General}
+\\section{Objetivos del Libro}
+\\section{Estructura del Contenido}
+
+\\chapter{Marco Conceptual}
+\\section{Conceptos Fundamentales}
+Ecuación importante:
+\\begin{equation}
+\\nabla^2 \\phi = \\rho / \\epsilon_0
+\\end{equation}
+\\section{Estado del Arte}
+
+\\part{Segunda Parte: Desarrollo}
+
+\\chapter{Metodología}
+\\chapter{Análisis y Resultados}
+\\chapter{Discusión}
+
+\\backmatter
+
+\\chapter{Conclusiones}
+
+\\bibliographystyle{apa}
+\\begin{thebibliography}{9}
+\\bibitem{r1} Apellido, N. (\\the\\year). \\textit{Título}. Editorial.
+\\end{thebibliography}
+
+\\end{document}`
+};
+
+let currentCategory='all';
+let allGalleryItems=[...GALLERY_TEMPLATES];
+
+function openGallery(){
+  document.getElementById('gallery-modal').style.display='flex';
+  renderGallery(allGalleryItems);
+}
+function closeGallery(){ document.getElementById('gallery-modal').style.display='none'; }
+window.openGallery=openGallery; window.closeGallery=closeGallery;
+
+function filterGallery(cat,btn){
+  currentCategory=cat;
+  document.querySelectorAll('.gtab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const q=document.getElementById('gallery-search').value.toLowerCase();
+  const filtered=GALLERY_TEMPLATES.filter(t=>(cat==='all'||t.cat===cat)&&(t.name.toLowerCase().includes(q)||t.desc.toLowerCase().includes(q)));
+  renderGallery(filtered);
+}
+window.filterGallery=filterGallery;
+
+function searchGallery(){
+  const q=document.getElementById('gallery-search').value.toLowerCase();
+  const filtered=GALLERY_TEMPLATES.filter(t=>(currentCategory==='all'||t.cat===currentCategory)&&(t.name.toLowerCase().includes(q)||t.desc.toLowerCase().includes(q)));
+  renderGallery(filtered);
+}
+window.searchGallery=searchGallery;
+
+function renderGallery(items){
+  const grid=document.getElementById('gallery-grid');
+  if(!items.length){ grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink3);font-size:13px">No se encontraron plantillas</div>'; return; }
+  grid.innerHTML=items.map(t=>`
+    <div class="tpl-card">
+      <div class="tpl-card-preview"><pre>${escHtml(t.preview)}</pre></div>
+      <div class="tpl-card-body">
+        <div class="tpl-card-name">${t.name}</div>
+        <div class="tpl-card-desc">${t.desc}</div>
+        <div class="tpl-card-footer">
+          <span class="${t.free?'tpl-badge-free':'tpl-badge-pro'}">${t.free?'Gratis':'Premium'}</span>
+          <button class="tpl-use-btn${t.free?'':' locked'}" onclick="useGalleryTemplate('${t.id}')">${t.free?'Usar':'🔒 Usar'}</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function escHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function useGalleryTemplate(id){
+  const isPro=!GALLERY_TEMPLATES.find(t=>t.id===id)?.free;
+  if(isPro&&!window._userData?.premium){
+    closeGallery();
+    document.getElementById('modal-payment-info').innerHTML='Esta plantilla es exclusiva del plan Premium.';
+    document.getElementById('upgrade-modal').classList.add('show');
+    return;
+  }
+  const code=EXTRA_TEMPLATES[id]||window.TEMPLATES?.[id]||'';
+  if(!code){ alert('Plantilla no disponible'); return; }
+  if(Object.keys(window.projectFiles).length&&!confirm('¿Cargar plantilla? Se perderá el proyecto actual.')) return;
+  window.projectFiles={}; window.imageBlobs={}; window.mainTexFile='main.tex'; window.activeFile=null;
+  window.projectFiles['main.tex']=code;
+  buildFileTree(); buildFileTabs(['main.tex']);
+  openFile('main.tex');
+  const tpl=GALLERY_TEMPLATES.find(t=>t.id===id);
+  document.getElementById('tree-project-name').textContent=(tpl?.name||id).toUpperCase();
+  document.getElementById('file-tabs').style.display='flex';
+  closeGallery();
+}
+window.useGalleryTemplate=useGalleryTemplate;
 function buildFileTree(){
   const list=document.getElementById('tree-list');
   document.getElementById('tree-empty').style.display='none';
@@ -536,43 +1202,54 @@ function buildFileTree(){
   const imgFiles=allFiles.filter(f=>IMG_EXTS.test(f));
   const otherFiles=allFiles.filter(f=>!TEX_EXTS.test(f)&&!IMG_EXTS.test(f));
 
-  if(texFiles.length){
-    const s=document.createElement('div'); s.className='tree-section'; s.textContent='Documentos'; list.appendChild(s);
-    texFiles.forEach(f=>{ const item=createTreeItem(f,'📄',()=>openFile(f)); list.appendChild(item); });
-  }
-  if(imgFiles.length){
-    const s=document.createElement('div'); s.className='tree-section'; s.textContent='Imágenes'; list.appendChild(s);
-    imgFiles.forEach(f=>{
-      const fname=f.split('/').pop();
-      const item=createTreeItem(fname,'🖼',null,true);
-      // Miniatura
-      if(window.imageBlobs[fname]||window.imageBlobs[f]){
-        const wrap=document.createElement('div'); wrap.className='img-preview-thumb';
-        const img=document.createElement('img'); img.src=window.imageBlobs[fname]||window.imageBlobs[f]; img.alt=fname;
-        wrap.appendChild(img); item.appendChild(wrap);
-      }
-      // Botón insertar
-      item.style.cursor='pointer'; item.classList.remove('img-item');
-      item.title=`Clic para insertar ${fname} en el editor`;
-      item.onclick=()=>insertImageCode(fname);
-      list.appendChild(item);
-    });
-  }
-  if(otherFiles.length){
-    const s=document.createElement('div'); s.className='tree-section'; s.textContent='Otros'; list.appendChild(s);
-    otherFiles.forEach(f=>{ const item=createTreeItem(f.split('/').pop(),'📎',null,true); list.appendChild(item); });
+  function makeSection(label, files, renderFn){
+    if(!files.length) return;
+    const header=document.createElement('div');
+    header.className='tree-section-header';
+    const arrow=document.createElement('span'); arrow.className='tree-section-arrow open'; arrow.textContent='▶';
+    const lbl=document.createElement('span'); lbl.className='tree-section-label'; lbl.textContent=label;
+    header.appendChild(arrow); header.appendChild(lbl);
+    const content=document.createElement('div'); content.className='tree-section-content';
+    files.forEach(f=>renderFn(f,content));
+    header.onclick=()=>{ const open=content.style.display!=='none'; content.style.display=open?'none':''; arrow.classList.toggle('open',!open); };
+    list.appendChild(header); list.appendChild(content);
   }
 
-  document.getElementById('tree-filecount').textContent=allFiles.length+' archivos';
+  makeSection('Documentos', texFiles, (f,parent)=>{
+    const item=document.createElement('div'); item.className='tree-item'; item.dataset.file=f;
+    const icon=document.createElement('span'); icon.className='tree-icon'; icon.textContent=f===window.mainTexFile?'📋':'📄';
+    const name=document.createElement('span'); name.className='tree-name'; name.textContent=f.split('/').pop()+(f===window.mainTexFile?' ★':'');
+    name.title=f; item.appendChild(icon); item.appendChild(name);
+    item.onclick=()=>openFile(f); parent.appendChild(item);
+  });
+
+  makeSection('Imágenes', imgFiles, (f,parent)=>{
+    const fname=f.split('/').pop();
+    const item=document.createElement('div'); item.className='tree-item'; item.dataset.file=fname;
+    const icon=document.createElement('span'); icon.className='tree-icon'; icon.textContent='🖼';
+    const name=document.createElement('span'); name.className='tree-name'; name.textContent=fname; name.title=fname;
+    item.appendChild(icon); item.appendChild(name);
+    item.onclick=()=>insertImageCode(fname); parent.appendChild(item);
+    // Miniatura
+    const src=window.imageBlobs[fname]||window.imageBlobs[f];
+    if(src){ const tw=document.createElement('div'); tw.className='img-thumb-wrap'; const img=document.createElement('img'); img.src=src; img.alt=fname; img.onclick=()=>insertImageCode(fname); tw.appendChild(img); parent.appendChild(tw); }
+  });
+
+  makeSection('Otros', otherFiles, (f,parent)=>{
+    const item=document.createElement('div'); item.className='tree-item'; item.dataset.file=f.split('/').pop();
+    const icon=document.createElement('span'); icon.className='tree-icon'; icon.textContent='📎';
+    const name=document.createElement('span'); name.className='tree-name'; name.textContent=f.split('/').pop(); name.title=f;
+    item.appendChild(icon); item.appendChild(name); parent.appendChild(item);
+  });
+
+  document.getElementById('tree-filecount')&&(document.getElementById('tree-filecount').textContent='');
 }
 
-function createTreeItem(name,icon,onclick,noClick=false){
-  const item=document.createElement('div'); item.className='tree-item'+(noClick?' img-item':'');
-  item.dataset.file=name;
-  item.innerHTML=`<span class="tree-icon">${icon}</span><span class="tree-name" title="${name}">${name}</span>`;
-  if(onclick) item.onclick=onclick;
-  return item;
+function collapseAll(){
+  document.querySelectorAll('.tree-section-content').forEach(c=>c.style.display='none');
+  document.querySelectorAll('.tree-section-arrow').forEach(a=>a.classList.remove('open'));
 }
+window.collapseAll=collapseAll;
 
 // ── PESTAÑAS DE ARCHIVOS ──────────────────────────────────────────────────────
 function buildFileTabs(texFiles){
@@ -849,7 +1526,432 @@ Síntesis de los hallazgos principales.
 \\end{document}`
 };
 
-const PRO_TPLS=['thesis','beamer','ieee','apa'];
+const PRO_TPLS=['thesis','beamer','ieee','apa','icontec','elsevier','ingenieria','monografia','propuesta'];
+
+window.TEMPLATES={...window.TEMPLATES,
+
+icontec:`\\documentclass[12pt,letterpaper]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[T1]{fontenc}
+\\usepackage[spanish]{babel}
+\\usepackage[left=4cm,right=2cm,top=3cm,bottom=3cm]{geometry}
+\\usepackage{amsmath,graphicx,hyperref}
+\\usepackage{setspace}
+\\doublespacing
+\\usepackage{times}
+
+\\begin{document}
+
+\\begin{titlepage}
+\\centering
+\\vspace*{2cm}
+{\\Large\\textbf{TÍTULO DEL TRABAJO EN MAYÚSCULA}}\\\\[1cm]
+{\\large Subtítulo si aplica}\\\\[2cm]
+{\\normalsize NOMBRE APELLIDO AUTOR}\\\\[0.5cm]
+{\\normalsize Código: XXXXXXXX}\\\\[3cm]
+{\\normalsize Trabajo de grado presentado como requisito para optar\\\\al título de [Nombre del título]}\\\\[1cm]
+{\\normalsize Director: Dr. Nombre Apellido}\\\\[2cm]
+{\\normalsize UNIVERSIDAD DEL NOMBRE}\\\\
+{\\normalsize FACULTAD DE NOMBRE}\\\\
+{\\normalsize PROGRAMA ACADÉMICO}\\\\
+{\\normalsize Ciudad — \\the\\year}
+\\end{titlepage}
+
+\\tableofcontents
+\\newpage
+\\listoffigures
+\\listoftables
+\\newpage
+
+\\section{Introducción}
+Texto de introducción según normas Icontec. Interlineado doble, márgenes: izquierdo 4cm, derecho 2cm, superior e inferior 3cm.
+
+\\section{Planteamiento del Problema}
+\\subsection{Descripción del Problema}
+\\subsection{Formulación del Problema}
+
+\\section{Objetivos}
+\\subsection{Objetivo General}
+\\subsection{Objetivos Específicos}
+\\begin{itemize}
+  \\item Primer objetivo específico.
+  \\item Segundo objetivo específico.
+\\end{itemize}
+
+\\section{Justificación}
+
+\\section{Marco Referencial}
+\\subsection{Marco Teórico}
+\\subsection{Marco Conceptual}
+\\subsection{Marco Legal}
+
+\\section{Metodología}
+\\subsection{Tipo de Investigación}
+\\subsection{Población y Muestra}
+\\subsection{Técnicas de Recolección}
+
+\\section{Resultados}
+
+\\section{Conclusiones}
+
+\\section{Recomendaciones}
+
+\\begin{thebibliography}{9}
+\\bibitem{r1} APELLIDO, Nombre. \\textit{Título del libro}. Ciudad: Editorial, año. p. páginas.
+\\end{thebibliography}
+
+\\end{document}`,
+
+elsevier:`\\documentclass[preprint,12pt]{elsarticle}
+\\usepackage[utf8]{inputenc}
+\\usepackage{amsmath,amssymb,graphicx}
+\\usepackage{lineno}
+\\journal{Journal Name}
+
+\\begin{document}
+
+\\begin{frontmatter}
+\\title{Title of the Article}
+\\author[inst1]{First Author}
+\\author[inst1,inst2]{Second Author\\corref{cor1}}
+\\ead{corresponding@email.com}
+\\cortext[cor1]{Corresponding author}
+\\affiliation[inst1]{organization={Department Name}, addressline={University Name}, city={City}, country={Country}}
+\\affiliation[inst2]{organization={Second Institution}, country={Country}}
+
+\\begin{abstract}
+Write your abstract here. It should summarize the key findings, methodology, and conclusions of your work in 150-250 words.
+\\end{abstract}
+
+\\begin{keyword}
+keyword1 \\sep keyword2 \\sep keyword3 \\sep keyword4
+\\end{keyword}
+\\end{frontmatter}
+
+\\linenumbers
+
+\\section{Introduction}
+Provide context and motivation for the work. State the research gap and contributions clearly.
+
+\\section{Materials and Methods}
+\\subsection{Experimental Setup}
+\\subsection{Data Analysis}
+The main equation governing the system:
+\\begin{equation}
+\\frac{\\partial u}{\\partial t} + u\\cdot\\nabla u = -\\nabla p + \\nu \\nabla^2 u
+\\label{eq:navier}
+\\end{equation}
+
+\\section{Results}
+\\subsection{Main Findings}
+\\subsection{Statistical Analysis}
+
+\\section{Discussion}
+Interpret results in context of existing literature.
+
+\\section{Conclusions}
+Summarize key contributions and future work directions.
+
+\\section*{Acknowledgements}
+The authors thank...
+
+\\bibliographystyle{elsarticle-num}
+\\begin{thebibliography}{9}
+\\bibitem{ref1} A. Author, B. Author, Title of paper, \\textit{Journal Name} \\textbf{10} (2024) 100--115.
+\\end{thebibliography}
+
+\\end{document}`,
+
+ingenieria:`\\documentclass[12pt,a4paper]{report}
+\\usepackage[utf8]{inputenc}
+\\usepackage[T1]{fontenc}
+\\usepackage[spanish]{babel}
+\\usepackage{amsmath,amssymb,graphicx,booktabs,float}
+\\usepackage[left=3cm,right=2.5cm,top=2.5cm,bottom=2.5cm]{geometry}
+\\usepackage{hyperref,fancyhdr,siunitx}
+\\pagestyle{fancy}
+\\fancyhf{}
+\\rhead{Informe Técnico}
+\\lhead{\\leftmark}
+\\rfoot{Página \\thepage}
+
+\\begin{document}
+
+\\begin{titlepage}
+\\centering
+\\includegraphics[width=0.3\\textwidth]{logo}\\\\[1cm]
+{\\LARGE\\textbf{INFORME TÉCNICO}}\\\\[0.5cm]
+{\\Large\\textbf{Título del Proyecto de Ingeniería}}\\\\[1cm]
+\\rule{\\linewidth}{0.5mm}\\\\[0.4cm]
+{\\large Curso: Nombre del Curso}\\\\
+{\\large Código: XXXX}\\\\[0.5cm]
+\\rule{\\linewidth}{0.5mm}\\\\[1.5cm]
+\\begin{tabular}{rl}
+\\textbf{Autor:} & Nombre Apellido \\\\
+\\textbf{Código:} & XXXXXXXX \\\\
+\\textbf{Docente:} & Dr. Nombre Apellido \\\\
+\\textbf{Fecha:} & \\today \\\\
+\\end{tabular}\\\\[2cm]
+{\\large Universidad — Facultad de Ingeniería}
+\\end{titlepage}
+
+\\tableofcontents
+\\listoffigures
+\\listoftables
+
+\\chapter{Introducción}
+\\section{Objetivos}
+\\subsection{Objetivo General}
+\\subsection{Objetivos Específicos}
+\\section{Alcance}
+
+\\chapter{Marco Teórico}
+\\section{Fundamentos}
+La potencia eléctrica se calcula como:
+\\begin{equation}
+P = V \\cdot I = I^2 R = \\frac{V^2}{R}
+\\end{equation}
+donde $V$ es el voltaje en \\si{\\volt}, $I$ la corriente en \\si{\\ampere} y $R$ la resistencia en \\si{\\ohm}.
+
+\\chapter{Diseño y Metodología}
+\\section{Descripción del Sistema}
+\\section{Materiales y Equipos}
+\\begin{table}[H]
+\\centering
+\\caption{Lista de materiales}
+\\begin{tabular}{@{}clcc@{}}
+\\toprule
+\\textbf{\\#} & \\textbf{Elemento} & \\textbf{Cantidad} & \\textbf{Especificación} \\\\
+\\midrule
+1 & Resistencia & 10 & \\SI{1}{\\kilo\\ohm} \\\\
+2 & Capacitor & 5 & \\SI{100}{\\micro\\farad} \\\\
+\\bottomrule
+\\end{tabular}
+\\end{table}
+
+\\chapter{Resultados y Análisis}
+\\section{Datos Experimentales}
+\\section{Análisis de Resultados}
+\\section{Cálculo de Errores}
+El error porcentual:
+\\[
+E_{\\%} = \\left|\\frac{V_{real} - V_{medido}}{V_{real}}\\right| \\times 100\\%
+\\]
+
+\\chapter{Conclusiones y Recomendaciones}
+\\section{Conclusiones}
+\\section{Recomendaciones}
+\\section{Trabajo Futuro}
+
+\\bibliographystyle{ieeetr}
+\\begin{thebibliography}{9}
+\\bibitem{r1} IEEE Standards, \\textit{Guide for...}, IEEE Std XXXX, 2024.
+\\end{thebibliography}
+
+\\end{document}`,
+
+monografia:`\\documentclass[12pt,a4paper]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[T1]{fontenc}
+\\usepackage[spanish]{babel}
+\\usepackage[left=3cm,right=2.5cm,top=3cm,bottom=2.5cm]{geometry}
+\\usepackage{amsmath,graphicx,hyperref,setspace}
+\\onehalfspacing
+
+\\begin{document}
+
+\\begin{titlepage}
+\\centering
+\\vspace*{1cm}
+{\\Large\\textbf{MONOGRAFÍA}}\\\\[1cm]
+{\\large\\textbf{Título de la Monografía}}\\\\[0.5cm]
+{\\normalsize Subtítulo descriptivo del tema}\\\\[2cm]
+{\\normalsize Presentada por:}\\\\[0.3cm]
+{\\large Nombre Completo del Autor}\\\\[0.2cm]
+{\\normalsize Código: XXXXXXXX}\\\\[2cm]
+{\\normalsize Para optar al título de:}\\\\
+{\\large Nombre del Título Académico}\\\\[1.5cm]
+{\\normalsize Director:}\\\\
+{\\normalsize Dr. Nombre Apellido}\\\\[2cm]
+{\\normalsize INSTITUCIÓN EDUCATIVA}\\\\
+{\\normalsize Departamento / Facultad}\\\\
+{\\normalsize Ciudad, \\the\\year}
+\\end{titlepage}
+
+\\newpage
+\\section*{Dedicatoria}
+\\newpage
+\\section*{Agradecimientos}
+\\newpage
+\\tableofcontents
+\\newpage
+
+\\section*{Resumen}
+\\addcontentsline{toc}{section}{Resumen}
+Síntesis de máximo una página con objetivo, metodología, resultados y conclusiones.
+
+\\textbf{Palabras clave:} palabra1, palabra2, palabra3, palabra4.
+
+\\section{Introducción}
+Presentación del tema, justificación, planteamiento del problema y objetivos.
+
+\\subsection{Planteamiento del Problema}
+\\subsection{Pregunta de Investigación}
+\\subsection{Objetivos}
+\\textbf{Objetivo General:} Describir...\\\\
+\\textbf{Objetivos Específicos:}
+\\begin{enumerate}
+  \\item Primer objetivo específico.
+  \\item Segundo objetivo específico.
+  \\item Tercer objetivo específico.
+\\end{enumerate}
+\\subsection{Justificación}
+
+\\section{Marco Teórico y Estado del Arte}
+\\subsection{Antecedentes}
+\\subsection{Bases Teóricas}
+\\subsection{Marco Conceptual}
+
+\\section{Metodología}
+\\subsection{Enfoque y Tipo de Investigación}
+\\subsection{Fuentes y Técnicas}
+\\subsection{Procedimiento}
+
+\\section{Desarrollo}
+\\subsection{Capítulo Principal}
+\\subsection{Análisis}
+
+\\section{Conclusiones}
+
+\\section*{Bibliografía}
+\\addcontentsline{toc}{section}{Bibliografía}
+\\begin{thebibliography}{9}
+\\bibitem{r1} Apellido, N. (\\the\\year). \\textit{Título del libro}. Editorial.
+\\bibitem{r2} Apellido, N., \\& Apellido, N. (\\the\\year). Título del artículo. \\textit{Revista}, \\textbf{Vol}(Núm), pp-pp.
+\\end{thebibliography}
+
+\\end{document}`,
+
+propuesta:`\\documentclass[12pt,a4paper]{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[T1]{fontenc}
+\\usepackage[spanish]{babel}
+\\usepackage[margin=2.5cm]{geometry}
+\\usepackage{amsmath,graphicx,booktabs,hyperref,array}
+\\usepackage{xcolor}
+\\definecolor{titleblue}{RGB}{11,110,94}
+
+\\begin{document}
+
+\\begin{titlepage}
+\\centering
+\\vspace*{0.5cm}
+{\\color{titleblue}\\rule{\\linewidth}{2pt}}\\\\[0.5cm]
+{\\Large\\textbf{PROPUESTA DE INVESTIGACIÓN}}\\\\[0.3cm]
+{\\color{titleblue}\\rule{\\linewidth}{1pt}}\\\\[1cm]
+{\\LARGE\\textbf{Título de la Propuesta de Investigación}}\\\\[0.5cm]
+{\\large Línea de investigación: Nombre de la línea}\\\\[2cm]
+\\begin{tabular}{rl}
+\\textbf{Investigador Principal:} & Nombre Apellido \\\\
+\\textbf{Co-investigadores:} & Nombre Apellido 2 \\\\
+\\textbf{Director/Tutor:} & Dr. Nombre Apellido \\\\
+\\textbf{Institución:} & Universidad \\\\
+\\textbf{Grupo de Investigación:} & Nombre del Grupo \\\\
+\\textbf{Duración:} & 12 meses \\\\
+\\textbf{Presupuesto:} & \\$XX.000.000 COP \\\\
+\\textbf{Fecha:} & \\today \\\\
+\\end{tabular}\\\\[1cm]
+{\\color{titleblue}\\rule{\\linewidth}{2pt}}
+\\end{titlepage}
+
+\\tableofcontents
+\\newpage
+
+\\section{Resumen Ejecutivo}
+Descripción concisa (máx. 300 palabras) del problema, objetivos, metodología y resultados esperados.
+
+\\section{Planteamiento del Problema}
+\\subsection{Descripción y Contexto}
+\\subsection{Pregunta de Investigación}
+\\textbf{¿Cómo/Cuál/Qué...?}
+
+\\subsection{Justificación e Impacto}
+
+\\section{Objetivos}
+\\subsection{Objetivo General}
+Verbo en infinitivo + qué + cómo + para qué.
+
+\\subsection{Objetivos Específicos}
+\\begin{enumerate}
+  \\item Identificar / Analizar...
+  \\item Diseñar / Desarrollar...
+  \\item Evaluar / Validar...
+\\end{enumerate}
+
+\\section{Marco Teórico}
+\\subsection{Estado del Arte}
+\\subsection{Fundamentos Teóricos}
+Ecuación o modelo matemático relevante:
+\\[
+y = f(x_1, x_2, \\ldots, x_n) + \\epsilon
+\\]
+
+\\section{Metodología}
+\\subsection{Enfoque Metodológico}
+\\subsection{Fases del Proyecto}
+\\begin{enumerate}
+  \\item \\textbf{Fase 1} (meses 1-3): Revisión bibliográfica y diseño
+  \\item \\textbf{Fase 2} (meses 4-8): Recolección y análisis de datos
+  \\item \\textbf{Fase 3} (meses 9-12): Resultados y publicación
+\\end{enumerate}
+
+\\subsection{Cronograma}
+\\begin{table}[h]
+\\centering
+\\caption{Cronograma de actividades}
+\\begin{tabular}{@{}lcccc@{}}
+\\toprule
+\\textbf{Actividad} & \\textbf{Mes 1-3} & \\textbf{Mes 4-6} & \\textbf{Mes 7-9} & \\textbf{Mes 10-12} \\\\
+\\midrule
+Revisión bibliográfica & ✓ & & & \\\\
+Diseño metodológico & ✓ & ✓ & & \\\\
+Recolección de datos & & ✓ & ✓ & \\\\
+Análisis & & & ✓ & ✓ \\\\
+Publicación & & & & ✓ \\\\
+\\bottomrule
+\\end{tabular}
+\\end{table}
+
+\\section{Presupuesto}
+\\begin{table}[h]
+\\centering
+\\caption{Presupuesto estimado}
+\\begin{tabular}{@{}lrr@{}}
+\\toprule
+\\textbf{Rubro} & \\textbf{Valor (COP)} & \\textbf{\\%} \\\\
+\\midrule
+Personal investigador & \\$10.000.000 & 40\\% \\\\
+Materiales y equipos & \\$5.000.000 & 20\\% \\\\
+Viáticos y transporte & \\$3.000.000 & 12\\% \\\\
+Publicaciones & \\$4.000.000 & 16\\% \\\\
+Imprevistos (12\\%) & \\$3.000.000 & 12\\% \\\\
+\\midrule
+\\textbf{Total} & \\textbf{\\$25.000.000} & \\textbf{100\\%} \\\\
+\\bottomrule
+\\end{tabular}
+\\end{table}
+
+\\section{Resultados Esperados}
+\\subsection{Productos Académicos}
+\\subsection{Impacto Científico y Social}
+
+\\section{Referencias}
+\\begin{thebibliography}{9}
+\\bibitem{r1} Apellido, N. (\\the\\year). \\textit{Título}. Editorial. https://doi.org/...
+\\end{thebibliography}
+
+\\end{document}`
+};
 function loadTemplate(){
   const val=document.getElementById('tpl-sel').value;
   if(PRO_TPLS.includes(val)&&!window._userData?.premium){
