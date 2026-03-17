@@ -518,23 +518,26 @@ window.closeProfile=function(){ document.getElementById('profile-modal').style.d
 
 window.doLogout=async function(){ await signOut(auth); window.location.href='login.html'; };
 
-window.compilePDF=async function(){
+window.compilePDF=async function(manual=true){
   if(!currentUser||!userData) return;
   const today=new Date().toDateString();
   let used=userData.compilationsToday||0;
   if(userData.compilationsDate!==today) used=0;
-  if(!userData.premium&&used>=FREE_LIMIT){
+  // Solo verificar límite en compilaciones manuales
+  if(manual && !userData.premium&&used>=FREE_LIMIT){
     document.getElementById('modal-payment-info').innerHTML=`Envía <strong>$8.000 COP</strong> por Nequi/Daviplata al número <strong>${PAYMENT_NUM}</strong> con tu correo como asunto.`;
     document.getElementById('upgrade-modal').classList.add('show'); return;
   }
 
   await compileWithTexlive();
 
-  const newUsed=used+1;
-  userData.compilationsToday=newUsed; userData.compilationsDate=today;
-  await updateDoc(doc(db,'users',currentUser.uid),{compilationsToday:newUsed,compilationsDate:today});
-  updatePlanUI();
-  setTimeout(()=>{ document.getElementById('status-msg').textContent='PDF listo ✓'; document.getElementById('compile-btn').disabled=false; },4000);
+  // Solo contar compilaciones manuales
+  if(manual){
+    const newUsed=used+1;
+    userData.compilationsToday=newUsed; userData.compilationsDate=today;
+    await updateDoc(doc(db,'users',currentUser.uid),{compilationsToday:newUsed,compilationsDate:today});
+    updatePlanUI();
+  }
 };
 
 async function compileWithTexlive(){
@@ -2068,13 +2071,50 @@ window.loadTemplate=loadTemplate;
 const editor=document.getElementById('editor');
 editor.value=TEMPLATES.article; updatePreview();
 
+// ── AUTO-COMPILACIÓN INCREMENTAL ─────────────────────────────────────────────
+let autoCompileTimer = null;
+let autoCompileEnabled = true;
+let isCompiling = false;
+
+// Agregar botón de auto-compilación en los tabs de preview
+document.getElementById('prev-tabs').insertAdjacentHTML('beforeend',
+  `<label style="margin-left:auto;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink3);padding:0 10px;cursor:pointer;user-select:none">
+    <input type="checkbox" id="auto-compile-toggle" checked onchange="toggleAutoCompile(this.checked)" style="cursor:pointer">
+    Auto-compilar
+  </label>`
+);
+
+function toggleAutoCompile(val){
+  autoCompileEnabled=val;
+  if(!val) clearTimeout(autoCompileTimer);
+}
+window.toggleAutoCompile=toggleAutoCompile;
+
+function scheduleAutoCompile(){
+  if(!autoCompileEnabled||isCompiling) return;
+  clearTimeout(autoCompileTimer);
+  // Mostrar indicador de "compilando en 3s..."
+  document.getElementById('status-msg').textContent='Compilando en 3s…';
+  autoCompileTimer=setTimeout(async()=>{
+    if(!currentUser||!userData||isCompiling) return;
+    isCompiling=true;
+    document.getElementById('status-msg').textContent='Compilando…';
+    try{
+      await window.compilePDF(false);
+      switchPreview('pdf', document.querySelectorAll('.ptab')[1]);
+    }catch(e){}
+    isCompiling=false;
+  }, 3000);
+}
+window.scheduleAutoCompile=scheduleAutoCompile;
+
 editor.addEventListener('input',()=>{
   if(window.activeFile && typeof window.projectFiles[window.activeFile]==='string'){
     window.projectFiles[window.activeFile]=editor.value;
-    // Marcar tab como modificada
     document.querySelectorAll('.ftab').forEach(t=>{ if(t.dataset.file===window.activeFile) t.classList.add('modified'); });
   }
   updatePreview(); updateCursor(); window._saveCode?.();
+  scheduleAutoCompile();
 });
 editor.addEventListener('keydown',e=>{
   if(e.key==='Tab'){ e.preventDefault(); const s=editor.selectionStart; editor.value=editor.value.substring(0,s)+'  '+editor.value.substring(editor.selectionEnd); editor.selectionStart=editor.selectionEnd=s+2; }
