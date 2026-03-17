@@ -314,7 +314,7 @@ Se aplicó el método de...
     <div class="step">
       <div class="step-num">2</div>
       <h4>Transfiere por Nequi o Daviplata</h4>
-      <p>Envía <strong>$8.000 COP</strong> al número <strong id="302 5677053">cargando...</strong> con el asunto: tu correo registrado.</p>
+      <p>Envía <strong>$8.000 COP</strong> al número <strong id="nequi-num">cargando...</strong> con el asunto: tu correo registrado.</p>
     </div>
     <div class="step">
       <div class="step-num">3</div>
@@ -368,9 +368,32 @@ Se aplicó el método de...
 </footer>
 
 <script src="firebase-config.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+const FIREBASE_CONFIG = {
+  apiKey:            "AIzaSyAaezwe-pPDi1rsS3uFopk9JMY199LLoqk",
+  authDomain:        "latexify-4bfc9.firebaseapp.com",
+  projectId:         "latexify-4bfc9",
+  storageBucket:     "latexify-4bfc9.firebasestorage.app",
+  messagingSenderId: "292044762895",
+  appId:             "1:292044762895:web:a7a0ed9489331e2e88d87a"
+};
+
+const app  = initializeApp(FIREBASE_CONFIG);
+const auth = getAuth(app);
+await setPersistence(auth, browserLocalPersistence);
+
+// Si ya está logueado → ir directo al editor
+onAuthStateChanged(auth, user => {
+  if(user) window.location.href = 'editor.html';
+});
+</script>
+
 <script>
 // Cargar número de contacto
-document.getElementById('302 5677053').textContent = typeof PAYMENT_CONFIG !== 'undefined' ? PAYMENT_CONFIG.nequi : '(configura en firebase-config.js)';
+document.getElementById('nequi-num').textContent = typeof PAYMENT_CONFIG !== 'undefined' ? PAYMENT_CONFIG.nequi : '(configura en firebase-config.js)';
 
 function toggleFaq(el){
   const ans = el.nextElementSibling;
