@@ -130,7 +130,7 @@ footer a:hover{color:var(--teal)}
 <!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, sendPasswordResetEmail, onAuthStateChanged, updateProfile, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { getFirestore, doc, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // ── CONFIG (rellena con tus datos de Firebase) ──────────────────────────────
@@ -149,6 +149,8 @@ try {
   app  = initializeApp(FIREBASE_CONFIG);
   auth = getAuth(app);
   db   = getFirestore(app);
+  // Mantener sesión aunque se cierre el navegador
+  await setPersistence(auth, browserLocalPersistence);
 } catch(e) {
   showErr('login-error', 'Firebase no configurado. Edita firebase-config.js con tus credenciales.');
 }
