@@ -551,40 +551,41 @@ async function compileWithTexlive(){
     : document.getElementById('editor').value;
 
   try{
-    const formData = new FormData();
-    formData.append('code', mainCode);
-
-    // Enviar TODOS los archivos del proyecto
+    const files=[];
+    // Convertir archivos del proyecto a base64
     if(window.projectFiles){
       for(const [fname, content] of Object.entries(window.projectFiles)){
         const shortName=fname.split('/').pop();
         if(fname===window.mainTexFile) continue;
         if(typeof content==='string' && content.length>0){
-          formData.append('files', new Blob([content],{type:'text/plain'}), shortName);
+          files.push({name:shortName, data:btoa(unescape(encodeURIComponent(content)))});
         } else if(content instanceof Uint8Array){
-          formData.append('files', new Blob([content]), shortName);
+          let bin=''; content.forEach(b=>bin+=String.fromCharCode(b));
+          files.push({name:shortName, data:btoa(bin)});
         }
       }
     }
-    // Enviar imágenes del ZIP
+    // Convertir imágenes a base64
     if(window.imageBlobs){
       for(const [fname, dataUrl] of Object.entries(window.imageBlobs)){
         if(fname.includes('/')) continue;
         try{
-          const r=await fetch(dataUrl); const b=await r.blob();
-          formData.append('files', b, fname);
+          const base64=dataUrl.split(',')[1];
+          if(base64) files.push({name:fname, data:base64});
         }catch(e){}
       }
     }
 
     const res = await fetch('https://latexify-co.duckdns.org/compile', {
       method: 'POST',
-      body: formData
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({code:mainCode, files})
     });
 
     if(res.ok){
-      const blob=await res.blob();
-      const url=URL.createObjectURL(new Blob([await blob.arrayBuffer()],{type:'application/pdf'}));
+      const data=await res.json();
+      const pdfBytes=Uint8Array.from(atob(data.pdf),c=>c.charCodeAt(0));
+      const url=URL.createObjectURL(new Blob([pdfBytes],{type:'application/pdf'}));
       const frame=document.getElementById('prev-pdf');
       frame.src='';
       setTimeout(()=>{ frame.src=url; },100);
