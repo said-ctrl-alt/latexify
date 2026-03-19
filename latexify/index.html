@@ -1,3 +1,263 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LaTeXify — Ingresar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0D1117;--ink2:#3D4451;--ink3:#6B7280;
+  --paper:#FAFAF8;--paper2:#F3F2EE;--border:#E2DED6;
+  --teal:#0B6E5E;--teal-l:#E0F2EE;--teal-m:#1D9E75;
+  --amber:#B45309;--amber-l:#FEF3C7;
+  --red-l:#FEE2E2;--red:#991B1B;
+  --mono:'DM Mono',monospace;--serif:'DM Serif Display',serif;--sans:'DM Sans',sans-serif;
+}
+body{font-family:var(--sans);background:var(--paper2);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
+nav{background:var(--paper);border-bottom:1px solid var(--border);padding:0 5vw}
+.nav-inner{display:flex;align-items:center;height:56px}
+.logo{font-family:var(--mono);font-weight:500;font-size:17px;color:var(--ink);text-decoration:none}
+.logo span{color:var(--teal-m)}
+.main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 16px}
+.auth-card{background:var(--paper);border:1px solid var(--border);border-radius:14px;width:100%;max-width:420px;overflow:hidden}
+.auth-tabs{display:flex;border-bottom:1px solid var(--border)}
+.auth-tab{flex:1;padding:14px;font-family:var(--sans);font-size:14px;font-weight:500;color:var(--ink3);background:transparent;border:none;cursor:pointer;transition:all .2s;border-bottom:2px solid transparent}
+.auth-tab.active{color:var(--ink);border-bottom-color:var(--teal-m);background:var(--paper)}
+.auth-body{padding:28px}
+.auth-title{font-family:var(--serif);font-size:26px;color:var(--ink);margin-bottom:6px}
+.auth-sub{font-size:13px;color:var(--ink3);margin-bottom:24px}
+.field{margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:500;color:var(--ink2);margin-bottom:6px}
+input[type=email],input[type=password],input[type=text],input[type=tel]{width:100%;padding:10px 14px;font-family:var(--sans);font-size:14px;color:var(--ink);background:var(--paper2);border:1px solid var(--border);border-radius:8px;outline:none;transition:border-color .2s}
+input:focus{border-color:var(--teal-m);background:var(--paper)}
+.btn{display:block;width:100%;padding:11px;font-family:var(--sans);font-weight:500;font-size:15px;border:none;border-radius:8px;cursor:pointer;transition:all .2s;text-align:center}
+.btn-primary{background:var(--teal);color:#fff;margin-top:8px}
+.btn-primary:hover{background:var(--teal-m)}
+.btn-primary:disabled{background:#9CA3AF;cursor:not-allowed}
+.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--ink2);margin-top:8px}
+.btn-outline:hover{border-color:var(--teal-m);color:var(--teal)}
+.btn-google{background:#fff;border:1.5px solid var(--border);color:var(--ink2)}
+.btn-google:hover{background:var(--paper2);border-color:#4285F4}
+.divider{display:flex;align-items:center;gap:12px;margin:20px 0}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
+.divider span{font-size:12px;color:var(--ink3)}
+.msg{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+.msg-error{background:var(--red-l);color:var(--red);border:1px solid #FCA5A5}
+.msg-success{background:var(--teal-l);color:var(--teal);border:1px solid #99D6C4}
+.msg.show{display:block}
+.plan-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.plan-opt{border:1.5px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all .2s;text-align:center}
+.plan-opt.selected{border-color:var(--teal-m);background:var(--teal-l)}
+.plan-opt-name{font-size:13px;font-weight:500;color:var(--ink)}
+.plan-opt-desc{font-size:11px;color:var(--ink3);margin-top:2px}
+.forgot{float:right;font-size:12px;color:var(--teal);text-decoration:none;cursor:pointer}
+.forgot:hover{text-decoration:underline}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.method-toggle{display:flex;gap:8px;margin-bottom:20px}
+.method-btn{flex:1;padding:8px;font-family:var(--sans);font-size:13px;font-weight:500;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:var(--paper2);color:var(--ink3);transition:all .2s}
+.method-btn.active{border-color:var(--teal-m);background:var(--teal-l);color:var(--teal)}
+.phone-row{display:flex;gap:8px}
+.phone-prefix{width:80px;flex-shrink:0;padding:10px 8px;font-family:var(--sans);font-size:14px;color:var(--ink);background:var(--paper2);border:1px solid var(--border);border-radius:8px;outline:none}
+.phone-prefix:focus{border-color:var(--teal-m)}
+#recaptcha-container{margin:12px 0}
+footer{text-align:center;padding:20px;font-size:12px;color:var(--ink3)}
+footer a{color:var(--ink3);text-decoration:none}
+footer a:hover{color:var(--teal)}
+</style>
+</head>
+<body>
+<nav><div class="nav-inner"><a href="index.html" class="logo">LaTeX<span>ify</span></a></div></nav>
+<div class="main">
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Ingresar</button>
+      <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Crear cuenta</button>
+    </div>
+    <div class="auth-body">
+
+      <!-- ── LOGIN ── -->
+      <div id="pane-login">
+        <h1 class="auth-title">Bienvenido</h1>
+        <p class="auth-sub">Ingresa a tu cuenta para continuar</p>
+        <div class="msg msg-error" id="login-error"></div>
+        <div class="msg msg-success" id="login-success"></div>
+
+        <!-- Selector método login -->
+        <div class="method-toggle">
+          <button class="method-btn active" id="login-method-email" onclick="setLoginMethod('email')">✉ Correo</button>
+          <button class="method-btn" id="login-method-phone" onclick="setLoginMethod('phone')">📱 Celular</button>
+        </div>
+
+        <!-- Login con correo -->
+        <div id="login-email-form">
+          <div class="field">
+            <label>Correo electrónico</label>
+            <input type="email" id="login-email" placeholder="tu@correo.com" autocomplete="email">
+          </div>
+          <div class="field">
+            <label>Contraseña <span class="forgot" onclick="showForgotPassword()">¿Olvidaste tu contraseña?</span></label>
+            <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
+          </div>
+          <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Ingresar</button>
+        </div>
+
+        <!-- Login con teléfono -->
+        <div id="login-phone-form" style="display:none">
+          <div class="field">
+            <label>Número de celular</label>
+            <div class="phone-row">
+              <input type="text" class="phone-prefix" id="login-prefix" value="+57" placeholder="+57">
+              <input type="tel" id="login-phone" placeholder="3001234567" style="flex:1" autocomplete="tel">
+            </div>
+          </div>
+          <div id="recaptcha-login"></div>
+          <button class="btn btn-primary" id="login-phone-btn" onclick="sendLoginSMS()">Enviar código SMS</button>
+          <div id="login-sms-step" style="display:none;margin-top:16px">
+            <div class="field">
+              <label>Código de verificación</label>
+              <input type="text" id="login-sms-code" placeholder="123456" maxlength="6" style="text-align:center;letter-spacing:.3em;font-size:20px">
+            </div>
+            <button class="btn btn-primary" onclick="verifyLoginSMS()">Verificar e ingresar</button>
+          </div>
+        </div>
+
+        <div class="divider"><span>o</span></div>
+        <button class="btn" onclick="doGoogleLogin()" style="background:#fff;border:1.5px solid var(--border);color:var(--ink2);display:flex;align-items:center;justify-content:center;gap:10px;margin-top:0">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Continuar con Google
+        </button>
+        <div class="divider"><span>o</span></div>
+        <p style="font-size:13px;color:var(--ink3);text-align:center">¿No tienes cuenta? <a href="#" style="color:var(--teal)" onclick="switchTab('register')">Regístrate gratis</a></p>
+      </div>
+
+      <!-- ── RECUPERAR CONTRASEÑA ── -->
+      <div id="pane-forgot" style="display:none">
+        <h1 class="auth-title">Recuperar acceso</h1>
+        <p class="auth-sub">Te enviaremos instrucciones para restablecer tu contraseña</p>
+        <div class="msg msg-error" id="forgot-error"></div>
+        <div class="msg msg-success" id="forgot-success"></div>
+
+        <div class="method-toggle">
+          <button class="method-btn active" id="forgot-method-email" onclick="setForgotMethod('email')">✉ Por correo</button>
+          <button class="method-btn" id="forgot-method-phone" onclick="setForgotMethod('phone')">📱 Por SMS</button>
+        </div>
+
+        <!-- Recuperar por correo -->
+        <div id="forgot-email-form">
+          <div class="field">
+            <label>Correo electrónico</label>
+            <input type="email" id="forgot-email" placeholder="tu@correo.com">
+          </div>
+          <button class="btn btn-primary" onclick="doForgotEmail()">Enviar correo de recuperación</button>
+        </div>
+
+        <!-- Recuperar por SMS -->
+        <div id="forgot-phone-form" style="display:none">
+          <div class="field">
+            <label>Número de celular registrado</label>
+            <div class="phone-row">
+              <input type="text" class="phone-prefix" id="forgot-prefix" value="+57">
+              <input type="tel" id="forgot-phone" placeholder="3001234567" style="flex:1">
+            </div>
+          </div>
+          <div id="recaptcha-forgot"></div>
+          <button class="btn btn-primary" onclick="sendForgotSMS()">Enviar código SMS</button>
+          <div id="forgot-sms-step" style="display:none;margin-top:16px">
+            <div class="field">
+              <label>Código de verificación</label>
+              <input type="text" id="forgot-sms-code" placeholder="123456" maxlength="6" style="text-align:center;letter-spacing:.3em;font-size:20px">
+            </div>
+            <div class="field">
+              <label>Nueva contraseña</label>
+              <input type="password" id="forgot-new-pass" placeholder="Mínimo 6 caracteres">
+            </div>
+            <button class="btn btn-primary" onclick="verifyForgotSMS()">Verificar y cambiar contraseña</button>
+          </div>
+        </div>
+
+        <button class="btn btn-outline" onclick="showLoginPane()" style="margin-top:12px">← Volver al inicio de sesión</button>
+      </div>
+
+      <!-- ── REGISTER ── -->
+      <div id="pane-register" style="display:none">
+        <h1 class="auth-title">Crear cuenta</h1>
+        <p class="auth-sub">Es gratis. 5 compilaciones diarias sin costo.</p>
+        <div class="msg msg-error" id="reg-error"></div>
+        <div class="msg msg-success" id="reg-success"></div>
+
+        <!-- Selector método registro -->
+        <div class="method-toggle">
+          <button class="method-btn active" id="reg-method-email" onclick="setRegMethod('email')">✉ Con correo</button>
+          <button class="method-btn" id="reg-method-phone" onclick="setRegMethod('phone')">📱 Con celular</button>
+        </div>
+
+        <div class="field">
+          <label>Nombre completo</label>
+          <input type="text" id="reg-name" placeholder="Juan García">
+        </div>
+
+        <!-- Registro con correo -->
+        <div id="reg-email-form">
+          <div class="field">
+            <label>Correo electrónico</label>
+            <input type="email" id="reg-email" placeholder="tu@correo.edu.co" autocomplete="email">
+          </div>
+          <div class="field">
+            <label>Contraseña</label>
+            <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+          </div>
+        </div>
+
+        <!-- Registro con teléfono -->
+        <div id="reg-phone-form" style="display:none">
+          <div class="field">
+            <label>Número de celular</label>
+            <div class="phone-row">
+              <input type="text" class="phone-prefix" id="reg-prefix" value="+57">
+              <input type="tel" id="reg-phone" placeholder="3001234567" style="flex:1">
+            </div>
+          </div>
+          <div id="recaptcha-reg"></div>
+          <div id="reg-sms-step" style="display:none;margin-top:8px">
+            <div class="field">
+              <label>Código de verificación SMS</label>
+              <input type="text" id="reg-sms-code" placeholder="123456" maxlength="6" style="text-align:center;letter-spacing:.3em;font-size:20px">
+            </div>
+          </div>
+        </div>
+
+        <div class="field" style="margin-top:8px">
+          <label>Plan inicial</label>
+          <div class="plan-selector">
+            <div class="plan-opt selected" id="opt-free" onclick="selectPlan('free')">
+              <div class="plan-opt-name">Gratuito</div>
+              <div class="plan-opt-desc">5 compil./día</div>
+            </div>
+            <div class="plan-opt" id="opt-premium" onclick="selectPlan('premium')">
+              <div class="plan-opt-name">Premium</div>
+              <div class="plan-opt-desc">$8.000 COP/mes</div>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="reg-btn" onclick="doRegister()">Crear cuenta gratis</button>
+        <div class="divider"><span>o</span></div>
+        <button class="btn" onclick="doGoogleLogin()" style="background:#fff;border:1.5px solid var(--border);color:var(--ink2);display:flex;align-items:center;justify-content:center;gap:10px;margin-top:0">
+          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+          Registrarse con Google
+        </button>
+        <p style="font-size:11px;color:var(--ink3);margin-top:14px;text-align:center;line-height:1.5">Al registrarte aceptas los términos de uso.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+<footer><a href="index.html">← Volver al inicio</a></footer>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
@@ -7,7 +267,7 @@ import {
   PhoneAuthProvider, signInWithCredential, RecaptchaVerifier,
   signInWithPhoneNumber, updatePassword, GoogleAuthProvider, signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, serverTimestamp, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const FIREBASE_CONFIG = {
   apiKey:            "AIzaSyAaezwe-pPDi1rsS3uFopk9JMY199LLoqk",
@@ -23,16 +283,19 @@ const auth = getAuth(app);
 const db   = getFirestore(app);
 await setPersistence(auth, browserLocalPersistence);
 
+// Redirigir si ya está logueado
 onAuthStateChanged(auth, user => {
   if(user) window.location.href = 'editor.html';
 });
 
 if(window.location.hash === '#register') switchTab('register');
 
+// ── HELPERS ──────────────────────────────────────────────────────────────────
 function showErr(id,msg){ const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
 function showOk(id,msg){ const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
 function hideMsg(id){ document.getElementById(id).classList.remove('show'); }
 function setLoading(id,on){ const b=document.getElementById(id); b.disabled=on; b.innerHTML=on?'<span class="spinner"></span>Cargando...':b.dataset.orig||b.textContent; }
+// Guardar texto original de botones
 document.querySelectorAll('.btn').forEach(b=>b.dataset.orig=b.textContent);
 
 let recaptchaVerifiers={};
@@ -40,17 +303,12 @@ let confirmationResults={};
 
 function getRecaptcha(containerId){
   if(!recaptchaVerifiers[containerId]){
-    recaptchaVerifiers[containerId]=new RecaptchaVerifier(containerId,{
-      size:'normal',
-      callback:()=>{},
-      'expired-callback':()=>{ recaptchaVerifiers[containerId].clear(); recaptchaVerifiers[containerId]=null; }
-    },auth);
-    recaptchaVerifiers[containerId].render();
+    recaptchaVerifiers[containerId]=new RecaptchaVerifier(auth, containerId,{size:'normal',callback:()=>{}});
   }
   return recaptchaVerifiers[containerId];
 }
 
-// ── LOGIN EMAIL ──
+// ── LOGIN EMAIL ───────────────────────────────────────────────────────────────
 window.doLogin = async function(){
   const email=document.getElementById('login-email').value.trim();
   const pass=document.getElementById('login-pass').value;
@@ -74,7 +332,7 @@ window.doLogin = async function(){
   setLoading('login-btn',false);
 };
 
-// ── LOGIN PHONE ──
+// ── LOGIN PHONE ───────────────────────────────────────────────────────────────
 window.sendLoginSMS = async function(){
   const prefix=document.getElementById('login-prefix').value.trim();
   const phone=document.getElementById('login-phone').value.trim();
@@ -89,7 +347,6 @@ window.sendLoginSMS = async function(){
     showOk('login-success',`Código enviado a ${full}`);
   }catch(e){
     showErr('login-error','Error al enviar SMS: '+e.message);
-    if(recaptchaVerifiers['recaptcha-login']) recaptchaVerifiers['recaptcha-login'].clear();
     recaptchaVerifiers['recaptcha-login']=null;
   }
   setLoading('login-phone-btn',false);
@@ -108,12 +365,136 @@ window.verifyLoginSMS = async function(){
   }
 };
 
-// ── GOOGLE SIGN IN ──
+// ── FORGOT PASSWORD EMAIL ─────────────────────────────────────────────────────
+window.doForgotEmail = async function(){
+  const email=document.getElementById('forgot-email').value.trim();
+  hideMsg('forgot-error'); hideMsg('forgot-success');
+  if(!email){ showErr('forgot-error','Ingresa tu correo.'); return; }
+  try{
+    await sendPasswordResetEmail(auth,email);
+    showOk('forgot-success','✓ Correo enviado. Revisa tu bandeja de entrada y spam.');
+  }catch(e){
+    showErr('forgot-error','No encontramos una cuenta con ese correo.');
+  }
+};
+
+// ── FORGOT PASSWORD SMS ───────────────────────────────────────────────────────
+window.sendForgotSMS = async function(){
+  const prefix=document.getElementById('forgot-prefix').value.trim();
+  const phone=document.getElementById('forgot-phone').value.trim();
+  const full=prefix+phone;
+  hideMsg('forgot-error');
+  if(!phone){ showErr('forgot-error','Ingresa tu número de celular.'); return; }
+  try{
+    const recaptcha=getRecaptcha('recaptcha-forgot');
+    confirmationResults.forgot=await signInWithPhoneNumber(auth,full,recaptcha);
+    document.getElementById('forgot-sms-step').style.display='block';
+    showOk('forgot-success',`Código enviado a ${full}`);
+  }catch(e){
+    showErr('forgot-error','Error al enviar SMS: '+e.message);
+    recaptchaVerifiers['recaptcha-forgot']=null;
+  }
+};
+
+window.verifyForgotSMS = async function(){
+  const code=document.getElementById('forgot-sms-code').value.trim();
+  const newPass=document.getElementById('forgot-new-pass').value;
+  hideMsg('forgot-error');
+  if(!code||!newPass){ showErr('forgot-error','Completa todos los campos.'); return; }
+  if(newPass.length<6){ showErr('forgot-error','La contraseña debe tener al menos 6 caracteres.'); return; }
+  try{
+    const result=await confirmationResults.forgot.confirm(code);
+    await updatePassword(result.user,newPass);
+    showOk('forgot-success','✓ Contraseña actualizada. Redirigiendo...');
+    setTimeout(()=>window.location.href='editor.html',1500);
+  }catch(e){
+    showErr('forgot-error','Código incorrecto o expirado.');
+  }
+};
+
+// ── REGISTER EMAIL ────────────────────────────────────────────────────────────
+window.doRegister = async function(){
+  const name=document.getElementById('reg-name').value.trim();
+  const method=window._regMethod||'email';
+  hideMsg('reg-error'); hideMsg('reg-success');
+
+  if(method==='email'){
+    const email=document.getElementById('reg-email').value.trim();
+    const pass=document.getElementById('reg-pass').value;
+    if(!name||!email||!pass){ showErr('reg-error','Completa todos los campos.'); return; }
+    if(pass.length<6){ showErr('reg-error','La contraseña debe tener al menos 6 caracteres.'); return; }
+    setLoading('reg-btn',true);
+    try{
+      const cred=await createUserWithEmailAndPassword(auth,email,pass);
+      await updateProfile(cred.user,{displayName:name});
+      await setDoc(doc(db,'users',cred.user.uid),{
+        name,email,plan:window._selectedPlan||'free',premium:false,
+        compilationsToday:0,compilationsDate:new Date().toDateString(),
+        createdAt:serverTimestamp(),role:'user'
+      });
+      showOk('reg-success','¡Cuenta creada! Redirigiendo...');
+      setTimeout(()=>window.location.href='editor.html',1000);
+    }catch(e){
+      const msgs={
+        'auth/email-already-in-use':'Ya existe una cuenta con ese correo.',
+        'auth/invalid-email':'Correo no válido.',
+        'auth/weak-password':'La contraseña es muy débil.'
+      };
+      showErr('reg-error',msgs[e.code]||'Error al crear cuenta.');
+    }
+    setLoading('reg-btn',false);
+  } else {
+    // Registro con teléfono — primero enviar SMS si no se ha enviado
+    const smsStep=document.getElementById('reg-sms-step');
+    if(smsStep.style.display==='none'||!smsStep.style.display){
+      const prefix=document.getElementById('reg-prefix').value.trim();
+      const phone=document.getElementById('reg-phone').value.trim();
+      const full=prefix+phone;
+      if(!name||!phone){ showErr('reg-error','Completa todos los campos.'); return; }
+      setLoading('reg-btn',true);
+      try{
+        const recaptcha=getRecaptcha('recaptcha-reg');
+        confirmationResults.reg=await signInWithPhoneNumber(auth,full,recaptcha);
+        smsStep.style.display='block';
+        document.getElementById('reg-btn').dataset.orig='Verificar y crear cuenta';
+        showOk('reg-success',`Código enviado a ${full}`);
+      }catch(e){
+        showErr('reg-error','Error al enviar SMS: '+e.message);
+        recaptchaVerifiers['recaptcha-reg']=null;
+      }
+      setLoading('reg-btn',false);
+    } else {
+      // Verificar código
+      const code=document.getElementById('reg-sms-code').value.trim();
+      if(!code){ showErr('reg-error','Ingresa el código SMS.'); return; }
+      setLoading('reg-btn',true);
+      try{
+        const result=await confirmationResults.reg.confirm(code);
+        await updateProfile(result.user,{displayName:name});
+        await setDoc(doc(db,'users',result.user.uid),{
+          name,phone:result.user.phoneNumber,
+          plan:window._selectedPlan||'free',premium:false,
+          compilationsToday:0,compilationsDate:new Date().toDateString(),
+          createdAt:serverTimestamp(),role:'user'
+        });
+        showOk('reg-success','¡Cuenta creada! Redirigiendo...');
+        setTimeout(()=>window.location.href='editor.html',1000);
+      }catch(e){
+        showErr('reg-error','Código incorrecto. Intenta de nuevo.');
+      }
+      setLoading('reg-btn',false);
+    }
+  }
+};
+
+// ── GOOGLE SIGN IN ────────────────────────────────────────────────────────────
 window.doGoogleLogin = async function(){
   try{
     const provider = new GoogleAuthProvider();
     const result = await signInWithPopup(auth, provider);
     const user = result.user;
+    // Crear documento en Firestore si no existe
+    const { getDoc, doc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
     const snap = await getDoc(doc(db,'users',user.uid));
     if(!snap.exists()){
       await setDoc(doc(db,'users',user.uid),{
@@ -132,4 +513,80 @@ window.doGoogleLogin = async function(){
     }
   }
 };
+
+window.doLogin=window.doLogin;
 </script>
+
+<script>
+window._selectedPlan='free';
+window._regMethod='email';
+window._loginMethod='email';
+window._forgotMethod='email';
+
+function switchTab(tab){
+  document.getElementById('pane-login').style.display   =tab==='login'   ?'block':'none';
+  document.getElementById('pane-register').style.display=tab==='register'?'block':'none';
+  document.getElementById('pane-forgot').style.display  ='none';
+  document.getElementById('tab-login').classList.toggle('active',   tab==='login');
+  document.getElementById('tab-register').classList.toggle('active',tab==='register');
+}
+window.switchTab=switchTab;
+
+function showForgotPassword(){
+  document.getElementById('pane-login').style.display='none';
+  document.getElementById('pane-forgot').style.display='block';
+}
+window.showForgotPassword=showForgotPassword;
+
+function showLoginPane(){
+  document.getElementById('pane-forgot').style.display='none';
+  document.getElementById('pane-login').style.display='block';
+}
+window.showLoginPane=showLoginPane;
+
+function setLoginMethod(m){
+  window._loginMethod=m;
+  document.getElementById('login-email-form').style.display=m==='email'?'block':'none';
+  document.getElementById('login-phone-form').style.display=m==='phone'?'block':'none';
+  document.getElementById('login-method-email').classList.toggle('active',m==='email');
+  document.getElementById('login-method-phone').classList.toggle('active',m==='phone');
+}
+window.setLoginMethod=setLoginMethod;
+
+function setRegMethod(m){
+  window._regMethod=m;
+  document.getElementById('reg-email-form').style.display=m==='email'?'block':'none';
+  document.getElementById('reg-phone-form').style.display=m==='phone'?'block':'none';
+  document.getElementById('reg-method-email').classList.toggle('active',m==='email');
+  document.getElementById('reg-method-phone').classList.toggle('active',m==='phone');
+}
+window.setRegMethod=setRegMethod;
+
+function setForgotMethod(m){
+  window._forgotMethod=m;
+  document.getElementById('forgot-email-form').style.display=m==='email'?'block':'none';
+  document.getElementById('forgot-phone-form').style.display=m==='phone'?'block':'none';
+  document.getElementById('forgot-method-email').classList.toggle('active',m==='email');
+  document.getElementById('forgot-method-phone').classList.toggle('active',m==='phone');
+}
+window.setForgotMethod=setForgotMethod;
+
+function selectPlan(plan){
+  window._selectedPlan=plan;
+  document.getElementById('opt-free').classList.toggle('selected',plan==='free');
+  document.getElementById('opt-premium').classList.toggle('selected',plan==='premium');
+  const btn=document.getElementById('reg-btn');
+  btn.textContent=plan==='premium'?'Crear cuenta y pagar Premium':'Crear cuenta gratis';
+  btn.dataset.orig=btn.textContent;
+}
+window.selectPlan=selectPlan;
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='Enter'){
+    const pane=document.getElementById('pane-login');
+    if(pane&&pane.style.display!=='none') window.doLogin?.();
+  }
+});
+</script>
+</body>
+</html>
