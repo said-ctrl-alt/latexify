@@ -1248,18 +1248,35 @@ async function registerCompile(){
   await setDoc(doc(db,"users",S.user.uid),{compilationsToday:used,compilationsDate:today},{merge:true});updatePlanUI();
 }
 async function compilePDF(target="latex-frame"){
-  if(!S.user)return;if(!S.userData.premium&&getUsed()>=FREE_LIMIT){showUpgrade();return}
-  setStatus("Compilando PDF...");els.compileBtn.disabled=true;
-  els.formCode.value=S.editor.getValue();els.compileForm.target=target;
+  if(!S.user)return;
+  if(!S.userData.premium&&getUsed()>=FREE_LIMIT){showUpgrade();return}
+  setStatus("Compilando PDF...");
+  els.compileBtn.disabled=true;
+  els.formCode.value=S.editor.getValue();
+  els.compileForm.target=target;
   S.awaitPdf=target==="latex-frame";
   if(S.awaitPdf){
-    setActiveTab("pdf");els.pdfEmpty.style.display="none";clearTimeout(S.compileTimer);
-    S.compileTimer=setTimeout(()=>{els.compileBtn.disabled=false;if(S.awaitPdf){S.awaitPdf=false;setStatus("Compilación tardó más de lo normal.","error")}},18000);
+    setActiveTab("pdf");
+    els.pdfEmpty.style.display="none";
+    els.pdfFrame.style.display="block";
+    clearTimeout(S.compileTimer);
+    S.compileTimer=setTimeout(()=>{
+      els.compileBtn.disabled=false;
+      if(S.awaitPdf){
+        S.awaitPdf=false;
+        setStatus("Sin respuesta del compilador. El servidor puede estar caído — intenta de nuevo en unos segundos.","error");
+        els.pdfFrame.style.display="none";
+        els.pdfEmpty.style.display="flex";
+      }
+    },25000);
   }
   els.compileForm.submit();
   try{await registerCompile()}catch{}
-  addActivity("Compilación",target==="latex-frame"?"PDF enviado al compilador.":"PDF en nueva pestaña.");
-  if(target!=="latex-frame"){els.compileBtn.disabled=false;setStatus("PDF en nueva pestaña","ok")}
+  addActivity("Compilación",target==="latex-frame"?"PDF enviado a latexonline.cc.":"PDF abierto en nueva pestaña.");
+  if(target!=="latex-frame"){
+    els.compileBtn.disabled=false;
+    setStatus("PDF abierto en nueva pestaña","ok");
+  }
 }
 function setActiveTab(tab){
   S.currentTab=tab;
