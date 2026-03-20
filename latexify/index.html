@@ -599,8 +599,11 @@ kbd{background:var(--sf3);border:1px solid var(--bd2);padding:1px 5px;border-rad
   </div>
 </div>
 
-<form id="compile-form" method="POST" action="https://latexonline.cc/compile" target="latex-frame" style="display:none">
-  <input id="form-code" type="hidden" name="code">
+<form id="compile-form" method="POST" action="https://texlive.net/cgi-bin/latexcgi" target="latex-frame" style="display:none">
+  <input id="form-code" type="hidden" name="filecontents[]">
+  <input type="hidden" name="filename[]" value="document.tex">
+  <input type="hidden" name="engine" value="pdflatex">
+  <input type="hidden" name="return" value="pdf">
 </form>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
@@ -1250,33 +1253,106 @@ async function registerCompile(){
 async function compilePDF(target="latex-frame"){
   if(!S.user)return;
   if(!S.userData.premium&&getUsed()>=FREE_LIMIT){showUpgrade();return}
+
+  const code=S.editor.getValue();
+
+  // Nueva pestaña → Overleaf
+  if(target==="_blank"){
+    const f=document.createElement("form");
+    f.method="POST";f.action="https://www.overleaf.com/docs";f.target="_blank";
+    const i=document.createElement("input");i.type="hidden";i.name="snip";i.value=code;
+    f.appendChild(i);document.body.appendChild(f);f.submit();document.body.removeChild(f);
+    setStatus("Abierto en Overleaf","ok");
+    addActivity("Compilación","Proyecto abierto en Overleaf.");
+    try{await registerCompile()}catch{}
+    return;
+  }
+
   setStatus("Compilando PDF...");
   els.compileBtn.disabled=true;
-  els.formCode.value=S.editor.getValue();
-  els.compileForm.target=target;
-  S.awaitPdf=target==="latex-frame";
-  if(S.awaitPdf){
-    setActiveTab("pdf");
-    els.pdfEmpty.style.display="none";
+  setActiveTab("pdf");
+  els.pdfEmpty.style.display="none";
+  els.pdfFrame.style.display="none";
+
+  // Spinner
+  let spinner=document.getElementById("compile-spinner");
+  if(!spinner){
+    spinner=document.createElement("div");
+    spinner.id="compile-spinner";
+    spinner.style.cssText="height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--bg);color:var(--tx3);font-family:var(--mono);font-size:12px;position:absolute;inset:0;z-index:10";
+    spinner.innerHTML=`<div style="width:34px;height:34px;border:3px solid var(--bd2);border-top-color:var(--accent);border-radius:50%;animation:_spin .75s linear infinite"></div><span id="compile-spinner-msg">Compilando con pdfLaTeX…</span>`;
+    if(!document.getElementById("_spin-style")){
+      const s=document.createElement("style");s.id="_spin-style";
+      s.textContent="@keyframes _spin{to{transform:rotate(360deg)}}";
+      document.head.appendChild(s);
+    }
+    els.pdfFrame.parentNode.style.position="relative";
+    els.pdfFrame.parentNode.appendChild(spinner);
+  }
+  spinner.style.display="flex";
+  const removeSpinner=()=>{spinner.style.display="none"};
+
+  const showPdf=blob=>{
+    const url=URL.createObjectURL(blob);
+    if(S._lastPdfUrl)URL.revokeObjectURL(S._lastPdfUrl);
+    S._lastPdfUrl=url;
+    els.pdfFrame.src=url;
     els.pdfFrame.style.display="block";
-    clearTimeout(S.compileTimer);
-    S.compileTimer=setTimeout(()=>{
-      els.compileBtn.disabled=false;
-      if(S.awaitPdf){
-        S.awaitPdf=false;
-        setStatus("Sin respuesta del compilador. El servidor puede estar caído — intenta de nuevo en unos segundos.","error");
-        els.pdfFrame.style.display="none";
-        els.pdfEmpty.style.display="flex";
-      }
-    },25000);
-  }
-  els.compileForm.submit();
-  try{await registerCompile()}catch{}
-  addActivity("Compilación",target==="latex-frame"?"PDF enviado a latexonline.cc.":"PDF abierto en nueva pestaña.");
-  if(target!=="latex-frame"){
+    removeSpinner();
+    setStatus("PDF compilado","ok");
+    addActivity("PDF listo","PDF generado y visible en el panel.");
     els.compileBtn.disabled=false;
-    setStatus("PDF abierto en nueva pestaña","ok");
+  };
+
+  // ── Intento 1: YtoTech ────────────────────────────────────────────────────
+  try{
+    const resp=await fetch("https://latex.ytotech.com/builds/sync",{
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body:JSON.stringify({compiler:"pdflatex",resources:[{main:true,content:code}]})
+    });
+    if(!resp.ok)throw new Error(`YtoTech ${resp.status}`);
+    showPdf(await resp.blob());
+    try{await registerCompile()}catch{}
+    return;
+  }catch(e1){
+    console.warn("YtoTech falló:",e1.message);
+    const msg=document.getElementById("compile-spinner-msg");
+    if(msg)msg.textContent="Intentando servidor alternativo…";
   }
+
+  // ── Intento 2: TeXLive.net ────────────────────────────────────────────────
+  try{
+    const fd=new FormData();
+    const blob=new Blob([code],{type:"text/plain"});
+    fd.append("filecontents[]",blob,"document.tex");
+    fd.append("filename[]","document.tex");
+    fd.append("engine","pdflatex");
+    fd.append("return","pdf");
+    const resp=await fetch("https://texlive.net/cgi-bin/latexcgi",{method:"POST",body:fd});
+    if(!resp.ok)throw new Error(`TeXLive ${resp.status}`);
+    const ct=resp.headers.get("content-type")||"";
+    if(!ct.includes("pdf"))throw new Error("TeXLive no devolvió PDF");
+    showPdf(await resp.blob());
+    try{await registerCompile()}catch{}
+    return;
+  }catch(e2){
+    console.warn("TeXLive.net falló:",e2.message);
+  }
+
+  // ── Sin compilador disponible ─────────────────────────────────────────────
+  removeSpinner();
+  els.pdfFrame.style.display="none";
+  els.pdfEmpty.style.display="flex";
+  els.pdfEmpty.innerHTML=`
+    <div class="pdf-empty-icon">⚠️</div>
+    <div class="pdf-empty-title">Compiladores no disponibles</div>
+    <div class="pdf-empty-sub">Los servidores externos están caídos. Usa <strong>↗ Nueva pestaña</strong> para compilar en Overleaf.</div>
+  `;
+  setStatus("Compiladores externos caídos — usa ↗ Nueva pestaña","error");
+  addActivity("Error de compilación","No se pudo alcanzar ningún compilador externo.");
+  els.compileBtn.disabled=false;
+  try{await registerCompile()}catch{}
 }
 function setActiveTab(tab){
   S.currentTab=tab;
