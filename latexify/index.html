@@ -1,591 +1,1226 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LaTeXify — Ingresar</title>
+<title>LaTeXify — Editor</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Serif+Display&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;1,400&family=Fraunces:ital,wght@0,600;0,700;1,600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --ink:#0D1117;--ink2:#3D4451;--ink3:#6B7280;
-  --paper:#FAFAF8;--paper2:#F3F2EE;--border:#E2DED6;
-  --teal:#0B6E5E;--teal-l:#E0F2EE;--teal-m:#1D9E75;
-  --amber:#B45309;--amber-l:#FEF3C7;
-  --red-l:#FEE2E2;--red:#991B1B;
-  --mono:'DM Mono',monospace;--serif:'DM Serif Display',serif;--sans:'DM Sans',sans-serif;
+  --bg:#0f0d09;--sf:#171410;--sf2:#1e1b14;--sf3:#252118;--sf4:#2d2920;
+  --bd:#38321f;--bd2:#4a4228;
+  --tx:#ece2cc;--tx2:#a89878;--tx3:#6a5e46;
+  --accent:#d4922a;--accent2:#f0b040;--acbg:rgba(212,146,42,.1);--acbg2:rgba(212,146,42,.18);
+  --green:#6dbf8a;--greenbg:rgba(109,191,138,.1);
+  --red:#d46060;--redbg:rgba(212,96,96,.1);
+  --blue:#78aee0;--bluebg:rgba(120,174,224,.1);
+  --purple:#a880d8;--purplebg:rgba(168,128,216,.1);
+  --mono:'JetBrains Mono',monospace;--display:'Fraunces',serif;--body:'DM Sans',sans-serif;
 }
-body{font-family:var(--sans);background:var(--paper2);color:var(--ink);min-height:100vh;display:flex;flex-direction:column}
-nav{background:var(--paper);border-bottom:1px solid var(--border);padding:0 5vw}
-.nav-inner{display:flex;align-items:center;height:56px}
-.logo{font-family:var(--mono);font-weight:500;font-size:17px;color:var(--ink);text-decoration:none}
-.logo span{color:var(--teal-m)}
-.main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 16px}
-.auth-card{background:var(--paper);border:1px solid var(--border);border-radius:14px;width:100%;max-width:420px;overflow:hidden}
-.auth-tabs{display:flex;border-bottom:1px solid var(--border)}
-.auth-tab{flex:1;padding:14px;font-family:var(--sans);font-size:14px;font-weight:500;color:var(--ink3);background:transparent;border:none;cursor:pointer;transition:all .2s;border-bottom:2px solid transparent}
-.auth-tab.active{color:var(--ink);border-bottom-color:var(--teal-m);background:var(--paper)}
-.auth-body{padding:28px}
-.auth-title{font-family:var(--serif);font-size:26px;color:var(--ink);margin-bottom:6px}
-.auth-sub{font-size:13px;color:var(--ink3);margin-bottom:24px}
-.field{margin-bottom:16px}
-label{display:block;font-size:13px;font-weight:500;color:var(--ink2);margin-bottom:6px}
-input[type=email],input[type=password],input[type=text],input[type=tel]{width:100%;padding:10px 14px;font-family:var(--sans);font-size:14px;color:var(--ink);background:var(--paper2);border:1px solid var(--border);border-radius:8px;outline:none;transition:border-color .2s}
-input:focus{border-color:var(--teal-m);background:var(--paper)}
-.btn{display:block;width:100%;padding:11px;font-family:var(--sans);font-weight:500;font-size:15px;border:none;border-radius:8px;cursor:pointer;transition:all .2s;text-align:center}
-.btn-primary{background:var(--teal);color:#fff;margin-top:8px}
-.btn-primary:hover{background:var(--teal-m)}
-.btn-primary:disabled{background:#9CA3AF;cursor:not-allowed}
-.btn-outline{background:transparent;border:1.5px solid var(--border);color:var(--ink2);margin-top:8px}
-.btn-outline:hover{border-color:var(--teal-m);color:var(--teal)}
-.btn-google{background:#fff;border:1.5px solid var(--border);color:var(--ink2)}
-.btn-google:hover{background:var(--paper2);border-color:#4285F4}
-.divider{display:flex;align-items:center;gap:12px;margin:20px 0}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.divider span{font-size:12px;color:var(--ink3)}
-.msg{padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
-.msg-error{background:var(--red-l);color:var(--red);border:1px solid #FCA5A5}
-.msg-success{background:var(--teal-l);color:var(--teal);border:1px solid #99D6C4}
-.msg.show{display:block}
-.plan-selector{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.plan-opt{border:1.5px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all .2s;text-align:center}
-.plan-opt.selected{border-color:var(--teal-m);background:var(--teal-l)}
-.plan-opt-name{font-size:13px;font-weight:500;color:var(--ink)}
-.plan-opt-desc{font-size:11px;color:var(--ink3);margin-top:2px}
-.forgot{float:right;font-size:12px;color:var(--teal);text-decoration:none;cursor:pointer}
-.forgot:hover{text-decoration:underline}
-.spinner{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px}
-@keyframes spin{to{transform:rotate(360deg)}}
-.method-toggle{display:flex;gap:8px;margin-bottom:20px}
-.method-btn{flex:1;padding:8px;font-family:var(--sans);font-size:13px;font-weight:500;border:1.5px solid var(--border);border-radius:8px;cursor:pointer;background:var(--paper2);color:var(--ink3);transition:all .2s}
-.method-btn.active{border-color:var(--teal-m);background:var(--teal-l);color:var(--teal)}
-.phone-row{display:flex;gap:8px}
-.phone-prefix{width:80px;flex-shrink:0;padding:10px 8px;font-family:var(--sans);font-size:14px;color:var(--ink);background:var(--paper2);border:1px solid var(--border);border-radius:8px;outline:none}
-.phone-prefix:focus{border-color:var(--teal-m)}
-#recaptcha-container{margin:12px 0}
-footer{text-align:center;padding:20px;font-size:12px;color:var(--ink3)}
-footer a{color:var(--ink3);text-decoration:none}
-footer a:hover{color:var(--teal)}
+[data-theme="light"]{
+  --bg:#f5f0e8;--sf:#faf7f1;--sf2:#f0ebe0;--sf3:#e8e0d0;--sf4:#ddd5c4;
+  --bd:#d0c8b4;--bd2:#bbb098;
+  --tx:#28210f;--tx2:#5a4e38;--tx3:#8a7a60;
+  --accent:#b87820;--accent2:#d99030;--acbg:rgba(184,120,32,.09);--acbg2:rgba(184,120,32,.16);
+  --green:#2a8050;--greenbg:rgba(42,128,80,.1);
+  --red:#b84040;--redbg:rgba(184,64,64,.1);
+  --blue:#2060b0;--bluebg:rgba(32,96,176,.08);
+  --purple:#7040b0;--purplebg:rgba(112,64,176,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:var(--body);background:var(--bg);color:var(--tx);font-size:14px}
+button,input,select,textarea{font:inherit;cursor:pointer}
+a{color:inherit;text-decoration:none}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:3px}
+
+/* APP */
+.app{height:100vh;display:flex;flex-direction:column}
+
+/* ── TOPBAR (2 rows) ─────────────────────────────────────────────────────── */
+.topbar{flex-shrink:0;border-bottom:1px solid var(--bd);background:var(--sf)}
+
+/* Row 1 */
+.tb-row1{
+  height:46px;display:flex;align-items:center;gap:0;padding:0 16px;
+  border-bottom:1px solid var(--bd);
+}
+.brand{
+  display:flex;align-items:center;gap:9px;
+  font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:-.03em;
+  flex-shrink:0;padding-right:16px;border-right:1px solid var(--bd);margin-right:14px;
+}
+.brand-gem{
+  width:26px;height:26px;border-radius:7px;
+  background:linear-gradient(140deg,var(--accent2),var(--accent));
+  display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;
+  box-shadow:0 2px 8px rgba(212,146,42,.3);
+}
+.brand em{color:var(--accent);font-style:normal}
+.project-input{
+  border:none;background:transparent;outline:none;color:var(--tx);
+  font-size:14px;font-weight:600;font-family:var(--body);
+  min-width:140px;max-width:240px;padding:0 6px;border-radius:5px;height:28px;transition:background .15s;
+}
+.project-input:hover{background:var(--sf3)}
+.project-input:focus{background:var(--sf2);box-shadow:0 0 0 1.5px var(--bd2)}
+.save-pill{
+  display:flex;align-items:center;gap:6px;padding:0 10px;height:26px;border-radius:999px;
+  border:1px solid var(--bd);background:var(--sf2);font-size:11px;color:var(--tx3);
+  margin-left:8px;font-family:var(--mono);
+}
+.save-dot{width:6px;height:6px;border-radius:50%;background:var(--tx3);flex-shrink:0}
+.save-dot.saved{background:var(--green)}
+.save-dot.saving{background:var(--accent);animation:blink .9s infinite}
+.save-dot.dirty{background:var(--red)}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+.tb1-spacer{flex:1}
+.plan-badge{
+  padding:3px 9px;border-radius:999px;font-family:var(--mono);
+  font-size:10px;letter-spacing:.06em;font-weight:500;
+  border:1px solid var(--bd2);background:var(--sf2);color:var(--tx3);margin-right:6px;
+}
+.plan-badge.premium{background:var(--acbg);color:var(--accent2);border-color:rgba(240,176,64,.3)}
+.compil-text{font-size:11px;color:var(--tx3);font-family:var(--mono);margin-right:14px}
+.user-chip{
+  display:flex;align-items:center;gap:7px;padding:0 10px;height:28px;border-radius:7px;
+  border:1px solid var(--bd);background:var(--sf2);color:var(--tx2);font-size:12px;font-weight:500;
+  max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.user-av{
+  width:18px;height:18px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:grid;place-items:center;font-size:9px;font-weight:700;color:#fff;
+}
+.tb1-btn{
+  height:28px;padding:0 10px;border-radius:7px;border:1px solid transparent;background:transparent;
+  color:var(--tx3);font-size:12px;font-weight:500;display:flex;align-items:center;gap:5px;
+  transition:all .14s;margin-left:6px;
+}
+.tb1-btn:hover{background:var(--sf3);border-color:var(--bd);color:var(--tx2)}
+
+/* Row 2 */
+.tb-row2{
+  height:40px;display:flex;align-items:center;gap:4px;padding:0 14px;
+}
+.tb2-group{display:flex;align-items:center;gap:3px}
+.tb2-sep{width:1px;height:18px;background:var(--bd2);margin:0 6px;flex-shrink:0}
+.tb2-spacer{flex:1}
+.tb2-btn{
+  height:28px;padding:0 11px;border-radius:7px;border:1px solid var(--bd);background:var(--sf2);
+  color:var(--tx2);font-size:12px;font-weight:500;display:flex;align-items:center;gap:6px;
+  transition:all .14s;white-space:nowrap;
+}
+.tb2-btn:hover{background:var(--sf3);border-color:var(--bd2);color:var(--tx)}
+.tb2-btn:disabled{opacity:.45;pointer-events:none}
+.tb2-btn.compile{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#1a1000;border-color:transparent;font-weight:600;
+  box-shadow:0 2px 12px rgba(212,146,42,.28);padding:0 18px;height:30px;font-size:13px;
+}
+.tb2-btn.compile:hover{box-shadow:0 4px 20px rgba(212,146,42,.4);transform:translateY(-1px)}
+.tb2-btn.overleaf{background:var(--greenbg);color:var(--green);border-color:rgba(109,191,138,.22)}
+.tb2-btn.overleaf:hover{background:rgba(109,191,138,.16)}
+.tpl-sel{
+  height:28px;padding:0 10px;border-radius:7px;border:1px solid var(--bd);
+  background:var(--sf2);color:var(--tx2);font-size:12px;outline:none;max-width:155px;transition:all .14s;
+}
+.tpl-sel:hover{background:var(--sf3);border-color:var(--bd2)}
+
+/* ── WORKSPACE ───────────────────────────────────────────────────────────── */
+.workspace{flex:1;min-height:0;display:flex;overflow:hidden}
+
+/* Left panel */
+.left-panel{
+  width:220px;flex-shrink:0;border-right:1px solid var(--bd);background:var(--sf);
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.lp-tabs{display:flex;border-bottom:1px solid var(--bd);flex-shrink:0}
+.lp-tab{
+  flex:1;height:34px;border:none;background:transparent;color:var(--tx3);
+  font-size:11px;font-weight:600;font-family:var(--body);letter-spacing:.02em;text-transform:uppercase;
+  border-bottom:2px solid transparent;transition:all .15s;cursor:pointer;
+}
+.lp-tab:hover{color:var(--tx2);background:var(--sf2)}
+.lp-tab.active{color:var(--accent);border-bottom-color:var(--accent);background:var(--sf)}
+.lp-scroll{flex:1;overflow-y:auto;padding:12px}
+.file-card{
+  display:flex;align-items:center;gap:9px;padding:9px 10px;border-radius:8px;
+  border:1px solid var(--bd);background:var(--sf2);margin-bottom:10px;
+}
+.file-ext{
+  width:28px;height:28px;border-radius:6px;background:var(--acbg);color:var(--accent);
+  font-family:var(--mono);font-size:10px;font-weight:600;display:grid;place-items:center;flex-shrink:0;
+}
+.file-meta .nm{font-size:13px;font-weight:600;color:var(--tx)}
+.file-meta .sb{font-size:11px;color:var(--tx3);margin-top:1px}
+.lp-btn{
+  width:100%;height:28px;border-radius:7px;border:1px solid var(--bd);background:transparent;
+  color:var(--tx2);font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;gap:5px;
+  transition:all .14s;margin-bottom:4px;
+}
+.lp-btn:hover{background:var(--sf3);border-color:var(--bd2);color:var(--tx)}
+.outline-empty{font-size:12px;color:var(--tx3);line-height:1.65;padding:10px;border-radius:7px;border:1px dashed var(--bd2)}
+.outline-item{
+  width:100%;border:none;background:transparent;padding:6px 8px;border-radius:6px;
+  color:var(--tx2);text-align:left;font-size:12px;transition:all .13s;
+}
+.outline-item:hover{background:var(--sf3);color:var(--tx)}
+.outline-item .lvl{font-family:var(--mono);font-size:9px;color:var(--accent);text-transform:uppercase;letter-spacing:.07em;display:block;margin-bottom:1px}
+.shortcut-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+.shortcut-list li{display:flex;justify-content:space-between;align-items:center;font-size:12px;color:var(--tx3)}
+.shortcut-list code{font-family:var(--mono);font-size:10px;background:var(--sf2);border:1px solid var(--bd2);padding:2px 6px;border-radius:4px;color:var(--tx2)}
+
+/* Editor panel */
+.editor-panel{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--sf);border-right:1px solid var(--bd)}
+.editor-tabs{height:36px;display:flex;align-items:stretch;border-bottom:1px solid var(--bd);background:var(--sf2);flex-shrink:0}
+.editor-tab{display:flex;align-items:center;gap:8px;padding:0 16px;border-right:1px solid var(--bd);background:var(--sf);font-size:12px;color:var(--tx2);font-weight:500}
+.editor-tab-dot{width:6px;height:6px;border-radius:50%;background:var(--green)}
+.editor-metrics{margin-left:auto;padding:0 14px;font-family:var(--mono);font-size:11px;color:var(--tx3);display:flex;align-items:center;gap:12px}
+
+/* ── TOOLBAR ─────────────────────────────────────────────────────────────── */
+.toolbar{
+  display:flex;align-items:center;padding:5px 10px;gap:2px;
+  border-bottom:1px solid var(--bd);background:var(--sf2);
+  flex-shrink:0;overflow-x:auto;
+}
+.toolbar::-webkit-scrollbar{height:2px}
+.tg{
+  display:flex;align-items:center;gap:1px;padding:2px 4px;
+  border-radius:7px;border:1px solid var(--bd);background:var(--sf3);
+  margin:0 1px;
+}
+.tg.fmt{border-color:rgba(120,174,224,.22);background:rgba(120,174,224,.06)}
+.tg.mth{border-color:rgba(168,128,216,.22);background:rgba(168,128,216,.06)}
+.tg.str{border-color:rgba(212,146,42,.18);background:rgba(212,146,42,.06)}
+.tg.elm{border-color:rgba(109,191,138,.2);background:rgba(109,191,138,.06)}
+.tg.tls{border-color:rgba(212,96,96,.18);background:rgba(212,96,96,.06)}
+.tg-lbl{
+  font-family:var(--mono);font-size:8.5px;text-transform:uppercase;letter-spacing:.07em;
+  padding:0 4px 0 2px;color:var(--tx3);flex-shrink:0;
+}
+.tg.fmt .tg-lbl{color:var(--blue)} .tg.mth .tg-lbl{color:var(--purple)}
+.tg.str .tg-lbl{color:var(--accent)} .tg.elm .tg-lbl{color:var(--green)} .tg.tls .tg-lbl{color:var(--red)}
+.tbtn{
+  height:24px;padding:0 7px;border-radius:5px;border:none;background:transparent;
+  font-family:var(--mono);font-size:11px;font-weight:500;color:var(--tx3);
+  transition:all .12s;white-space:nowrap;flex-shrink:0;
+}
+.tg.fmt .tbtn:hover{background:rgba(120,174,224,.14);color:var(--blue)}
+.tg.mth .tbtn:hover{background:rgba(168,128,216,.14);color:var(--purple)}
+.tg.str .tbtn:hover{background:rgba(212,146,42,.14);color:var(--accent)}
+.tg.elm .tbtn:hover{background:rgba(109,191,138,.14);color:var(--green)}
+.tg.tls .tbtn:hover{background:rgba(212,96,96,.14);color:var(--red)}
+.catalog-tbtn{
+  height:26px;padding:0 12px;border-radius:7px;margin-left:6px;
+  border:1px solid rgba(168,128,216,.3);background:rgba(168,128,216,.08);
+  color:var(--purple);font-size:11px;font-weight:600;
+  display:flex;align-items:center;gap:7px;transition:all .14s;flex-shrink:0;
+}
+.catalog-tbtn:hover{background:rgba(168,128,216,.18);border-color:rgba(168,128,216,.5)}
+.catalog-tbtn kbd{background:rgba(168,128,216,.12);border:1px solid rgba(168,128,216,.2);padding:1px 4px;border-radius:3px;font-size:9px;color:var(--purple)}
+
+/* CodeMirror */
+.editor-surface{flex:1;min-height:0;overflow:hidden}
+.CodeMirror{height:100%;font-family:var(--mono);font-size:13.5px;line-height:1.72;background:#0c0a06;color:#d8c9a8}
+.CodeMirror-gutters{background:#0c0a06;border-right:1px solid #28221a}
+.CodeMirror-linenumber{color:#4a4030;font-size:12px}
+.CodeMirror-cursor{border-left:2px solid var(--accent2)}
+.CodeMirror-selected{background:rgba(212,146,42,.14)}
+.CodeMirror-activeline-background{background:rgba(255,255,255,.024)}
+.cm-keyword,.cm-tag{color:#e8a030} .cm-string,.cm-string-2{color:#8ec8e8}
+.cm-number{color:#c8d870} .cm-comment{color:#4a4030;font-style:italic}
+.cm-bracket,.cm-builtin{color:#c080d8}
+[data-theme="light"] .CodeMirror{background:#faf6ee;color:#28200c}
+[data-theme="light"] .CodeMirror-gutters{background:#f2eee2;border-right-color:#ddd4c0}
+[data-theme="light"] .CodeMirror-linenumber{color:#a09070}
+[data-theme="light"] .cm-keyword{color:#9a5800}
+[data-theme="light"] .cm-string{color:#1860a0}
+[data-theme="light"] .cm-comment{color:#9a8860}
+
+/* Resizer */
+.resizer{width:4px;flex-shrink:0;cursor:col-resize;background:var(--bd);transition:background .15s}
+.resizer:hover,.resizer.dragging{background:var(--accent)}
+
+/* Preview panel */
+.preview-panel{flex:1;min-width:0;display:flex;flex-direction:column;background:var(--sf)}
+.preview-tabs{height:36px;display:flex;align-items:stretch;border-bottom:1px solid var(--bd);background:var(--sf2);flex-shrink:0}
+.ptab{
+  display:flex;align-items:center;gap:7px;padding:0 16px;border-right:1px solid var(--bd);
+  color:var(--tx3);font-size:12px;font-weight:500;cursor:pointer;
+  border-bottom:2px solid transparent;background:var(--sf2);transition:all .14s;
+}
+.ptab:hover{color:var(--tx2);background:var(--sf3)}
+.ptab.active{color:var(--accent);border-bottom-color:var(--accent);background:var(--sf)}
+.ptab-icon{font-size:13px}
+.preview-actions{margin-left:auto;display:flex;align-items:center;gap:5px;padding:0 10px}
+.pact-btn{
+  height:24px;padding:0 9px;border-radius:5px;border:1px solid var(--bd);background:transparent;
+  color:var(--tx3);font-size:11px;transition:all .12s;display:flex;align-items:center;gap:4px;
+}
+.pact-btn:hover{background:var(--sf3);border-color:var(--bd2);color:var(--tx2)}
+
+.tab-body{flex:1;min-height:0;position:relative}
+.tab-panel{display:none;height:100%;overflow-y:auto}
+.tab-panel.active{display:block}
+
+/* Preview content */
+#tab-preview{background:var(--bg);padding:24px 18px}
+.preview-sheet{max-width:680px;margin:0 auto}
+.paper-page{
+  background:#fff;border-radius:2px;
+  box-shadow:0 0 0 1px rgba(0,0,0,.06),0 16px 48px rgba(0,0,0,.24);
+  padding:48px 52px 56px;min-height:860px;color:#111;
+}
+.paper-topline{display:flex;justify-content:space-between;margin-bottom:22px;font-size:10px;color:#999;font-family:var(--mono)}
+.sheet-header{border-bottom:1px solid #e8e5e0;padding-bottom:16px;margin-bottom:18px}
+.sheet-kicker{font-size:9px;color:#9a6820;text-transform:uppercase;letter-spacing:.1em;margin-bottom:7px;font-family:var(--mono)}
+.sheet-title{font-size:26px;line-height:1.2;color:#0d0d0a;font-family:'Georgia',serif;font-weight:700}
+.sheet-author{margin-top:7px;font-size:13px;color:#555}
+.paper-chips{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0}
+.paper-chip{border:1px solid #e8e3da;background:#f8f4ee;color:#6a5e40;border-radius:999px;padding:3px 9px;font-size:10px;font-family:var(--mono)}
+.preview-block{margin-top:20px;padding-top:20px;border-top:1px solid #f2ede6}
+.preview-block:first-of-type{margin-top:0;padding-top:0;border:none}
+.block-label{font-size:9px;text-transform:uppercase;letter-spacing:.09em;color:#9a9080;margin-bottom:8px;font-family:var(--mono)}
+.abstract-box{padding:14px 16px;background:#f8f5ef;border-left:3px solid #c88020;color:#3a3020;font-size:13px;line-height:1.75;border-radius:0 4px 4px 0}
+.section-item strong{display:block;font-size:17px;color:#0d0d0a;font-family:'Georgia',serif;font-weight:600;margin-bottom:5px}
+.section-item span{font-size:13px;color:#4a4030;line-height:1.75;display:block}
+.math-card{border:1px solid #e8e3da;background:#fffcf7;border-radius:4px;padding:12px;overflow-x:auto;margin-top:8px;text-align:center}
+.preview-note{margin-top:18px;font-size:10px;color:#aaa;text-align:center}
+
+/* PDF panel */
+#tab-pdf{background:#555}
+.pdf-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;color:var(--tx3);background:var(--bg)}
+.pdf-empty-icon{font-size:52px;opacity:.25}
+.pdf-empty-title{font-size:15px;font-weight:600;color:var(--tx2)}
+.pdf-empty-sub{font-size:12px;text-align:center;line-height:1.7;max-width:260px}
+kbd{background:var(--sf3);border:1px solid var(--bd2);padding:1px 5px;border-radius:4px;font-family:var(--mono);font-size:10px;color:var(--tx2)}
+#pdf-frame{width:100%;height:100%;border:none;display:none}
+
+/* Activity */
+#tab-activity{padding:12px;display:flex;flex-direction:column;gap:7px;background:var(--bg)}
+.act-item{border:1px solid var(--bd);background:var(--sf);border-radius:8px;padding:10px 12px}
+.act-head{display:flex;justify-content:space-between;gap:8px;margin-bottom:4px}
+.act-title{font-size:12px;font-weight:600;color:var(--tx2)}
+.act-time{font-size:10px;color:var(--tx3);font-family:var(--mono)}
+.act-body{font-size:11px;color:var(--tx3);line-height:1.5}
+
+/* Statusbar */
+.statusbar{height:26px;display:flex;align-items:center;gap:12px;padding:0 14px;background:var(--bg);border-top:1px solid var(--bd);font-family:var(--mono);font-size:10.5px;color:var(--tx3);flex-shrink:0}
+.sb-ok{color:var(--green)} .sb-err{color:var(--red)} .sb-spacer{flex:1}
+
+/* ── CATALOG OVERLAY ─────────────────────────────────────────────────────── */
+.overlay{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.72);backdrop-filter:blur(8px);display:none;align-items:flex-start;justify-content:center;padding:50px 16px 16px}
+.overlay.show{display:flex}
+.catalog-box{width:min(880px,100%);max-height:calc(100vh - 66px);background:var(--sf);border:1px solid var(--bd2);border-radius:14px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 24px 80px rgba(0,0,0,.5)}
+.cat-hd{padding:16px 20px;border-bottom:1px solid var(--bd);display:flex;align-items:flex-start;gap:12px;flex-shrink:0}
+.cat-hd-text{flex:1}
+.cat-hd-title{font-family:var(--display);font-size:19px;font-weight:700;color:var(--tx);letter-spacing:-.02em}
+.cat-hd-sub{font-size:12px;color:var(--tx3);margin-top:2px}
+.cat-close-btn{width:30px;height:30px;border-radius:7px;border:1px solid var(--bd2);background:var(--sf2);color:var(--tx3);font-size:17px;display:grid;place-items:center;transition:all .13s;flex-shrink:0}
+.cat-close-btn:hover{background:var(--redbg);color:var(--red);border-color:rgba(212,96,96,.3)}
+.cat-search-row{padding:10px 20px;border-bottom:1px solid var(--bd);flex-shrink:0}
+.cat-search{
+  width:100%;height:34px;padding:0 12px 0 34px;border-radius:8px;border:1px solid var(--bd2);
+  background:var(--sf2);color:var(--tx);font-size:13px;outline:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' fill='%236a5e46' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:11px center;transition:border-color .15s;
+}
+.cat-search:focus{border-color:var(--accent)}
+.cat-body{display:flex;flex:1;min-height:0;overflow:hidden}
+.cat-sidebar{width:160px;border-right:1px solid var(--bd);padding:8px;display:flex;flex-direction:column;gap:2px;flex-shrink:0;overflow-y:auto}
+.cat-nav-btn{width:100%;padding:7px 10px;border-radius:6px;border:none;background:transparent;color:var(--tx3);font-size:12px;font-weight:500;text-align:left;display:flex;align-items:center;gap:7px;transition:all .13s}
+.cat-nav-btn:hover{background:var(--sf3);color:var(--tx2)}
+.cat-nav-btn.active{background:var(--acbg);color:var(--accent)}
+.cat-nav-icon{font-size:14px;flex-shrink:0}
+.cat-items{flex:1;overflow-y:auto;padding:10px 14px}
+.cat-sec-label{font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--tx3);margin:12px 0 7px;padding-bottom:5px;border-bottom:1px solid var(--bd)}
+.cat-sec-label:first-child{margin-top:0}
+.fn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:5px;margin-bottom:10px}
+.fn-card{border:1px solid var(--bd);background:var(--sf2);border-radius:8px;padding:9px 11px;cursor:pointer;transition:all .14s}
+.fn-card:hover{border-color:var(--accent);background:var(--acbg);transform:translateY(-1px)}
+.fn-card:active{transform:none}
+.fn-name{font-family:var(--mono);font-size:11.5px;font-weight:500;color:var(--accent);margin-bottom:3px}
+.fn-desc{font-size:11px;color:var(--tx3);line-height:1.4}
+.fn-preview{margin-top:5px;font-family:var(--mono);font-size:9.5px;color:var(--tx2);background:var(--sf);border:1px solid var(--bd);border-radius:3px;padding:3px 5px;word-break:break-all;line-height:1.4}
+
+/* Upgrade modal */
+.upgrade-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.82);backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;padding:20px}
+.upgrade-overlay.show{display:flex}
+.upgrade-box{width:min(420px,100%);background:var(--sf);border:1px solid var(--bd2);border-radius:14px;padding:28px;box-shadow:0 24px 60px rgba(0,0,0,.5)}
+.upgrade-box h2{font-family:var(--display);font-size:22px;font-weight:700;margin-bottom:8px;color:var(--tx)}
+.upgrade-box p{font-size:13px;color:var(--tx2);line-height:1.7;margin-bottom:14px}
+.upgrade-payment{background:var(--acbg);border:1px solid rgba(212,146,42,.25);border-radius:9px;padding:12px 14px;color:var(--accent2);font-size:13px;line-height:1.7;margin-bottom:18px}
+.upgrade-actions{display:flex;gap:8px}
+.upgrade-actions .tb2-btn{flex:1;justify-content:center;height:36px;font-size:13px}
 </style>
 </head>
 <body>
-<nav><div class="nav-inner"><a href="index.html" class="logo">LaTeX<span>ify</span></a></div></nav>
-<div class="main">
-  <div class="auth-card">
-    <div class="auth-tabs">
-      <button class="auth-tab active" id="tab-login" onclick="switchTab('login')">Ingresar</button>
-      <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Crear cuenta</button>
+<div class="app">
+
+  <header class="topbar">
+    <!-- Row 1: brand + project + user -->
+    <div class="tb-row1">
+      <a href="index.html" class="brand">
+        <span class="brand-gem">L</span>
+        LaTeX<em>ify</em>
+      </a>
+      <input id="project-name" class="project-input" type="text" value="Proyecto LaTeX" placeholder="Nombre del proyecto">
+      <div class="save-pill">
+        <span id="save-dot" class="save-dot"></span>
+        <span id="save-label">Sin cambios</span>
+      </div>
+      <div class="tb1-spacer"></div>
+      <span id="plan-badge" class="plan-badge">FREE</span>
+      <span id="compil-count" class="compil-text">0/5 hoy</span>
+      <span id="user-name" class="user-chip"><span class="user-av">U</span><span>Cargando...</span></span>
+      <button id="logout-btn" class="tb1-btn">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z"/><path d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z"/></svg>
+        Salir
+      </button>
     </div>
-    <div class="auth-body">
-
-      <!-- ── LOGIN ── -->
-      <div id="pane-login">
-        <h1 class="auth-title">Bienvenido</h1>
-        <p class="auth-sub">Ingresa a tu cuenta para continuar</p>
-        <div class="msg msg-error" id="login-error"></div>
-        <div class="msg msg-success" id="login-success"></div>
-
-        <!-- Selector método login -->
-        <div class="method-toggle">
-          <button class="method-btn active" id="login-method-email" onclick="setLoginMethod('email')">✉ Correo</button>
-          <button class="method-btn" id="login-method-phone" onclick="setLoginMethod('phone')">📱 Celular</button>
-        </div>
-
-        <!-- Login con correo -->
-        <div id="login-email-form">
-          <div class="field">
-            <label>Correo electrónico</label>
-            <input type="email" id="login-email" placeholder="tu@correo.com" autocomplete="email">
-          </div>
-          <div class="field">
-            <label>Contraseña <span class="forgot" onclick="showForgotPassword()">¿Olvidaste tu contraseña?</span></label>
-            <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password">
-          </div>
-          <button class="btn btn-primary" id="login-btn" onclick="doLogin()">Ingresar</button>
-        </div>
-
-        <!-- Login con teléfono -->
-        <div id="login-phone-form" style="display:none">
-          <div class="field">
-            <label>Número de celular</label>
-            <div class="phone-row">
-              <input type="text" class="phone-prefix" id="login-prefix" value="+57" placeholder="+57">
-              <input type="tel" id="login-phone" placeholder="3001234567" style="flex:1" autocomplete="tel">
-            </div>
-          </div>
-          <div id="recaptcha-login"></div>
-          <button class="btn btn-primary" id="login-phone-btn" onclick="sendLoginSMS()">Enviar código SMS</button>
-          <div id="login-sms-step" style="display:none;margin-top:16px">
-            <div class="field">
-              <label>Código de verificación</label>
-              <input type="text" id="login-sms-code" placeholder="123456" maxlength="6" style="text-align:center;letter-spacing:.3em;font-size:20px">
-            </div>
-            <button class="btn btn-primary" onclick="verifyLoginSMS()">Verificar e ingresar</button>
-          </div>
-        </div>
-
-        <div class="divider"><span>o</span></div>
-        <button class="btn" onclick="doGoogleLogin()" style="background:#fff;border:1.5px solid var(--border);color:var(--ink2);display:flex;align-items:center;justify-content:center;gap:10px;margin-top:0">
-          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-          Continuar con Google
+    <!-- Row 2: template + actions -->
+    <div class="tb-row2">
+      <div class="tb2-group">
+        <select id="tpl-sel" class="tpl-sel">
+          <option value="article">Artículo científico</option>
+          <option value="lab">Reporte de lab</option>
+          <option value="thesis">Tesis ★</option>
+          <option value="beamer">Beamer ★</option>
+          <option value="ieee">IEEE ★</option>
+          <option value="apa">APA ★</option>
+        </select>
+        <button id="load-tpl-btn" class="tb2-btn">Cargar</button>
+      </div>
+      <div class="tb2-sep"></div>
+      <div class="tb2-group">
+        <button id="save-btn" class="tb2-btn">
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4.5a1 1 0 0 0-.293-.707l-2.5-2.5A1 1 0 0 0 11.5 1zm5.5 11a1.5 1.5 0 1 1 0-3 1.5 1.5 0 0 1 0 3M3 3.5A.5.5 0 0 1 3.5 3h7a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-7a.5.5 0 0 1-.5-.5z"/></svg>
+          Guardar
         </button>
-        <div class="divider"><span>o</span></div>
-        <p style="font-size:13px;color:var(--ink3);text-align:center">¿No tienes cuenta? <a href="#" style="color:var(--teal)" onclick="switchTab('register')">Regístrate gratis</a></p>
+        <button id="theme-btn" class="tb2-btn">◑ Claro/Oscuro</button>
       </div>
-
-      <!-- ── RECUPERAR CONTRASEÑA ── -->
-      <div id="pane-forgot" style="display:none">
-        <h1 class="auth-title">Recuperar acceso</h1>
-        <p class="auth-sub">Te enviaremos instrucciones para restablecer tu contraseña</p>
-        <div class="msg msg-error" id="forgot-error"></div>
-        <div class="msg msg-success" id="forgot-success"></div>
-
-        <div class="method-toggle">
-          <button class="method-btn active" id="forgot-method-email" onclick="setForgotMethod('email')">✉ Por correo</button>
-          <button class="method-btn" id="forgot-method-phone" onclick="setForgotMethod('phone')">📱 Por SMS</button>
-        </div>
-
-        <!-- Recuperar por correo -->
-        <div id="forgot-email-form">
-          <div class="field">
-            <label>Correo electrónico</label>
-            <input type="email" id="forgot-email" placeholder="tu@correo.com">
-          </div>
-          <button class="btn btn-primary" onclick="doForgotEmail()">Enviar correo de recuperación</button>
-        </div>
-
-        <!-- Recuperar por SMS -->
-        <div id="forgot-phone-form" style="display:none">
-          <div class="field">
-            <label>Número de celular registrado</label>
-            <div class="phone-row">
-              <input type="text" class="phone-prefix" id="forgot-prefix" value="+57">
-              <input type="tel" id="forgot-phone" placeholder="3001234567" style="flex:1">
-            </div>
-          </div>
-          <div id="recaptcha-forgot"></div>
-          <button class="btn btn-primary" onclick="sendForgotSMS()">Enviar código SMS</button>
-          <div id="forgot-sms-step" style="display:none;margin-top:16px">
-            <div class="field">
-              <label>Código de verificación</label>
-              <input type="text" id="forgot-sms-code" placeholder="123456" maxlength="6" style="text-align:center;letter-spacing:.3em;font-size:20px">
-            </div>
-            <div class="field">
-              <label>Nueva contraseña</label>
-              <input type="password" id="forgot-new-pass" placeholder="Mínimo 6 caracteres">
-            </div>
-            <button class="btn btn-primary" onclick="verifyForgotSMS()">Verificar y cambiar contraseña</button>
-          </div>
-        </div>
-
-        <button class="btn btn-outline" onclick="showLoginPane()" style="margin-top:12px">← Volver al inicio de sesión</button>
+      <div class="tb2-sep"></div>
+      <div class="tb2-group">
+        <button id="copy-code-btn" class="tb2-btn">📋 Copiar</button>
+        <button id="download-btn" class="tb2-btn">↓ .tex</button>
+        <button id="new-doc-btn" class="tb2-btn">+ Nuevo</button>
       </div>
-
-      <!-- ── REGISTER ── -->
-      <div id="pane-register" style="display:none">
-        <h1 class="auth-title">Crear cuenta</h1>
-        <p class="auth-sub">Es gratis. 5 compilaciones diarias sin costo.</p>
-        <div class="msg msg-error" id="reg-error"></div>
-        <div class="msg msg-success" id="reg-success"></div>
-
-        <!-- Selector método registro -->
-        <div class="method-toggle">
-          <button class="method-btn active" id="reg-method-email" onclick="setRegMethod('email')">✉ Con correo</button>
-          <button class="method-btn" id="reg-method-phone" onclick="setRegMethod('phone')">📱 Con celular</button>
-        </div>
-
-        <div class="field">
-          <label>Nombre completo</label>
-          <input type="text" id="reg-name" placeholder="Juan García">
-        </div>
-
-        <!-- Registro con correo -->
-        <div id="reg-email-form">
-          <div class="field">
-            <label>Correo electrónico</label>
-            <input type="email" id="reg-email" placeholder="tu@correo.edu.co" autocomplete="email">
-          </div>
-          <div class="field">
-            <label>Contraseña</label>
-            <input type="password" id="reg-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
-          </div>
-        </div>
-
-        <!-- Registro con teléfono -->
-        <div id="reg-phone-form" style="display:none">
-          <div class="field">
-            <label>Número de celular</label>
-            <div class="phone-row">
-              <input type="text" class="phone-prefix" id="reg-prefix" value="+57">
-              <input type="tel" id="reg-phone" placeholder="3001234567" style="flex:1">
-            </div>
-          </div>
-          <div id="recaptcha-reg"></div>
-          <div id="reg-sms-step" style="display:none;margin-top:8px">
-            <div class="field">
-              <label>Código de verificación SMS</label>
-              <input type="text" id="reg-sms-code" placeholder="123456" maxlength="6" style="text-align:center;letter-spacing:.3em;font-size:20px">
-            </div>
-          </div>
-        </div>
-
-        <div class="field" style="margin-top:8px">
-          <label>Plan inicial</label>
-          <div class="plan-selector">
-            <div class="plan-opt selected" id="opt-free" onclick="selectPlan('free')">
-              <div class="plan-opt-name">Gratuito</div>
-              <div class="plan-opt-desc">5 compil./día</div>
-            </div>
-            <div class="plan-opt" id="opt-premium" onclick="selectPlan('premium')">
-              <div class="plan-opt-name">Premium</div>
-              <div class="plan-opt-desc">$8.000 COP/mes</div>
-            </div>
-          </div>
-        </div>
-
-        <button class="btn btn-primary" id="reg-btn" onclick="doRegister()">Crear cuenta gratis</button>
-        <div class="divider"><span>o</span></div>
-        <button class="btn" onclick="doGoogleLogin()" style="background:#fff;border:1.5px solid var(--border);color:var(--ink2);display:flex;align-items:center;justify-content:center;gap:10px;margin-top:0">
-          <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
-          Registrarse con Google
+      <div class="tb2-spacer"></div>
+      <div class="tb2-group">
+        <button id="overleaf-btn" class="tb2-btn overleaf">↗ Overleaf</button>
+        <button id="compile-btn" class="tb2-btn compile">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M6.5 12.5v-9l6 4.5z"/></svg>
+          Compilar PDF
         </button>
-        <p style="font-size:11px;color:var(--ink3);margin-top:14px;text-align:center;line-height:1.5">Al registrarte aceptas los términos de uso.</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="workspace">
+
+    <!-- LEFT PANEL -->
+    <aside class="left-panel">
+      <div class="lp-tabs">
+        <button class="lp-tab active" data-sec="files">Archivos</button>
+        <button class="lp-tab" data-sec="outline">Esquema</button>
+        <button class="lp-tab" data-sec="keys">Atajos</button>
+      </div>
+      <div class="lp-scroll">
+        <div id="lp-files">
+          <div class="file-card">
+            <div class="file-ext">TEX</div>
+            <div class="file-meta">
+              <div class="nm">main.tex</div>
+              <div class="sb" id="last-saved-label">Sin guardar</div>
+            </div>
+          </div>
+          <button id="copy-code-btn2" class="lp-btn">📋 Copiar código</button>
+          <button id="download-btn2" class="lp-btn">⬇ Descargar .tex</button>
+          <button id="new-doc-btn2" class="lp-btn">+ Nuevo documento</button>
+        </div>
+        <div id="lp-outline" style="display:none">
+          <div id="outline-list"><div class="outline-empty">Agrega secciones para ver el esquema.</div></div>
+        </div>
+        <div id="lp-keys" style="display:none">
+          <ul class="shortcut-list">
+            <li><span>Compilar PDF</span><code>Ctrl+↵</code></li>
+            <li><span>Guardar</span><code>Ctrl+S</code></li>
+            <li><span>Buscar</span><code>Ctrl+F</code></li>
+            <li><span>Comentar</span><code>Ctrl+/</code></li>
+            <li><span>Indentar</span><code>Tab</code></li>
+            <li><span>Catálogo</span><code>Ctrl+K</code></li>
+          </ul>
+        </div>
+      </div>
+    </aside>
+
+    <!-- EDITOR PANEL -->
+    <section class="editor-panel">
+      <div class="editor-tabs">
+        <div class="editor-tab">
+          <span class="editor-tab-dot"></span>
+          <span>main.tex</span>
+        </div>
+        <div class="editor-metrics">
+          <span id="doc-metrics">0L · 0W</span>
+          <span id="cursor-info">L1 C1</span>
+        </div>
       </div>
 
+      <div class="toolbar">
+        <div class="tg fmt">
+          <span class="tg-lbl">Fmt</span>
+          <button class="tbtn" data-before="\textbf{" data-after="}"><b>B</b></button>
+          <button class="tbtn" data-before="\textit{" data-after="}"><i>I</i></button>
+          <button class="tbtn" data-before="\underline{" data-after="}">U̲</button>
+          <button class="tbtn" data-before="\emph{" data-after="}">em</button>
+          <button class="tbtn" data-before="\texttt{" data-after="}">tt</button>
+        </div>
+        <div class="tg mth">
+          <span class="tg-lbl">Math</span>
+          <button class="tbtn" data-before="$" data-after="$">$ $</button>
+          <button class="tbtn" data-before="\[\n" data-after="\n\]">[·]</button>
+          <button class="tbtn" data-before="\begin{equation}\n" data-after="\n\end{equation}">eq</button>
+          <button class="tbtn" data-before="\frac{" data-after="}{}">½</button>
+          <button class="tbtn" data-before="\sqrt{" data-after="}">√</button>
+          <button class="tbtn" data-before="\begin{align}\n" data-after="\n\end{align}">≡</button>
+        </div>
+        <div class="tg str">
+          <span class="tg-lbl">Struct</span>
+          <button class="tbtn" data-before="\section{" data-after="}">§</button>
+          <button class="tbtn" data-before="\subsection{" data-after="}">§§</button>
+          <button class="tbtn" data-before="\begin{itemize}\n  \item " data-after="\n\end{itemize}">• list</button>
+          <button class="tbtn" data-before="\begin{enumerate}\n  \item " data-after="\n\end{enumerate}">1. list</button>
+        </div>
+        <div class="tg elm">
+          <span class="tg-lbl">Elem</span>
+          <button class="tbtn" data-before="\begin{figure}[h]\n  \centering\n  \includegraphics[width=0.65\textwidth]{" data-after="}\n  \caption{}\n  \label{fig:}\n\end{figure}">fig</button>
+          <button class="tbtn" data-before="\begin{table}[h]\n  \centering\n  \caption{}\n  \begin{tabular}{|c|c|}\n    \hline\n    A & B \\\\\n    \hline\n  \end{tabular}\n" data-after="\end{table}">tbl</button>
+          <button class="tbtn" data-before="\cite{" data-after="}">cite</button>
+          <button class="tbtn" data-before="\label{" data-after="}">lbl</button>
+          <button class="tbtn" data-before="\ref{" data-after="}">ref</button>
+        </div>
+        <div class="tg tls">
+          <span class="tg-lbl">Tools</span>
+          <button id="search-btn" class="tbtn">🔍</button>
+          <button id="comment-btn" class="tbtn">//</button>
+          <button id="indent-btn" class="tbtn">⇥</button>
+        </div>
+        <button id="catalog-btn" class="catalog-tbtn">
+          ⚡ Catálogo de funciones
+          <kbd>Ctrl+K</kbd>
+        </button>
+      </div>
+
+      <div class="editor-surface">
+        <textarea id="editor-source" spellcheck="false"></textarea>
+      </div>
+    </section>
+
+    <div class="resizer" id="resizer"></div>
+
+    <!-- PREVIEW PANEL -->
+    <section class="preview-panel">
+      <div class="preview-tabs">
+        <div class="ptab active" data-tab="preview"><span class="ptab-icon">👁</span> Vista previa</div>
+        <div class="ptab" data-tab="pdf"><span class="ptab-icon">📄</span> PDF</div>
+        <div class="ptab" data-tab="activity"><span class="ptab-icon">📌</span> Actividad</div>
+        <div class="preview-actions">
+          <button id="refresh-btn" class="pact-btn">↺ Actualizar</button>
+          <button id="open-pdf-btn" class="pact-btn">↗ Nueva pestaña</button>
+        </div>
+      </div>
+      <div class="tab-body">
+        <div id="tab-preview" class="tab-panel active">
+          <div class="preview-sheet" id="preview-render"></div>
+        </div>
+        <div id="tab-pdf" class="tab-panel">
+          <div id="pdf-empty" class="pdf-empty">
+            <div class="pdf-empty-icon">📄</div>
+            <div class="pdf-empty-title">PDF aún no generado</div>
+            <div class="pdf-empty-sub">Presiona <kbd>Compilar PDF</kbd> o usa <kbd>Ctrl+↵</kbd></div>
+          </div>
+          <iframe id="pdf-frame" name="latex-frame"></iframe>
+        </div>
+        <div id="tab-activity" class="tab-panel">
+          <div id="activity-list"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="statusbar">
+    <span id="status-msg">Listo</span>
+    <span id="status-ok" class="sb-ok"></span>
+    <span id="status-err" class="sb-err"></span>
+    <span class="sb-spacer"></span>
+    <span id="footer-summary">0 palabras</span>
+    <span>UTF-8</span><span>LaTeX</span>
+  </footer>
+</div>
+
+<!-- CATALOG -->
+<div id="catalog-overlay" class="overlay">
+  <div class="catalog-box">
+    <div class="cat-hd">
+      <div class="cat-hd-text">
+        <div class="cat-hd-title">⚡ Catálogo de funciones LaTeX</div>
+        <div class="cat-hd-sub">Haz clic en cualquier función para insertarla en el cursor del editor</div>
+      </div>
+      <button class="cat-close-btn" id="catalog-close">✕</button>
+    </div>
+    <div class="cat-search-row">
+      <input class="cat-search" id="catalog-search" type="text" placeholder="Buscar función... ej: frac, matrix, itemize, color">
+    </div>
+    <div class="cat-body">
+      <div class="cat-sidebar" id="catalog-cats"></div>
+      <div class="cat-items" id="catalog-items"></div>
     </div>
   </div>
 </div>
-<footer><a href="index.html">← Volver al inicio</a></footer>
+
+<!-- UPGRADE -->
+<div id="upgrade-overlay" class="upgrade-overlay">
+  <div class="upgrade-box">
+    <h2>Límite del plan gratuito</h2>
+    <p>Usaste las 5 compilaciones del día. Puedes seguir editando, guardar y exportar sin restricciones.</p>
+    <div id="modal-payment" class="upgrade-payment">Cargando información de pago...</div>
+    <div class="upgrade-actions">
+      <a href="index.html#payment" target="_blank" class="tb2-btn compile">Activar Premium →</a>
+      <button id="close-upgrade-btn" class="tb2-btn">Seguir editando</button>
+    </div>
+  </div>
+</div>
+
+<form id="compile-form" method="POST" action="https://latexonline.cc/compile" target="latex-frame" style="display:none">
+  <input id="form-code" type="hidden" name="code">
+</form>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/stex/stex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import {
-  getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
-  sendPasswordResetEmail, onAuthStateChanged, updateProfile,
-  setPersistence, browserLocalPersistence,
-  PhoneAuthProvider, signInWithCredential, RecaptchaVerifier,
-  signInWithPhoneNumber, updatePassword, GoogleAuthProvider, signInWithPopup
-} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyAaezwe-pPDi1rsS3uFopk9JMY199LLoqk",
-  authDomain:        "latexify-4bfc9.firebaseapp.com",
-  projectId:         "latexify-4bfc9",
-  storageBucket:     "latexify-4bfc9.firebasestorage.app",
-  messagingSenderId: "292044762895",
-  appId:             "1:292044762895:web:a7a0ed9489331e2e88d87a"
+const FIREBASE_CONFIG={apiKey:"AIzaSyAaezwe-pPDi1rsS3uFopk9JMY199LLoqk",authDomain:"latexify-4bfc9.firebaseapp.com",projectId:"latexify-4bfc9",storageBucket:"latexify-4bfc9.firebasestorage.app",messagingSenderId:"292044762895",appId:"1:292044762895:web:a7a0ed9489331e2e88d87a"};
+const PAYMENT_NUM="302 5677053",FREE_LIMIT=5;
+const PRO_TEMPLATES=new Set(["thesis","beamer","ieee","apa"]);
+
+const TEMPLATES={
+  article:String.raw`\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,amssymb,graphicx,hyperref}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{Título del artículo}
+\author{Autor Nombre}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+Resumen del artículo. Describe objetivo, metodología y hallazgos principales.
+\end{abstract}
+
+\section{Introducción}
+Contexto del problema. La ecuación de Einstein:
+\[
+E = mc^2
+\]
+
+\section{Metodología}
+Describe aquí el procedimiento, materiales y decisiones de análisis.
+
+\section{Resultados}
+Presenta datos, figuras, tablas y ecuaciones relevantes.
+
+\section{Conclusiones}
+Síntesis final del documento.
+
+\begin{thebibliography}{9}
+\bibitem{r1} Autor, N. (2024). \textit{Título}. Editorial.
+\end{thebibliography}
+\end{document}`,
+  lab:String.raw`\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,booktabs,float}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{\textbf{Reporte de laboratorio}\\Práctica No. 1}
+\author{Estudiante: Nombre Apellido\\Código: 000000}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Objetivo}
+Explica el objetivo principal de la práctica.
+
+\section{Marco teórico}
+La ley de Ohm: $V = IR$
+
+\section{Materiales}
+\begin{itemize}
+  \item Material 1
+  \item Material 2
+\end{itemize}
+
+\section{Procedimiento}
+\begin{enumerate}
+  \item Paso uno.
+  \item Paso dos.
+\end{enumerate}
+
+\section{Resultados}
+\begin{table}[H]
+  \centering
+  \caption{Datos experimentales}
+  \begin{tabular}{@{}ccc@{}}
+    \toprule
+    Ensayo & Valor & Error \\
+    \midrule
+    1 & 10.0 & 0.1 \\
+    2 & 20.0 & 0.1 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Conclusiones}
+Resume lo observado en la práctica.
+\end{document}`,
+  thesis:String.raw`\documentclass[12pt,a4paper]{book}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath,graphicx,hyperref}
+\usepackage{geometry}
+\geometry{margin=3cm}
+
+\title{Título de la tesis}
+\author{Nombre del estudiante}
+\date{\today}
+
+\begin{document}
+\frontmatter
+\maketitle
+\tableofcontents
+
+\chapter*{Resumen}
+\mainmatter
+\chapter{Introducción}
+\section{Planteamiento del problema}
+\section{Objetivos}
+
+\chapter{Marco teórico}
+\chapter{Metodología}
+\chapter{Resultados}
+\chapter{Conclusiones}
+
+\backmatter
+\begin{thebibliography}{9}
+\bibitem{r1} Autor (2024). \textit{Título}. Editorial.
+\end{thebibliography}
+\end{document}`,
+  beamer:String.raw`\documentclass[aspectratio=169]{beamer}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usetheme{Madrid}\usecolortheme{seahorse}
+
+\title{Título de la presentación}
+\author{Nombre Autor}
+\institute{Universidad}
+\date{\today}
+
+\begin{document}
+\begin{frame}\titlepage\end{frame}
+\begin{frame}{Contenido}\tableofcontents\end{frame}
+
+\section{Introducción}
+\begin{frame}{Motivación}
+  \begin{itemize}
+    \item Punto 1
+    \item Punto 2
+  \end{itemize}
+\end{frame}
+
+\section{Resultados}
+\begin{frame}{Ecuación}
+  \[ \hat{f}(\xi) = \int_{-\infty}^{\infty} f(x)e^{-2\pi i x \xi}\,dx \]
+\end{frame}
+\end{document}`,
+  ieee:String.raw`\documentclass[conference]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,graphicx,cite}
+
+\title{Paper title}
+\author{\IEEEauthorblockN{Author Name}
+\IEEEauthorblockA{Department\\University\\email@domain.com}}
+
+\begin{document}
+\maketitle
+\begin{abstract}Abstract of the paper.\end{abstract}
+\begin{IEEEkeywords}keyword1, keyword2\end{IEEEkeywords}
+
+\section{Introduction}
+\begin{equation}P = \frac{V^2}{R}\end{equation}
+
+\section{Methodology}
+\section{Results}
+\section{Conclusion}
+
+\bibliographystyle{IEEEtran}
+\begin{thebibliography}{1}
+\bibitem{ref} A. Author, \textit{Title}, Journal, 2024.
+\end{thebibliography}
+\end{document}`,
+  apa:String.raw`\documentclass[stu,12pt]{apa7}
+\usepackage[spanish]{babel}
+
+\title{Título del reporte}
+\author{Nombre Apellido}
+\affiliation{Universidad}
+\course{Nombre del curso}
+\professor{Nombre del profesor}
+\duedate{\today}
+
+\begin{document}
+\maketitle
+
+\section{Introducción}
+Planteamiento del problema y objetivos.
+
+\section{Desarrollo}
+Cuerpo del reporte con análisis y discusión.
+
+\section{Conclusiones}
+Síntesis de los hallazgos principales.
+\end{document}`
 };
 
-const app  = initializeApp(FIREBASE_CONFIG);
-const auth = getAuth(app);
-const db   = getFirestore(app);
-await setPersistence(auth, browserLocalPersistence);
+const CATALOG={
+  "Estructura":{icon:"📦",sections:{"Documento":[
+    {name:"\\documentclass",desc:"Clase del documento",snippet:"\\documentclass[12pt,a4paper]{article}"},
+    {name:"\\usepackage",desc:"Importar paquete",snippet:"\\usepackage{}"},
+    {name:"\\begin{document}",desc:"Inicio del doc",snippet:"\\begin{document}\n\n\\end{document}"},
+    {name:"\\maketitle",desc:"Genera el título",snippet:"\\maketitle"},
+    {name:"\\tableofcontents",desc:"Tabla de contenidos",snippet:"\\tableofcontents"},
+    {name:"\\appendix",desc:"Inicio de apéndices",snippet:"\\appendix"},
+  ],"Secciones":[
+    {name:"\\chapter",desc:"Capítulo (book)",snippet:"\\chapter{Título}"},
+    {name:"\\section",desc:"Sección",snippet:"\\section{Título de la sección}"},
+    {name:"\\subsection",desc:"Subsección",snippet:"\\subsection{Título de subsección}"},
+    {name:"\\subsubsection",desc:"Sub-subsección",snippet:"\\subsubsection{Título}"},
+    {name:"\\paragraph",desc:"Párrafo con título",snippet:"\\paragraph{Título}"},
+    {name:"\\label / \\ref",desc:"Etiquetar y referenciar",snippet:"\\label{sec:nombre}\n\\ref{sec:nombre}"},
+  ]}},
+  "Texto":{icon:"✍️",sections:{"Formato":[
+    {name:"\\textbf",desc:"Negrita",snippet:"\\textbf{texto}"},
+    {name:"\\textit",desc:"Cursiva",snippet:"\\textit{texto}"},
+    {name:"\\underline",desc:"Subrayado",snippet:"\\underline{texto}"},
+    {name:"\\emph",desc:"Énfasis contextual",snippet:"\\emph{texto}"},
+    {name:"\\texttt",desc:"Monoespaciado",snippet:"\\texttt{texto}"},
+    {name:"\\textsc",desc:"Versalitas",snippet:"\\textsc{texto}"},
+    {name:"\\textcolor",desc:"Color de texto",snippet:"\\textcolor{red}{texto}"},
+  ],"Tamaño":[
+    {name:"\\tiny",desc:"Diminuto",snippet:"{\\tiny texto}"},
+    {name:"\\small",desc:"Pequeño",snippet:"{\\small texto}"},
+    {name:"\\large",desc:"Grande",snippet:"{\\large texto}"},
+    {name:"\\Large",desc:"Más grande",snippet:"{\\Large texto}"},
+    {name:"\\huge",desc:"Enorme",snippet:"{\\huge texto}"},
+  ],"Alineación":[
+    {name:"center",desc:"Centrado",snippet:"\\begin{center}\n  texto\n\\end{center}"},
+    {name:"flushleft",desc:"Izquierda",snippet:"\\begin{flushleft}\n  texto\n\\end{flushleft}"},
+    {name:"flushright",desc:"Derecha",snippet:"\\begin{flushright}\n  texto\n\\end{flushright}"},
+  ]}},
+  "Matemáticas":{icon:"∑",sections:{"Modo matemático":[
+    {name:"$ ... $",desc:"Ecuación inline",snippet:"$expresión$"},
+    {name:"\\[ ... \\]",desc:"Bloque de ecuación",snippet:"\\[\n  expresión\n\\]"},
+    {name:"equation",desc:"Ecuación numerada",snippet:"\\begin{equation}\n  expresión\n\\end{equation}"},
+    {name:"align",desc:"Ecuaciones alineadas",snippet:"\\begin{align}\n  a &= b + c \\\\\n  d &= e - f\n\\end{align}"},
+  ],"Operaciones":[
+    {name:"\\frac",desc:"Fracción",snippet:"\\frac{num}{den}"},
+    {name:"\\sqrt",desc:"Raíz cuadrada",snippet:"\\sqrt{x}"},
+    {name:"\\sqrt[n]",desc:"Raíz n-ésima",snippet:"\\sqrt[n]{x}"},
+    {name:"\\sum",desc:"Sumatoria",snippet:"\\sum_{i=0}^{n} x_i"},
+    {name:"\\prod",desc:"Productoria",snippet:"\\prod_{i=1}^{n} x_i"},
+    {name:"\\int",desc:"Integral definida",snippet:"\\int_{a}^{b} f(x)\\,dx"},
+    {name:"\\oint",desc:"Integral de línea",snippet:"\\oint_C f(z)\\,dz"},
+    {name:"\\lim",desc:"Límite",snippet:"\\lim_{x \\to \\infty} f(x)"},
+    {name:"\\partial",desc:"Derivada parcial",snippet:"\\frac{\\partial f}{\\partial x}"},
+    {name:"\\nabla",desc:"Operador nabla",snippet:"\\nabla f"},
+  ],"Griegos":[
+    {name:"Minúsculas",desc:"α β γ δ ε...",snippet:"\\alpha \\beta \\gamma \\delta \\epsilon \\zeta \\eta \\theta"},
+    {name:"Mayúsculas",desc:"Γ Δ Σ Ω Π...",snippet:"\\Gamma \\Delta \\Sigma \\Omega \\Pi \\Phi \\Psi"},
+    {name:"π λ μ σ φ ω",desc:"Más usados",snippet:"\\pi \\lambda \\mu \\sigma \\tau \\phi \\omega"},
+  ],"Matrices":[
+    {name:"pmatrix",desc:"Con paréntesis ( )",snippet:"\\begin{pmatrix}\n  a & b \\\\\n  c & d\n\\end{pmatrix}"},
+    {name:"bmatrix",desc:"Con corchetes [ ]",snippet:"\\begin{bmatrix}\n  a & b \\\\\n  c & d\n\\end{bmatrix}"},
+    {name:"vmatrix",desc:"Determinante | |",snippet:"\\begin{vmatrix}\n  a & b \\\\\n  c & d\n\\end{vmatrix}"},
+    {name:"cases",desc:"Función por casos",snippet:"f(x)=\\begin{cases}\n  x^2 & \\text{si } x>0\\\\\n  0 & \\text{si } x\\leq0\n\\end{cases}"},
+  ],"Relaciones y conjuntos":[
+    {name:"\\leq \\geq \\neq",desc:"Comparaciones",snippet:"\\leq \\geq \\neq \\approx \\equiv"},
+    {name:"\\in \\notin",desc:"Pertenencia",snippet:"x \\in A, \\; y \\notin B"},
+    {name:"\\subset \\cup \\cap",desc:"Operaciones de conjuntos",snippet:"A \\subset B \\cup C \\cap D"},
+    {name:"\\forall \\exists",desc:"Cuantificadores",snippet:"\\forall x \\in \\mathbb{R}, \\; \\exists y"},
+    {name:"\\mathbb{R}",desc:"Conjuntos numéricos ℝℕℤ",snippet:"\\mathbb{R} \\mathbb{N} \\mathbb{Z} \\mathbb{Q} \\mathbb{C}"},
+    {name:"\\infty \\vec \\hat",desc:"Infinito, vector, unitario",snippet:"\\infty \\quad \\vec{v} \\quad \\hat{u}"},
+  ]}},
+  "Listas":{icon:"📋",sections:{"Tipos":[
+    {name:"itemize",desc:"Lista con viñetas",snippet:"\\begin{itemize}\n  \\item Elemento 1\n  \\item Elemento 2\n\\end{itemize}"},
+    {name:"enumerate",desc:"Lista numerada",snippet:"\\begin{enumerate}\n  \\item Elemento 1\n  \\item Elemento 2\n\\end{enumerate}"},
+    {name:"description",desc:"Lista descriptiva",snippet:"\\begin{description}\n  \\item[Término] Definición\n\\end{description}"},
+    {name:"Lista anidada",desc:"Listas dentro de listas",snippet:"\\begin{itemize}\n  \\item Nivel 1\n  \\begin{itemize}\n    \\item Nivel 2\n  \\end{itemize}\n\\end{itemize}"},
+  ]}},
+  "Tablas":{icon:"📊",sections:{"Entornos":[
+    {name:"tabular básico",desc:"Tabla con bordes",snippet:"\\begin{tabular}{|c|c|c|}\n  \\hline\n  Col1 & Col2 & Col3 \\\\\n  \\hline\n  A & B & C \\\\\n  \\hline\n\\end{tabular}"},
+    {name:"table flotante",desc:"Tabla con caption",snippet:"\\begin{table}[h]\n  \\centering\n  \\caption{Título}\n  \\label{tab:}\n  \\begin{tabular}{ccc}\n    \\toprule\n    Col1 & Col2 & Col3 \\\\\n    \\midrule\n    A & B & C \\\\\n    \\bottomrule\n  \\end{tabular}\n\\end{table}"},
+    {name:"\\multicolumn",desc:"Celda multi-columna",snippet:"\\multicolumn{3}{c}{Texto centrado}"},
+    {name:"\\multirow",desc:"Celda multi-fila",snippet:"\\multirow{2}{*}{Texto}"},
+  ]}},
+  "Figuras":{icon:"🖼️",sections:{"Imágenes":[
+    {name:"figure básica",desc:"Figura con imagen",snippet:"\\begin{figure}[h]\n  \\centering\n  \\includegraphics[width=0.65\\textwidth]{imagen}\n  \\caption{Descripción}\n  \\label{fig:etiqueta}\n\\end{figure}"},
+    {name:"\\includegraphics",desc:"Imagen inline",snippet:"\\includegraphics[width=0.5\\textwidth]{imagen}"},
+    {name:"subfigure",desc:"Dos figuras lado a lado",snippet:"\\begin{figure}[h]\n  \\centering\n  \\begin{subfigure}[b]{0.45\\textwidth}\n    \\includegraphics[width=\\textwidth]{img1}\n    \\caption{a}\n  \\end{subfigure}\n  \\hfill\n  \\begin{subfigure}[b]{0.45\\textwidth}\n    \\includegraphics[width=\\textwidth]{img2}\n    \\caption{b}\n  \\end{subfigure}\n  \\caption{Principal}\n\\end{figure}"},
+  ],"TikZ":[
+    {name:"tikzpicture",desc:"Entorno gráfico TikZ",snippet:"\\begin{tikzpicture}\n  \\draw[->] (0,0) -- (2,0) node[right] {$x$};\n  \\draw[->] (0,0) -- (0,2) node[above] {$y$};\n\\end{tikzpicture}"},
+    {name:"nodo + flecha",desc:"Diagrama con nodos",snippet:"\\node[draw,circle] (A) at (0,0) {A};\n\\node[draw,circle] (B) at (2,0) {B};\n\\draw[->] (A) -- (B);"},
+  ]}},
+  "Referencias":{icon:"📚",sections:{"Citas":[
+    {name:"\\cite",desc:"Citar por clave",snippet:"\\cite{clave}"},
+    {name:"\\citep \\citet",desc:"Citas natbib",snippet:"\\citep{clave}\n\\citet{clave}"},
+    {name:"thebibliography",desc:"Bibliografía manual",snippet:"\\begin{thebibliography}{9}\n  \\bibitem{r1} Autor. \\textit{Título}. Editorial, 2024.\n\\end{thebibliography}"},
+    {name:"\\bibliography",desc:"BibTeX",snippet:"\\bibliographystyle{plain}\n\\bibliography{references}"},
+    {name:"\\footnote",desc:"Nota al pie",snippet:"texto\\footnote{Nota al pie.}"},
+    {name:"\\ref \\eqref",desc:"Referencias cruzadas",snippet:"\\ref{sec:} \\quad \\eqref{eq:}"},
+  ]}},
+  "Código":{icon:"💻",sections:{"Listados":[
+    {name:"verbatim",desc:"Texto literal",snippet:"\\begin{verbatim}\ncódigo aquí\n\\end{verbatim}"},
+    {name:"lstlisting",desc:"Código coloreado",snippet:"\\begin{lstlisting}[language=Python, caption=Código]\ndef hola():\n    print(\"Hola\")\n\\end{lstlisting}"},
+    {name:"minted",desc:"Resaltado avanzado",snippet:"\\begin{minted}{python}\ndef suma(a,b):\n    return a+b\n\\end{minted}"},
+    {name:"\\verb",desc:"Código inline",snippet:"\\verb|código inline|"},
+  ]}},
+  "Layout":{icon:"📐",sections:{"Espacio":[
+    {name:"\\vspace",desc:"Espacio vertical",snippet:"\\vspace{1cm}"},
+    {name:"\\hspace",desc:"Espacio horizontal",snippet:"\\hspace{1cm}"},
+    {name:"\\newpage",desc:"Nueva página",snippet:"\\newpage"},
+    {name:"\\noindent",desc:"Sin sangría",snippet:"\\noindent"},
+    {name:"minipage",desc:"Cajas lado a lado",snippet:"\\begin{minipage}{0.45\\textwidth}\n  Izquierda\n\\end{minipage}\\hfill\n\\begin{minipage}{0.45\\textwidth}\n  Derecha\n\\end{minipage}"},
+    {name:"multicols",desc:"Texto en columnas",snippet:"\\begin{multicols}{2}\n  Columnas aquí\n\\end{multicols}"},
+  ],"Márgenes":[
+    {name:"\\geometry",desc:"Configurar márgenes",snippet:"\\geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=3cm}"},
+    {name:"\\setlength",desc:"Ajustar longitud",snippet:"\\setlength{\\parindent}{0pt}"},
+  ]}},
+  "Paquetes":{icon:"📦",sections:{"Esenciales":[
+    {name:"amsmath",desc:"Matemáticas avanzadas",snippet:"\\usepackage{amsmath}"},
+    {name:"amssymb",desc:"Símbolos extras",snippet:"\\usepackage{amssymb}"},
+    {name:"graphicx",desc:"Imágenes",snippet:"\\usepackage{graphicx}"},
+    {name:"hyperref",desc:"Hipervínculos PDF",snippet:"\\usepackage[colorlinks=true,linkcolor=blue]{hyperref}"},
+    {name:"babel (es)",desc:"Español",snippet:"\\usepackage[spanish]{babel}"},
+    {name:"xcolor",desc:"Colores",snippet:"\\usepackage{xcolor}\n\\definecolor{miColor}{RGB}{0,128,200}"},
+    {name:"booktabs",desc:"Tablas profesionales",snippet:"\\usepackage{booktabs}"},
+    {name:"float",desc:"Control [H] flotantes",snippet:"\\usepackage{float}"},
+    {name:"siunitx",desc:"Unidades del SI",snippet:"\\usepackage{siunitx}\n$\\SI{9.8}{m/s^2}$"},
+    {name:"pgfplots",desc:"Gráficas científicas",snippet:"\\usepackage{pgfplots}\n\\begin{tikzpicture}\n\\begin{axis}\n  \\addplot {x^2};\n\\end{axis}\n\\end{tikzpicture}"},
+    {name:"caption",desc:"Captions personalizados",snippet:"\\usepackage{caption}\n\\captionsetup{font=small,labelfont=bf}"},
+    {name:"enumitem",desc:"Listas personalizadas",snippet:"\\usepackage{enumitem}"},
+  ]}}
+};
 
-// Redirigir si ya está logueado
-onAuthStateChanged(auth, user => {
-  if(user) window.location.href = 'editor.html';
-});
+const S={user:null,userData:{premium:false,compilationsToday:0,compilationsDate:""},editor:null,saveTimer:null,previewTimer:null,compileTimer:null,suspendSave:false,awaitPdf:false,lastSavedAt:null,lastLogAt:0,lastSearch:"",template:"article",activity:[],currentTab:"preview",lpSec:"files"};
 
-if(window.location.hash === '#register') switchTab('register');
+function esc(v=""){return v.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;")}
+function cleanTex(v=""){return v.replace(/%.*$/gm," ").replace(/\\(?:textbf|textit|emph|underline|caption|section|subsection|chapter|title|author)\{([^}]*)\}/g,"$1").replace(/\\[a-zA-Z*]+(\[[^\]]*\])?/g," ").replace(/[{}]/g," ").replace(/\s+/g," ").trim()}
+function wc(c){const w=cleanTex(c).match(/[A-Za-z0-9\u00C0-\u024F]+/g);return w?w.length:0}
+function todayKey(){return new Intl.DateTimeFormat("en-CA",{timeZone:"America/Bogota"}).format(new Date())}
+function fmt(d){return new Intl.DateTimeFormat("es-CO",{hour:"2-digit",minute:"2-digit"}).format(d)}
 
-// ── HELPERS ──────────────────────────────────────────────────────────────────
-function showErr(id,msg){ const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
-function showOk(id,msg){ const el=document.getElementById(id); el.textContent=msg; el.classList.add('show'); }
-function hideMsg(id){ document.getElementById(id).classList.remove('show'); }
-function setLoading(id,on){ const b=document.getElementById(id); b.disabled=on; b.innerHTML=on?'<span class="spinner"></span>Cargando...':b.dataset.orig||b.textContent; }
-// Guardar texto original de botones
-document.querySelectorAll('.btn').forEach(b=>b.dataset.orig=b.textContent);
+const $=id=>document.getElementById(id);
+const els={
+  projectName:$("project-name"),planBadge:$("plan-badge"),compilCount:$("compil-count"),
+  saveDot:$("save-dot"),saveLabel:$("save-label"),userName:$("user-name"),
+  tplSel:$("tpl-sel"),loadTplBtn:$("load-tpl-btn"),saveBtn:$("save-btn"),themeBtn:$("theme-btn"),
+  compileBtn:$("compile-btn"),overleafBtn:$("overleaf-btn"),logoutBtn:$("logout-btn"),
+  lastSavedLabel:$("last-saved-label"),copyCodeBtn:$("copy-code-btn"),downloadBtn:$("download-btn"),newDocBtn:$("new-doc-btn"),
+  copyCodeBtn2:$("copy-code-btn2"),downloadBtn2:$("download-btn2"),newDocBtn2:$("new-doc-btn2"),
+  outlineList:$("outline-list"),docMetrics:$("doc-metrics"),cursorInfo:$("cursor-info"),
+  searchBtn:$("search-btn"),commentBtn:$("comment-btn"),indentBtn:$("indent-btn"),
+  catalogBtn:$("catalog-btn"),refreshBtn:$("refresh-btn"),openPdfBtn:$("open-pdf-btn"),
+  previewRender:$("preview-render"),pdfFrame:$("pdf-frame"),pdfEmpty:$("pdf-empty"),
+  activityList:$("activity-list"),statusMsg:$("status-msg"),statusOk:$("status-ok"),statusErr:$("status-err"),footerSummary:$("footer-summary"),
+  upgradeOverlay:$("upgrade-overlay"),modalPayment:$("modal-payment"),closeUpgrade:$("close-upgrade-btn"),
+  compileForm:$("compile-form"),formCode:$("form-code"),resizer:$("resizer"),
+  catalogOverlay:$("catalog-overlay"),catalogClose:$("catalog-close"),catalogSearch:$("catalog-search"),catalogCats:$("catalog-cats"),catalogItems:$("catalog-items"),
+};
 
-let recaptchaVerifiers={};
-let confirmationResults={};
+function setStatus(m,k=""){els.statusMsg.textContent=m;els.statusOk.textContent=k==="ok"?"●":"";els.statusErr.textContent=k==="error"?"●":""}
+function setSave(mode,label){els.saveDot.className="save-dot"+(mode?" "+mode:"");els.saveLabel.textContent=label}
+function addActivity(t,b){S.activity.unshift({id:Date.now(),t,b,time:fmt(new Date())});S.activity=S.activity.slice(0,20);renderActivity()}
+function renderActivity(){
+  if(!S.activity.length){els.activityList.innerHTML='<div style="padding:20px;color:var(--tx3);font-size:12px">Sin actividad aún.</div>';return}
+  els.activityList.innerHTML=S.activity.map(a=>`<div class="act-item"><div class="act-head"><span class="act-title">${esc(a.t)}</span><span class="act-time">${esc(a.time)}</span></div><div class="act-body">${esc(a.b)}</div></div>`).join("")
+}
+function getUsed(){const t=todayKey();return S.userData.compilationsDate===t?S.userData.compilationsToday||0:0}
+function updatePlanUI(){
+  const used=getUsed();
+  if(S.userData.premium){els.planBadge.textContent="PREMIUM";els.planBadge.classList.add("premium");els.compilCount.textContent="Compilaciones ∞"}
+  else{els.planBadge.textContent="FREE";els.planBadge.classList.remove("premium");els.compilCount.textContent=`${used}/${FREE_LIMIT} hoy`}
+}
+function showUpgrade(msg){
+  els.modalPayment.innerHTML=msg||`Activa Premium enviando <strong>$8.000 COP</strong> por Nequi al <strong>${PAYMENT_NUM}</strong> con tu correo como referencia.`;
+  els.upgradeOverlay.classList.add("show");
+}
+function closeUpgrade(){els.upgradeOverlay.classList.remove("show")}
 
-function getRecaptcha(containerId){
-  if(!recaptchaVerifiers[containerId]){
-    recaptchaVerifiers[containerId]=new RecaptchaVerifier(auth, containerId,{size:'normal',callback:()=>{}});
-  }
-  return recaptchaVerifiers[containerId];
+function extractOutline(code){return[...code.matchAll(/\\(chapter|section|subsection)\{([^}]*)\}/g)].map(m=>({level:m[1],title:cleanTex(m[2])||"(sin título)",line:code.slice(0,m.index).split("\n").length-1}))}
+function renderOutline(outline){
+  if(!outline.length){els.outlineList.innerHTML='<div class="outline-empty">Agrega secciones para ver el esquema aquí.</div>';return}
+  els.outlineList.innerHTML=outline.map(o=>`<button class="outline-item" data-line="${o.line}"><span class="lvl">${esc(o.level)}</span>${esc(o.title)}</button>`).join("")
+}
+function updatePreview(){
+  const code=S.editor.getValue();
+  const title=(code.match(/\\title\{([\s\S]*?)\}/)||[])[1];
+  const author=(code.match(/\\author\{([\s\S]*?)\}/)||[])[1];
+  const date=(code.match(/\\date\{([\s\S]*?)\}/)||[])[1];
+  const abstract=(code.match(/\\begin\{abstract\}([\s\S]*?)\\end\{abstract\}/)||[])[1];
+  const outline=extractOutline(code);
+  const sections=[...code.matchAll(/\\(chapter|section|subsection)\{([^}]*)\}/g)].slice(0,6).map((m,i,arr)=>{
+    const start=m.index+m[0].length,end=arr[i+1]?arr[i+1].index:(code.search(/\\end\{document\}/)===-1?code.length:code.search(/\\end\{document\}/));
+    let ex=cleanTex(code.slice(start,end));if(ex.length>200)ex=ex.slice(0,200)+"...";
+    return{level:m[1],title:cleanTex(m[2])||"(sin título)",excerpt:ex||"Contenido pendiente."};
+  });
+  const dmatch=[...code.matchAll(/\\\[([\s\S]*?)\\\]/g),...code.matchAll(/\\begin\{equation\*?\}([\s\S]*?)\\end\{equation\*?\}/g)].map(m=>m[1].trim()).filter(Boolean).slice(0,3);
+  const lines=S.editor.lineCount(),words=wc(code);
+  const figs=(code.match(/\\includegraphics/g)||[]).length,tabs=(code.match(/\\begin\{table\}/g)||[]).length;
+  renderOutline(outline);
+  els.previewRender.innerHTML=`<div class="paper-page">
+    <div class="paper-topline"><span>${esc(els.projectName.value||"Proyecto")}</span><span>${esc(S.template.toUpperCase())}</span></div>
+    <header class="sheet-header"><div class="sheet-kicker">Vista previa estructural</div><h1 class="sheet-title">${esc(cleanTex(title)||"Documento sin título")}</h1><div class="sheet-author">${esc(cleanTex(author)||"Autor sin definir")}${date?` — ${esc(cleanTex(date))}`:"" }</div></header>
+    <div class="paper-chips"><span class="paper-chip">${lines} líneas</span><span class="paper-chip">${words} palabras</span><span class="paper-chip">${outline.length} secciones</span><span class="paper-chip">${dmatch.length} ecuaciones</span><span class="paper-chip">${figs} figuras</span><span class="paper-chip">${tabs} tablas</span></div>
+    ${abstract?`<div class="preview-block"><div class="block-label">Resumen</div><div class="abstract-box">${esc(cleanTex(abstract))}</div></div>`:""}
+    ${sections.length?sections.map((s,i)=>`<div class="preview-block"><div class="block-label">${esc(s.level)}</div><div class="section-item"><strong>${esc(s.title)}</strong><span>${esc(s.excerpt)}</span></div>${dmatch[i]?`<div class="math-card" data-math="${esc(dmatch[i])}" data-display="true"></div>`:""}</div>`).join(""):`<div class="preview-block"><div class="abstract-box">Escribe \\section{} para ver la estructura aquí.</div></div>`}
+    <div class="preview-note">Vista estructural · Para PDF real usa la pestaña <strong>PDF</strong></div>
+  </div>`;
+  els.previewRender.querySelectorAll("[data-math]").forEach(n=>{try{katex.render(n.dataset.math,n,{displayMode:n.dataset.display==="true",throwOnError:false})}catch{}});
+}
+function schedulePreview(){clearTimeout(S.previewTimer);S.previewTimer=setTimeout(updatePreview,180)}
+function updateMetrics(){
+  const code=S.editor.getValue(),cur=S.editor.getCursor(),l=S.editor.lineCount(),w=wc(code);
+  els.docMetrics.textContent=`${l}L · ${w}W`;els.cursorInfo.textContent=`L${cur.line+1} C${cur.ch+1}`;
+  els.footerSummary.textContent=`${w} palabras`;document.title=`${els.projectName.value||"Proyecto"} — LaTeXify`;
 }
 
-// ── LOGIN EMAIL ───────────────────────────────────────────────────────────────
-window.doLogin = async function(){
-  const email=document.getElementById('login-email').value.trim();
-  const pass=document.getElementById('login-pass').value;
-  hideMsg('login-error'); hideMsg('login-success');
-  if(!email||!pass){ showErr('login-error','Completa todos los campos.'); return; }
-  setLoading('login-btn',true);
+const app=initializeApp(FIREBASE_CONFIG);const auth=getAuth(app);const db=getFirestore(app);
+async function persist(msg="",manual=false){
+  if(!S.user)return;setSave("saving","Guardando...");
+  const payload={lastCode:S.editor.getValue(),lastSavedAt:new Date().toISOString(),lastTemplate:S.template,projectName:els.projectName.value||"Proyecto LaTeX"};
   try{
-    await signInWithEmailAndPassword(auth,email,pass);
-    showOk('login-success','¡Bienvenido! Redirigiendo...');
-    setTimeout(()=>window.location.href='editor.html',800);
-  }catch(e){
-    const msgs={
-      'auth/user-not-found':'No existe una cuenta con ese correo.',
-      'auth/wrong-password':'Contraseña incorrecta.',
-      'auth/invalid-credential':'Correo o contraseña incorrectos.',
-      'auth/invalid-email':'Correo no válido.',
-      'auth/too-many-requests':'Demasiados intentos. Espera un momento.'
-    };
-    showErr('login-error',msgs[e.code]||'Error al ingresar. Intenta de nuevo.');
-  }
-  setLoading('login-btn',false);
-};
-
-// ── LOGIN PHONE ───────────────────────────────────────────────────────────────
-window.sendLoginSMS = async function(){
-  const prefix=document.getElementById('login-prefix').value.trim();
-  const phone=document.getElementById('login-phone').value.trim();
-  const full=prefix+phone;
-  hideMsg('login-error');
-  if(!phone){ showErr('login-error','Ingresa tu número de celular.'); return; }
-  setLoading('login-phone-btn',true);
-  try{
-    const recaptcha=getRecaptcha('recaptcha-login');
-    confirmationResults.login=await signInWithPhoneNumber(auth,full,recaptcha);
-    document.getElementById('login-sms-step').style.display='block';
-    showOk('login-success',`Código enviado a ${full}`);
-  }catch(e){
-    showErr('login-error','Error al enviar SMS: '+e.message);
-    recaptchaVerifiers['recaptcha-login']=null;
-  }
-  setLoading('login-phone-btn',false);
-};
-
-window.verifyLoginSMS = async function(){
-  const code=document.getElementById('login-sms-code').value.trim();
-  hideMsg('login-error');
-  if(!code){ showErr('login-error','Ingresa el código.'); return; }
-  try{
-    await confirmationResults.login.confirm(code);
-    showOk('login-success','¡Verificado! Redirigiendo...');
-    setTimeout(()=>window.location.href='editor.html',800);
-  }catch(e){
-    showErr('login-error','Código incorrecto. Intenta de nuevo.');
-  }
-};
-
-// ── FORGOT PASSWORD EMAIL ─────────────────────────────────────────────────────
-window.doForgotEmail = async function(){
-  const email=document.getElementById('forgot-email').value.trim();
-  hideMsg('forgot-error'); hideMsg('forgot-success');
-  if(!email){ showErr('forgot-error','Ingresa tu correo.'); return; }
-  try{
-    await sendPasswordResetEmail(auth,email);
-    showOk('forgot-success','✓ Correo enviado. Revisa tu bandeja de entrada y spam.');
-  }catch(e){
-    showErr('forgot-error','No encontramos una cuenta con ese correo.');
-  }
-};
-
-// ── FORGOT PASSWORD SMS ───────────────────────────────────────────────────────
-window.sendForgotSMS = async function(){
-  const prefix=document.getElementById('forgot-prefix').value.trim();
-  const phone=document.getElementById('forgot-phone').value.trim();
-  const full=prefix+phone;
-  hideMsg('forgot-error');
-  if(!phone){ showErr('forgot-error','Ingresa tu número de celular.'); return; }
-  try{
-    const recaptcha=getRecaptcha('recaptcha-forgot');
-    confirmationResults.forgot=await signInWithPhoneNumber(auth,full,recaptcha);
-    document.getElementById('forgot-sms-step').style.display='block';
-    showOk('forgot-success',`Código enviado a ${full}`);
-  }catch(e){
-    showErr('forgot-error','Error al enviar SMS: '+e.message);
-    recaptchaVerifiers['recaptcha-forgot']=null;
-  }
-};
-
-window.verifyForgotSMS = async function(){
-  const code=document.getElementById('forgot-sms-code').value.trim();
-  const newPass=document.getElementById('forgot-new-pass').value;
-  hideMsg('forgot-error');
-  if(!code||!newPass){ showErr('forgot-error','Completa todos los campos.'); return; }
-  if(newPass.length<6){ showErr('forgot-error','La contraseña debe tener al menos 6 caracteres.'); return; }
-  try{
-    const result=await confirmationResults.forgot.confirm(code);
-    await updatePassword(result.user,newPass);
-    showOk('forgot-success','✓ Contraseña actualizada. Redirigiendo...');
-    setTimeout(()=>window.location.href='editor.html',1500);
-  }catch(e){
-    showErr('forgot-error','Código incorrecto o expirado.');
-  }
-};
-
-// ── REGISTER EMAIL ────────────────────────────────────────────────────────────
-window.doRegister = async function(){
-  const name=document.getElementById('reg-name').value.trim();
-  const method=window._regMethod||'email';
-  hideMsg('reg-error'); hideMsg('reg-success');
-
-  if(method==='email'){
-    const email=document.getElementById('reg-email').value.trim();
-    const pass=document.getElementById('reg-pass').value;
-    if(!name||!email||!pass){ showErr('reg-error','Completa todos los campos.'); return; }
-    if(pass.length<6){ showErr('reg-error','La contraseña debe tener al menos 6 caracteres.'); return; }
-    setLoading('reg-btn',true);
-    try{
-      const cred=await createUserWithEmailAndPassword(auth,email,pass);
-      await updateProfile(cred.user,{displayName:name});
-      await setDoc(doc(db,'users',cred.user.uid),{
-        name,email,plan:window._selectedPlan||'free',premium:false,
-        compilationsToday:0,compilationsDate:new Date().toDateString(),
-        createdAt:serverTimestamp(),role:'user'
-      });
-      showOk('reg-success','¡Cuenta creada! Redirigiendo...');
-      setTimeout(()=>window.location.href='editor.html',1000);
-    }catch(e){
-      const msgs={
-        'auth/email-already-in-use':'Ya existe una cuenta con ese correo.',
-        'auth/invalid-email':'Correo no válido.',
-        'auth/weak-password':'La contraseña es muy débil.'
-      };
-      showErr('reg-error',msgs[e.code]||'Error al crear cuenta.');
+    await setDoc(doc(db,"users",S.user.uid),payload,{merge:true});
+    S.lastSavedAt=payload.lastSavedAt;els.lastSavedLabel.textContent=`Guardado ${fmt(new Date(payload.lastSavedAt))}`;setSave("saved","Guardado");
+    if(manual||Date.now()-S.lastLogAt>45000){addActivity("Guardado",msg||"Cambios sincronizados.");S.lastLogAt=Date.now()}
+  }catch(e){setSave("dirty","Sin guardar");setStatus("Error al guardar","error")}
+}
+function scheduleSave(){
+  if(S.suspendSave)return;setSave("dirty","Cambios pendientes");clearTimeout(S.saveTimer);S.saveTimer=setTimeout(()=>persist("Autosave."),1500);
+}
+function applyValue(v){S.suspendSave=true;S.editor.setValue(v);S.suspendSave=false;updateMetrics();updatePreview()}
+function insertSnippet(before,after=""){
+  const d=S.editor.getDoc(),sel=d.getSelection(),from=d.getCursor("from");
+  before=before.replace(/\\n/g,"\n");after=after.replace(/\\n/g,"\n");
+  d.replaceSelection(`${before}${sel}${after}`,"around");
+  if(sel){const to=d.getCursor("to");d.setSelection({line:from.line,ch:from.ch+before.length},{line:to.line,ch:Math.max(to.ch-after.length,0)})}
+  else d.setCursor({line:from.line,ch:from.ch+before.length});
+  S.editor.focus();
+}
+function insertRaw(snippet){S.editor.getDoc().replaceSelection(snippet);S.editor.focus()}
+function initEditor(){
+  S.editor=CodeMirror.fromTextArea($("editor-source"),{
+    mode:"stex",lineNumbers:true,lineWrapping:false,indentUnit:2,tabSize:2,
+    smartIndent:true,autofocus:true,styleActiveLine:true,autoCloseBrackets:true,matchBrackets:true,theme:"default",
+    extraKeys:{
+      Tab(cm){cm.somethingSelected()?cm.indentSelection("add"):cm.replaceSelection("  ","end")},
+      "Shift-Tab"(cm){cm.indentSelection("subtract")},
+      "Ctrl-F"(){searchInEditor()},"Cmd-F"(){searchInEditor()},
+      "Ctrl-S"(){persist("Guardado manual.",true)},"Cmd-S"(){persist("Guardado manual.",true)},
+      "Ctrl-Enter"(){compilePDF()},"Cmd-Enter"(){compilePDF()},
+      "Ctrl-/"(cm){cm.toggleComment()},"Cmd-/"(cm){cm.toggleComment()},
+      "Ctrl-K"(){openCatalog()},"Cmd-K"(){openCatalog()},
     }
-    setLoading('reg-btn',false);
-  } else {
-    // Registro con teléfono — primero enviar SMS si no se ha enviado
-    const smsStep=document.getElementById('reg-sms-step');
-    if(smsStep.style.display==='none'||!smsStep.style.display){
-      const prefix=document.getElementById('reg-prefix').value.trim();
-      const phone=document.getElementById('reg-phone').value.trim();
-      const full=prefix+phone;
-      if(!name||!phone){ showErr('reg-error','Completa todos los campos.'); return; }
-      setLoading('reg-btn',true);
-      try{
-        const recaptcha=getRecaptcha('recaptcha-reg');
-        confirmationResults.reg=await signInWithPhoneNumber(auth,full,recaptcha);
-        smsStep.style.display='block';
-        document.getElementById('reg-btn').dataset.orig='Verificar y crear cuenta';
-        showOk('reg-success',`Código enviado a ${full}`);
-      }catch(e){
-        showErr('reg-error','Error al enviar SMS: '+e.message);
-        recaptchaVerifiers['recaptcha-reg']=null;
-      }
-      setLoading('reg-btn',false);
-    } else {
-      // Verificar código
-      const code=document.getElementById('reg-sms-code').value.trim();
-      if(!code){ showErr('reg-error','Ingresa el código SMS.'); return; }
-      setLoading('reg-btn',true);
-      try{
-        const result=await confirmationResults.reg.confirm(code);
-        await updateProfile(result.user,{displayName:name});
-        await setDoc(doc(db,'users',result.user.uid),{
-          name,phone:result.user.phoneNumber,
-          plan:window._selectedPlan||'free',premium:false,
-          compilationsToday:0,compilationsDate:new Date().toDateString(),
-          createdAt:serverTimestamp(),role:'user'
-        });
-        showOk('reg-success','¡Cuenta creada! Redirigiendo...');
-        setTimeout(()=>window.location.href='editor.html',1000);
-      }catch(e){
-        showErr('reg-error','Código incorrecto. Intenta de nuevo.');
-      }
-      setLoading('reg-btn',false);
-    }
+  });
+  applyValue(TEMPLATES.article);
+  S.editor.on("change",()=>{updateMetrics();schedulePreview();scheduleSave()});
+  S.editor.on("cursorActivity",updateMetrics);
+}
+function setTheme(t){
+  document.documentElement.setAttribute("data-theme",t);localStorage.setItem("ltx-theme",t);
+  const isDark=t==="dark";els.themeBtn.textContent=isDark?"◑ Claro":"● Oscuro";
+}
+function toggleTheme(){setTheme(document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark")}
+function searchInEditor(){
+  const q=prompt("Buscar en el documento:",S.lastSearch);if(q===null)return;const t=q.trim();if(!t)return;
+  S.lastSearch=t;const content=S.editor.getValue(),lower=content.toLowerCase(),lt=t.toLowerCase();
+  const ci=S.editor.indexFromPos(S.editor.getCursor());
+  let fi=lower.indexOf(lt,ci+1);if(fi===-1)fi=lower.indexOf(lt);
+  if(fi===-1){setStatus(`No encontrado: "${t}"`,"error");return}
+  const from=S.editor.posFromIndex(fi),to=S.editor.posFromIndex(fi+t.length);
+  S.editor.focus();S.editor.getDoc().setSelection(from,to);S.editor.scrollIntoView({from,to},100);setStatus(`Encontrado: "${t}"`,"ok");
+}
+async function registerCompile(){
+  if(S.userData.premium||!S.user)return;
+  const today=todayKey(),used=getUsed()+1;
+  S.userData.compilationsToday=used;S.userData.compilationsDate=today;
+  await setDoc(doc(db,"users",S.user.uid),{compilationsToday:used,compilationsDate:today},{merge:true});updatePlanUI();
+}
+async function compilePDF(target="latex-frame"){
+  if(!S.user)return;if(!S.userData.premium&&getUsed()>=FREE_LIMIT){showUpgrade();return}
+  setStatus("Compilando PDF...");els.compileBtn.disabled=true;
+  els.formCode.value=S.editor.getValue();els.compileForm.target=target;
+  S.awaitPdf=target==="latex-frame";
+  if(S.awaitPdf){
+    setActiveTab("pdf");els.pdfEmpty.style.display="none";clearTimeout(S.compileTimer);
+    S.compileTimer=setTimeout(()=>{els.compileBtn.disabled=false;if(S.awaitPdf){S.awaitPdf=false;setStatus("Compilación tardó más de lo normal.","error")}},18000);
   }
-};
+  els.compileForm.submit();
+  try{await registerCompile()}catch{}
+  addActivity("Compilación",target==="latex-frame"?"PDF enviado al compilador.":"PDF en nueva pestaña.");
+  if(target!=="latex-frame"){els.compileBtn.disabled=false;setStatus("PDF en nueva pestaña","ok")}
+}
+function setActiveTab(tab){
+  S.currentTab=tab;
+  document.querySelectorAll(".ptab").forEach(t=>t.classList.toggle("active",t.dataset.tab===tab));
+  document.querySelectorAll(".tab-panel").forEach(p=>p.classList.toggle("active",p.id===`tab-${tab}`));
+}
+function showLPSec(sec){
+  S.lpSec=sec;
+  ["files","outline","keys"].forEach(s=>$(`lp-${s}`).style.display=s===sec?"block":"none");
+  document.querySelectorAll(".lp-tab").forEach(t=>t.classList.toggle("active",t.dataset.sec===sec));
+}
+function downloadTex(){
+  const blob=new Blob([S.editor.getValue()],{type:"application/x-tex"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");
+  a.href=url;a.download=`${(els.projectName.value||"proyecto").toLowerCase().replace(/\s+/g,"-")}.tex`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  setStatus("Archivo .tex descargado","ok");addActivity("Descarga","Archivo .tex generado.");
+}
+async function copyCode(){
+  try{await navigator.clipboard.writeText(S.editor.getValue());setStatus("Código copiado","ok");addActivity("Copiar","Código copiado.")}
+  catch{setStatus("Error al copiar","error")}
+}
+function openOverleaf(){
+  const f=document.createElement("form");f.method="POST";f.action="https://www.overleaf.com/docs";f.target="_blank";
+  const i=document.createElement("input");i.type="hidden";i.name="snip";i.value=S.editor.getValue();
+  f.appendChild(i);document.body.appendChild(f);f.submit();document.body.removeChild(f);
+  addActivity("Overleaf","Proyecto abierto en Overleaf.");
+}
+function loadTemplate(force=false){
+  const sel=els.tplSel.value;
+  if(PRO_TEMPLATES.has(sel)&&!S.userData.premium){showUpgrade("Las plantillas avanzadas son parte del plan Premium.");return}
+  if(!force&&!confirm("¿Reemplazar el contenido actual con esta plantilla?"))return;
+  S.template=sel;applyValue(TEMPLATES[sel]||TEMPLATES.article);scheduleSave();
+  setStatus("Plantilla cargada","ok");addActivity("Plantilla",`Plantilla ${sel} aplicada.`);
+}
 
-// ── GOOGLE SIGN IN ────────────────────────────────────────────────────────────
-window.doGoogleLogin = async function(){
-  try{
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
-    // Crear documento en Firestore si no existe
-    const { getDoc, doc } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
-    const snap = await getDoc(doc(db,'users',user.uid));
-    if(!snap.exists()){
-      await setDoc(doc(db,'users',user.uid),{
-        name: user.displayName||'Usuario',
-        email: user.email||'',
-        plan:'free', premium:false,
-        compilationsToday:0,
-        compilationsDate:new Date().toDateString(),
-        createdAt:serverTimestamp(), role:'user'
-      });
-    }
-    window.location.href='editor.html';
-  }catch(e){
-    if(e.code!=='auth/popup-closed-by-user'){
-      showErr('login-error','Error al ingresar con Google: '+e.message);
-    }
+let activeCat="Estructura",catalogFilter="";
+function openCatalog(){els.catalogOverlay.classList.add("show");els.catalogSearch.value="";catalogFilter="";renderCatalog();els.catalogSearch.focus()}
+function closeCatalog(){els.catalogOverlay.classList.remove("show")}
+function renderCatalog(){
+  els.catalogCats.innerHTML=Object.keys(CATALOG).map(c=>`<button class="cat-nav-btn${c===activeCat?" active":""}" data-cat="${esc(c)}"><span class="cat-nav-icon">${CATALOG[c].icon}</span>${esc(c)}</button>`).join("");
+  els.catalogCats.querySelectorAll(".cat-nav-btn").forEach(b=>b.addEventListener("click",()=>{activeCat=b.dataset.cat;catalogFilter="";els.catalogSearch.value="";renderCatalog()}));
+  renderCatalogItems();
+}
+function renderCatalogItems(){
+  const filter=catalogFilter.toLowerCase().trim();let html="";
+  if(filter){
+    const results=[];
+    Object.entries(CATALOG).forEach(([cn,cat])=>Object.entries(cat.sections).forEach(([sn,items])=>items.forEach(item=>{if(item.name.toLowerCase().includes(filter)||item.desc.toLowerCase().includes(filter)||item.snippet.toLowerCase().includes(filter))results.push({...item})})));
+    html=results.length?`<div class="cat-sec-label">Resultados (${results.length})</div><div class="fn-grid">${results.map(fnCard).join("")}</div>`:`<div style="padding:30px;color:var(--tx3);font-size:13px;text-align:center">Sin resultados para "${esc(filter)}"</div>`;
+  }else{
+    const cat=CATALOG[activeCat];
+    Object.entries(cat.sections).forEach(([sec,items])=>{html+=`<div class="cat-sec-label">${esc(sec)}</div><div class="fn-grid">${items.map(fnCard).join("")}</div>`});
   }
-};
-
-window.doLogin=window.doLogin;
-</script>
-
-<script>
-window._selectedPlan='free';
-window._regMethod='email';
-window._loginMethod='email';
-window._forgotMethod='email';
-
-function switchTab(tab){
-  document.getElementById('pane-login').style.display   =tab==='login'   ?'block':'none';
-  document.getElementById('pane-register').style.display=tab==='register'?'block':'none';
-  document.getElementById('pane-forgot').style.display  ='none';
-  document.getElementById('tab-login').classList.toggle('active',   tab==='login');
-  document.getElementById('tab-register').classList.toggle('active',tab==='register');
+  els.catalogItems.innerHTML=html;
+  els.catalogItems.querySelectorAll(".fn-card").forEach(c=>c.addEventListener("click",()=>{insertRaw(c.dataset.snippet);closeCatalog();setStatus(`${c.dataset.name} insertado`,"ok");addActivity("Catálogo",`Se insertó ${c.dataset.name}`)}));
 }
-window.switchTab=switchTab;
+function fnCard(item){const prev=item.snippet.length>55?item.snippet.slice(0,55)+"...":item.snippet;return`<div class="fn-card" data-snippet="${esc(item.snippet)}" data-name="${esc(item.name)}"><div class="fn-name">${esc(item.name)}</div><div class="fn-desc">${esc(item.desc)}</div><div class="fn-preview">${esc(prev)}</div></div>`}
 
-function showForgotPassword(){
-  document.getElementById('pane-login').style.display='none';
-  document.getElementById('pane-forgot').style.display='block';
+function initResizer(){
+  let dragging=false;const ws=document.querySelector(".workspace"),ep=document.querySelector(".editor-panel"),pp=document.querySelector(".preview-panel");
+  els.resizer.addEventListener("pointerdown",e=>{dragging=true;els.resizer.classList.add("dragging");els.resizer.setPointerCapture(e.pointerId);document.body.style.userSelect="none"});
+  window.addEventListener("pointermove",e=>{
+    if(!dragging)return;const wr=ws.getBoundingClientRect(),lw=220,x=e.clientX-wr.left-lw,total=wr.width-lw-4;
+    const pct=Math.min(Math.max(x/total,0.28),0.72);ep.style.flex=`0 0 ${pct*100}%`;pp.style.flex=`0 0 ${(1-pct)*100}%`;
+  });
+  window.addEventListener("pointerup",()=>{dragging=false;els.resizer.classList.remove("dragging");document.body.style.userSelect=""});
 }
-window.showForgotPassword=showForgotPassword;
-
-function showLoginPane(){
-  document.getElementById('pane-forgot').style.display='none';
-  document.getElementById('pane-login').style.display='block';
+async function loadUser(uid){
+  const snap=await getDoc(doc(db,"users",uid));
+  if(snap.exists())S.userData={premium:false,compilationsToday:0,compilationsDate:"",...snap.data()};
+  updatePlanUI();
+  els.tplSel.value=S.userData.lastTemplate&&TEMPLATES[S.userData.lastTemplate]?S.userData.lastTemplate:"article";
+  S.template=els.tplSel.value;els.projectName.value=S.userData.projectName||"Proyecto LaTeX";
+  document.title=`${els.projectName.value} — LaTeXify`;applyValue(S.userData.lastCode||TEMPLATES[S.template]);
+  if(S.userData.lastSavedAt){els.lastSavedLabel.textContent=`Guardado ${fmt(new Date(S.userData.lastSavedAt))}`;setSave("saved","Guardado")}
+  const name=S.user.displayName||S.user.email||"U";
+  els.userName.querySelector(".user-av").textContent=name[0].toUpperCase();
+  els.userName.querySelector("span:last-child").textContent=(S.user.displayName||S.user.email||"").split(" ")[0].slice(0,14);
+  addActivity("Sesión restaurada","Última sesión cargada correctamente.");
 }
-window.showLoginPane=showLoginPane;
-
-function setLoginMethod(m){
-  window._loginMethod=m;
-  document.getElementById('login-email-form').style.display=m==='email'?'block':'none';
-  document.getElementById('login-phone-form').style.display=m==='phone'?'block':'none';
-  document.getElementById('login-method-email').classList.toggle('active',m==='email');
-  document.getElementById('login-method-phone').classList.toggle('active',m==='phone');
+function bindAll(){
+  const saved=localStorage.getItem("ltx-theme");if(saved)document.documentElement.setAttribute("data-theme",saved);
+  const isDark=document.documentElement.getAttribute("data-theme")==="dark";els.themeBtn.textContent=isDark?"◑ Claro":"● Oscuro";
+  els.themeBtn.addEventListener("click",toggleTheme);
+  els.loadTplBtn.addEventListener("click",()=>loadTemplate());
+  els.saveBtn.addEventListener("click",()=>persist("Guardado manual.",true));
+  els.compileBtn.addEventListener("click",()=>compilePDF());
+  els.overleafBtn.addEventListener("click",openOverleaf);
+  els.logoutBtn.addEventListener("click",async()=>{await signOut(auth);window.location.href="login.html"});
+  [els.copyCodeBtn,els.copyCodeBtn2].forEach(b=>{if(b)b.addEventListener("click",copyCode)});
+  [els.downloadBtn,els.downloadBtn2].forEach(b=>{if(b)b.addEventListener("click",downloadTex)});
+  [els.newDocBtn,els.newDocBtn2].forEach(b=>{if(b)b.addEventListener("click",()=>{if(confirm("¿Nuevo documento?"))loadTemplate(true)})});
+  els.projectName.addEventListener("input",()=>{document.title=`${els.projectName.value||"Proyecto"} — LaTeXify`;scheduleSave()});
+  els.searchBtn.addEventListener("click",searchInEditor);
+  els.commentBtn.addEventListener("click",()=>{S.editor.toggleComment();S.editor.focus()});
+  if(els.indentBtn)els.indentBtn.addEventListener("click",()=>{S.editor.indentSelection("add");S.editor.focus()});
+  document.querySelectorAll("[data-before]").forEach(b=>b.addEventListener("click",()=>insertSnippet(b.dataset.before||"",b.dataset.after||"")));
+  document.querySelectorAll(".ptab").forEach(t=>t.addEventListener("click",()=>setActiveTab(t.dataset.tab)));
+  document.querySelectorAll(".lp-tab").forEach(t=>t.addEventListener("click",()=>showLPSec(t.dataset.sec)));
+  els.refreshBtn.addEventListener("click",()=>{updatePreview();setStatus("Vista actualizada","ok")});
+  els.openPdfBtn.addEventListener("click",()=>compilePDF("_blank"));
+  els.outlineList.addEventListener("click",e=>{const b=e.target.closest("[data-line]");if(b){S.editor.focus();S.editor.setCursor({line:Number(b.dataset.line),ch:0});S.editor.scrollIntoView({line:Number(b.dataset.line),ch:0},100)}});
+  els.pdfFrame.addEventListener("load",()=>{if(!S.awaitPdf)return;S.awaitPdf=false;clearTimeout(S.compileTimer);els.compileBtn.disabled=false;els.pdfFrame.style.display="block";els.pdfEmpty.style.display="none";setStatus("PDF compilado","ok");addActivity("PDF listo","PDF generado y visible.")});
+  els.closeUpgrade.addEventListener("click",closeUpgrade);
+  els.upgradeOverlay.addEventListener("click",e=>{if(e.target===els.upgradeOverlay)closeUpgrade()});
+  els.catalogBtn.addEventListener("click",openCatalog);
+  els.catalogClose.addEventListener("click",closeCatalog);
+  els.catalogOverlay.addEventListener("click",e=>{if(e.target===els.catalogOverlay)closeCatalog()});
+  els.catalogSearch.addEventListener("input",e=>{catalogFilter=e.target.value;renderCatalogItems()});
+  window.addEventListener("beforeunload",e=>{if(els.saveLabel.textContent.includes("pendientes")){e.preventDefault();e.returnValue=""}});
 }
-window.setLoginMethod=setLoginMethod;
 
-function setRegMethod(m){
-  window._regMethod=m;
-  document.getElementById('reg-email-form').style.display=m==='email'?'block':'none';
-  document.getElementById('reg-phone-form').style.display=m==='phone'?'block':'none';
-  document.getElementById('reg-method-email').classList.toggle('active',m==='email');
-  document.getElementById('reg-method-phone').classList.toggle('active',m==='phone');
-}
-window.setRegMethod=setRegMethod;
+initEditor();bindAll();initResizer();updateMetrics();updatePreview();renderActivity();showLPSec("files");
 
-function setForgotMethod(m){
-  window._forgotMethod=m;
-  document.getElementById('forgot-email-form').style.display=m==='email'?'block':'none';
-  document.getElementById('forgot-phone-form').style.display=m==='phone'?'block':'none';
-  document.getElementById('forgot-method-email').classList.toggle('active',m==='email');
-  document.getElementById('forgot-method-phone').classList.toggle('active',m==='phone');
-}
-window.setForgotMethod=setForgotMethod;
-
-function selectPlan(plan){
-  window._selectedPlan=plan;
-  document.getElementById('opt-free').classList.toggle('selected',plan==='free');
-  document.getElementById('opt-premium').classList.toggle('selected',plan==='premium');
-  const btn=document.getElementById('reg-btn');
-  btn.textContent=plan==='premium'?'Crear cuenta y pagar Premium':'Crear cuenta gratis';
-  btn.dataset.orig=btn.textContent;
-}
-window.selectPlan=selectPlan;
-
-document.addEventListener('keydown',e=>{
-  if(e.key==='Enter'){
-    const pane=document.getElementById('pane-login');
-    if(pane&&pane.style.display!=='none') window.doLogin?.();
-  }
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.href="login.html";return}
+  S.user=user;
+  try{await loadUser(user.uid)}catch(e){console.error(e);setStatus("Error al cargar sesión","error");addActivity("Carga parcial","Se abrió con plantilla base.")}
 });
 </script>
 </body>
