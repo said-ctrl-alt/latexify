@@ -235,25 +235,97 @@ select.tpl-sel{font-size:11px;font-family:'DM Sans',sans-serif;background:var(--
   <button class="tb-btn" onclick="doLogout()">Salir</button>
 </div>
 
+<style>
+#toolbar2{display:flex;align-items:center;gap:6px;padding:3px 10px;background:var(--paper2);border-bottom:1px solid var(--border);flex-shrink:0;transition:background .2s}
+#toolbar-toggle{
+  display:flex;align-items:center;gap:5px;
+  font-size:11px;font-family:'DM Mono',monospace;
+  color:var(--ink2);background:var(--paper);
+  border:1px solid var(--border);border-radius:5px;
+  padding:3px 10px;cursor:pointer;
+  transition:background .15s,color .15s;
+  white-space:nowrap;user-select:none;
+}
+#toolbar-toggle:hover{background:var(--paper3);color:var(--ink)}
+#toolbar-toggle.open{background:var(--teal-l);color:var(--teal);border-color:var(--teal-m)}
+#toolbar-toggle .arrow{display:inline-block;transition:transform .2s;font-style:normal;font-size:9px}
+#toolbar-toggle.open .arrow{transform:rotate(180deg)}
+
+#toolbar-drawer{
+  display:none;
+  flex-wrap:wrap;
+  gap:3px;
+  align-items:center;
+}
+#toolbar-drawer.open{display:flex}
+
+/* grupos dentro del drawer */
+.cmd-group{
+  display:flex;align-items:center;gap:2px;
+  padding:2px 5px;border-radius:5px;
+  border:1px solid var(--border);
+  background:var(--paper);
+}
+.cmd-group-label{
+  font-size:9px;font-family:'DM Mono',monospace;
+  color:var(--ink3);text-transform:uppercase;
+  letter-spacing:.06em;padding-right:3px;
+  border-right:1px solid var(--border);margin-right:2px;
+}
+</style>
+
 <div id="toolbar2">
-  <button class="cmd" onclick="ins('\\textbf{','}')"><b>B</b></button>
-  <button class="cmd" onclick="ins('\\textit{','}')" style="font-style:italic">I</button>
-  <button class="cmd" onclick="ins('\\underline{','}')"><u>U</u></button>
-  <button class="cmd" onclick="ins('$','$')">$x$</button>
-  <button class="cmd" onclick="ins('\\[\n','\\]\n')">$$$$</button>
-  <button class="cmd" onclick="ins('\\frac{','}{n}')">½</button>
-  <button class="cmd" onclick="ins('\\sqrt{','}')">√</button>
-  <button class="cmd" onclick="ins('\\begin{equation}\n','\\n\\end{equation}')">Eq.</button>
-  <button class="cmd" onclick="ins('\\begin{itemize}\n  \\item ','\\n\\end{itemize}')">• Lista</button>
-  <button class="cmd" onclick="ins('\\begin{enumerate}\n  \\item ','\\n\\end{enumerate}')">1. Lista</button>
-  <button class="cmd" onclick="ins('\\begin{table}[h]\n\\centering\n\\caption{Título}\n\\begin{tabular}{|c|c|}\n\\hline\nCol1 & Col2 \\\\\n\\hline\nDato & Dato \\\\\n\\hline\n\\end{tabular}\n','\\end{table}')">Tabla</button>
-  <button class="cmd" onclick="ins('\\cite{','}')">\cite</button>
-  <button class="cmd" onclick="ins('\\ref{','}')">\ref</button>
-  <button class="cmd" onclick="ins('\\label{','}')">\label</button>
-  <button class="cmd" onclick="ins('\\section{','}')">§ Sec</button>
-  <button class="cmd" onclick="ins('\\subsection{','}')">§§ Sub</button>
-  <button class="cmd" onclick="ins('\\includegraphics[width=0.8\\linewidth]{','}')">🖼 img</button>
+  <button id="toolbar-toggle" onclick="toggleToolbar()" title="Mostrar/ocultar herramientas">
+    ⚡ Herramientas
+    <em class="arrow">▼</em>
+  </button>
+
+  <div id="toolbar-drawer">
+    <!-- Formato -->
+    <div class="cmd-group">
+      <span class="cmd-group-label">Fmt</span>
+      <button class="cmd" onclick="ins('\\textbf{','}')" title="Negrita"><b>B</b></button>
+      <button class="cmd" onclick="ins('\\textit{','}')" style="font-style:italic" title="Cursiva">I</button>
+      <button class="cmd" onclick="ins('\\underline{','}')" title="Subrayado"><u>U</u></button>
+    </div>
+    <!-- Matemáticas -->
+    <div class="cmd-group">
+      <span class="cmd-group-label">Math</span>
+      <button class="cmd" onclick="ins('$','$')" title="Ecuación inline">$x$</button>
+      <button class="cmd" onclick="ins('\\[\n','\\]\n')" title="Bloque de ecuación">[ eq ]</button>
+      <button class="cmd" onclick="ins('\\begin{equation}\n','\\n\\end{equation}')" title="Ecuación numerada">Eq.</button>
+      <button class="cmd" onclick="ins('\\frac{','}{n}')" title="Fracción">½</button>
+      <button class="cmd" onclick="ins('\\sqrt{','}')" title="Raíz cuadrada">√</button>
+    </div>
+    <!-- Estructura -->
+    <div class="cmd-group">
+      <span class="cmd-group-label">Struct</span>
+      <button class="cmd" onclick="ins('\\section{','}')" title="Sección">§ Sec</button>
+      <button class="cmd" onclick="ins('\\subsection{','}')" title="Subsección">§§ Sub</button>
+      <button class="cmd" onclick="ins('\\begin{itemize}\n  \\item ','\\n\\end{itemize}')" title="Lista con viñetas">• Lista</button>
+      <button class="cmd" onclick="ins('\\begin{enumerate}\n  \\item ','\\n\\end{enumerate}')" title="Lista numerada">1. Lista</button>
+    </div>
+    <!-- Elementos -->
+    <div class="cmd-group">
+      <span class="cmd-group-label">Elem</span>
+      <button class="cmd" onclick="ins('\\begin{table}[h]\n\\centering\n\\caption{Título}\n\\begin{tabular}{|c|c|}\n\\hline\nCol1 & Col2 \\\\\n\\hline\nDato & Dato \\\\\n\\hline\n\\end{tabular}\n','\\end{table}')" title="Tabla">Tabla</button>
+      <button class="cmd" onclick="ins('\\includegraphics[width=0.8\\linewidth]{','}')" title="Imagen">🖼 img</button>
+      <button class="cmd" onclick="ins('\\cite{','}')" title="Cita">\cite</button>
+      <button class="cmd" onclick="ins('\\ref{','}')" title="Referencia">\ref</button>
+      <button class="cmd" onclick="ins('\\label{','}')" title="Etiqueta">\label</button>
+    </div>
+  </div>
 </div>
+
+<script>
+function toggleToolbar(){
+  const btn=document.getElementById('toolbar-toggle');
+  const drawer=document.getElementById('toolbar-drawer');
+  const isOpen=drawer.classList.contains('open');
+  drawer.classList.toggle('open',!isOpen);
+  btn.classList.toggle('open',!isOpen);
+}
+</script>
 
 <div id="main">
 
