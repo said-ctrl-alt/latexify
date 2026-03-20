@@ -390,6 +390,7 @@ kbd{background:var(--sf3);border:1px solid var(--bd2);padding:1px 5px;border-rad
         <select id="tpl-sel" class="tpl-sel">
           <option value="article">Artículo científico</option>
           <option value="lab">Reporte de lab</option>
+          <option value="replab">RepLab (físicas)</option>
           <option value="thesis">Tesis ★</option>
           <option value="beamer">Beamer ★</option>
           <option value="ieee">IEEE ★</option>
@@ -708,6 +709,163 @@ La ley de Ohm: $V = IR$
 \section{Conclusiones}
 Resume lo observado en la práctica.
 \end{document}`,
+  replab:String.raw`\documentclass{replab}
+\usepackage{lipsum}
+
+% --- Información del documento ---
+\title{Practica 1}
+\author{\mbox{}}
+
+% Nota: Si se desea incluir más de un autor, el archivo replab.cls contiene
+% líneas comentadas para 1 a 4 autores. Escoge solo una sección y comenta las demás.
+
+\date{\today}
+\subtitle={Cinemática}
+\subject={Laboratorio de Física}
+
+\setlength{\columnsep}{14pt}
+
+% --- Archivo de bibliografía ---
+\addbibresource{repbib.bib}
+
+% --- Inicio del documento ---
+\begin{document}
+
+	\pagestyle{fancy}
+	\unspacedoperators
+
+% --- Título ---
+	\twocolumn[
+		\begin{center}
+			\maketitle
+
+			{\begin{tcolorbox}[colframe=white, colback=principaldos, arc=8pt]
+				\begin{onecolabstract}
+					El resumen condensa un reporte de laboratorio en una revisión general breve de 150-300 palabras. Debe proveer a los lectores con una versión compacta de los objetivos de investigación, los métodos y materiales usados, los resultados principales y la conclusión final.
+
+					\medskip
+
+					\noindent\textit{Palabras clave:} algunas, palabras, importantes, relacionadas, con, el, experimento.
+				\end{onecolabstract}
+
+				\tcblower
+
+				\selectlanguage{english}
+				\begin{onecolabstract}
+					The abstract condenses a lab report into a brief overview of about 150–300 words. It should provide readers with a compact version of the research aims, the methods and materials used, the main results, and the final conclusion.
+
+					\medskip
+
+					\noindent\textit{Keywords:} some, important, words, related, to, the, experiment.
+				\end{onecolabstract}
+			\end{tcolorbox}}
+
+			\vspace{0.5\baselineskip}
+		\end{center}
+	]
+
+	\saythanks
+	\selectlanguage{spanish}
+
+% --- Cuerpo del reporte ---
+
+	\section{Introducción}
+
+	La introducción debe establecer la escena para el experimento. Comienza proporcionando información del tema de investigación y explicando por qué es importante en un contexto real o teórico. Describe las investigaciones previas relevantes y menciona cómo tu estudio puede confirmar, expandir o rellenar vacíos en el campo \autocite{bhandari-2022}.
+
+	\section{Metodología}
+
+	La metodología detalla los pasos que tomaste para adquirir y analizar los datos. Incluye suficientes detalles para que otros puedan seguir o evaluar tus procedimientos. Escribe esta sección en tiempo pasado \autocite{baird}.
+
+	\section{Materiales}
+
+	Enlista el equipo de laboratorio y materiales que utilizaste. Incluye el modelo y marca de cualquier instrumento especializado.
+
+	\section{Diseño experimental}
+
+	Describe el montaje utilizado durante la práctica, detallando los pasos necesarios para configurar y calibrar cualquier equipo especializado.
+
+	\section{Procedimiento}
+
+	Describe los pasos exactos en orden cronológico. Proporciona suficiente información para que otra persona pueda replicar tu procedimiento. Ver figura~\ref{fig1}.
+
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=.9\columnwidth]{escudouni.png}
+		\caption{Esta es una imagen de ejemplo.}
+		\label{fig1}
+	\end{figure}
+
+	\section{Resultados}
+
+	Reporta los resultados de cualquier procedimiento de análisis estadístico. Los principales resultados a reportar son:
+	\begin{itemize}
+		\item Cualquier análisis descriptivo.
+		\item Cualquier análisis cuantitativo.
+		\item La relevancia de los resultados obtenidos.
+		\item Estimaciones del error estándar o intervalos de confianza.
+	\end{itemize}
+
+	\begin{table}[htbp]
+		\centering
+		\begin{longtblr}[
+			theme = replab,
+			caption = {Un ejemplo de tabla.},
+			entry = {Unidades básicas del SI.},
+			label = {tab:unatabla},
+			note{a} = {Esta es una nota al pie.},
+			remark{Nota} = {Esta es una nota general sobre la tabla.},
+			remark{Fuente} = {Aquí se puede añadir la procedencia de los datos.}
+		]{
+			cell{2-7}{2} = {c},
+			row{1} = {font=\bfseries}
+		}
+			\toprule
+			Nombre & Símbolo & Magnitud \\
+			\midrule
+			segundo\TblrNote{a} & s & tiempo \\
+			metro & m & longitud \\
+			kilogramo & kg & masa \\
+			amperio & A & corriente eléctrica \\
+			mol & mol & cantidad de sustancia \\
+			candela & cd & intensidad lumínica \\
+			\bottomrule
+		\end{longtblr}
+	\end{table}
+
+	\section{Análisis de resultados}
+
+	Interpreta los resultados obtenidos a la luz de los objetivos e hipótesis. Explica qué tendencias observaste, cómo se relacionan con el modelo teórico y cuál es el significado físico de los valores calculados.
+
+	\section{Discusión}
+
+	En esta sección puedes:
+	\begin{itemize}
+		\item Interpretar tus resultados.
+		\item Comparar tus hallazgos con tus expectativas teóricas.
+		\item Identificar cualquier fuente de error experimental.
+		\item Explicar cualquier resultado inesperado.
+		\item Sugerir posibles mejoras para futuros estudios.
+	\end{itemize}
+
+	\begin{equation}
+		x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}
+	\end{equation}
+
+	\section{Conclusión}
+
+	Resume los hallazgos de tu experimento, con una breve descripción de las ventajas, limitaciones e implicaciones de tu estudio para futuras investigaciones.
+
+	\appendix
+
+	\section{Primer apéndice}
+
+	El apéndice contiene información de apoyo que es demasiado larga o detallada para incluirse en el texto principal, como conjuntos complejos de gráficos, tablas o datos sin procesar.
+
+	\printbibliography[heading=bibintoc]
+
+\end{document}`,
+
   thesis:String.raw`\documentclass[12pt,a4paper]{book}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
