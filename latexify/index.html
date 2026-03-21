@@ -305,33 +305,95 @@ Se aplicó el método de...
 <section class="payment" id="payment">
   <div class="section-label">¿Cómo pagar?</div>
   <div class="section-title">Fácil, en menos de 5 minutos</div>
-  <div class="payment-steps">
-    <div class="step">
-      <div class="step-num">1</div>
-      <h4>Crea tu cuenta</h4>
-      <p>Regístrate gratis con tu correo universitario en LaTeXify.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">2</div>
-      <h4>Transfiere por Nequi o Daviplata</h4>
-      <p>Envía <strong>$8.000 COP</strong> al número <strong id="nequi-num">cargando...</strong> con el asunto: tu correo registrado.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">3</div>
-      <h4>Envía el comprobante</h4>
-      <p>Toma captura de pantalla del pago y envíala por WhatsApp al mismo número.</p>
-    </div>
-    <div class="step">
-      <div class="step-num">4</div>
-      <h4>¡Listo en minutos!</h4>
-      <p>Activamos tu cuenta Premium manualmente. Recibirás confirmación por WhatsApp.</p>
+
+  <!-- Método tabs -->
+  <div class="pay-method-tabs">
+    <button class="pmt active" id="pmt-nequi"      onclick="showMethod('nequi')">📱 Nequi / Daviplata</button>
+    <button class="pmt"        id="pmt-bancolombia" onclick="showMethod('bancolombia')">🏦 Bancolombia</button>
+    <button class="pmt"        id="pmt-card"        onclick="showMethod('card')">💳 Tarjeta</button>
+  </div>
+
+  <!-- Nequi / Daviplata -->
+  <div class="pay-panel" id="panel-nequi">
+    <div class="payment-steps">
+      <div class="step"><div class="step-num">1</div><h4>Crea tu cuenta</h4><p>Regístrate gratis con tu correo universitario en LaTeXify.</p></div>
+      <div class="step"><div class="step-num">2</div><h4>Transfiere por Nequi o Daviplata</h4><p>Envía <strong>$8.000 COP</strong> al número <strong>302 567 7053</strong> con el asunto: tu correo registrado.</p></div>
+      <div class="step"><div class="step-num">3</div><h4>Envía el comprobante</h4><p>Toma captura de pantalla del pago y envíala por WhatsApp al mismo número.</p></div>
+      <div class="step"><div class="step-num">4</div><h4>¡Listo en minutos!</h4><p>Activamos tu cuenta Premium manualmente. Recibirás confirmación por WhatsApp.</p></div>
     </div>
   </div>
+
+  <!-- Bancolombia -->
+  <div class="pay-panel" id="panel-bancolombia" style="display:none">
+    <div class="payment-steps">
+      <div class="step"><div class="step-num">1</div><h4>Crea tu cuenta</h4><p>Regístrate gratis con tu correo universitario en LaTeXify.</p></div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <h4>Haz la transferencia</h4>
+        <p>Envía <strong>$8.000 COP</strong> a la siguiente cuenta:</p>
+        <div class="bank-detail-box">
+          <div class="bdb-row"><span>Banco</span><strong>Bancolombia</strong></div>
+          <div class="bdb-row"><span>Tipo</span><strong>Ahorros</strong></div>
+          <div class="bdb-row"><span>Número</span><strong>123-456789-00 <button class="cp-btn-idx" onclick="cpIdx('123-456789-00',this)">Copiar</button></strong></div>
+          <div class="bdb-row"><span>NIT / CC</span><strong>900.123.456-7</strong></div>
+          <div class="bdb-row"><span>Beneficiario</span><strong>LaTeXify S.A.S</strong></div>
+        </div>
+        <p style="margin-top:8px;font-size:12px">En el concepto escribe tu correo registrado.</p>
+      </div>
+      <div class="step"><div class="step-num">3</div><h4>Envía el comprobante</h4><p>Toma captura del recibo y envíala por WhatsApp al <strong>302 567 7053</strong>.</p></div>
+      <div class="step"><div class="step-num">4</div><h4>¡Listo en minutos!</h4><p>Activamos tu cuenta Premium. Recibirás confirmación por WhatsApp.</p></div>
+    </div>
+  </div>
+
+  <!-- Tarjeta -->
+  <div class="pay-panel" id="panel-card" style="display:none">
+    <div class="payment-steps" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+      <div class="step"><div class="step-num">1</div><h4>Crea tu cuenta</h4><p>Regístrate y elige el plan Premium al momento de crear tu cuenta.</p></div>
+      <div class="step"><div class="step-num">2</div><h4>Ingresa tus datos</h4><p>Completa el formulario de tarjeta de crédito o débito de forma segura.</p></div>
+      <div class="step"><div class="step-num">3</div><h4>Confirma el pago</h4><p>Tu pago se procesa al instante. Sin redirecciones externas.</p></div>
+      <div class="step"><div class="step-num">4</div><h4>¡Acceso inmediato!</h4><p>Tu cuenta Premium se activa automáticamente tras el pago.</p></div>
+    </div>
+    <div class="card-pay-note">
+      💳 El pago con tarjeta estará disponible próximamente. Por ahora usa Nequi, Daviplata o Bancolombia.
+    </div>
+  </div>
+
   <div class="payment-info">
     <div class="payment-info-icon">ℹ️</div>
     <p><strong>Importante:</strong> El pago es manual y seguro. Activamos tu cuenta en menos de 2 horas en horario de lunes a sábado. Para el plan semestral ($40.000 COP) también puedes pagar en efectivo directamente. ¿Dudas? Escríbenos por WhatsApp.</p>
   </div>
 </section>
+
+<style>
+.pay-method-tabs{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin:28px 0 24px}
+.pmt{padding:10px 20px;font-family:var(--sans);font-size:14px;font-weight:500;color:var(--ink3);background:var(--paper);border:1.5px solid var(--border);border-radius:100px;cursor:pointer;transition:all .2s}
+.pmt:hover{border-color:var(--teal-m);color:var(--teal)}
+.pmt.active{background:var(--teal-l);border-color:var(--teal-m);color:var(--teal)}
+.pay-panel{animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.bank-detail-box{background:var(--paper);border:1px solid var(--border);border-radius:8px;padding:10px 12px;margin-top:10px}
+.bdb-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--border);font-size:12px}
+.bdb-row:last-child{border-bottom:none}
+.bdb-row span{color:var(--ink3)}
+.bdb-row strong{color:var(--ink);font-weight:500;display:flex;align-items:center;gap:6px}
+.cp-btn-idx{background:none;border:none;color:var(--teal);font-family:var(--sans);font-size:11px;font-weight:500;cursor:pointer;padding:1px 5px;border-radius:4px}
+.cp-btn-idx:hover{background:var(--teal-l)}
+.card-pay-note{margin-top:20px;background:var(--amber-l);border:1px solid #FDE68A;border-radius:8px;padding:14px 16px;font-size:13px;color:var(--amber);text-align:center}
+</style>
+<script>
+function showMethod(m){
+  ['nequi','bancolombia','card'].forEach(id=>{
+    document.getElementById('pmt-'+id).classList.toggle('active', id===m);
+    document.getElementById('panel-'+id).style.display = id===m ? 'block' : 'none';
+  });
+}
+function cpIdx(text, btn){
+  navigator.clipboard.writeText(text).then(()=>{
+    btn.textContent='✓ Copiado';
+    setTimeout(()=>btn.textContent='Copiar',2000);
+  });
+}
+</script>
 
 <section class="faq" id="faq">
   <div class="faq-inner">
@@ -368,32 +430,9 @@ Se aplicó el método de...
 </footer>
 
 <script src="firebase-config.js"></script>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAuth, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-const FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyAaezwe-pPDi1rsS3uFopk9JMY199LLoqk",
-  authDomain:        "latexify-4bfc9.firebaseapp.com",
-  projectId:         "latexify-4bfc9",
-  storageBucket:     "latexify-4bfc9.firebasestorage.app",
-  messagingSenderId: "292044762895",
-  appId:             "1:292044762895:web:a7a0ed9489331e2e88d87a"
-};
-
-const app  = initializeApp(FIREBASE_CONFIG);
-const auth = getAuth(app);
-await setPersistence(auth, browserLocalPersistence);
-
-// Si ya está logueado → ir directo al editor
-onAuthStateChanged(auth, user => {
-  if(user) window.location.href = 'editor.html';
-});
-</script>
-
 <script>
 // Cargar número de contacto
-document.getElementById('nequi-num').textContent = typeof PAYMENT_CONFIG !== 'undefined' ? PAYMENT_CONFIG.nequi : '(configura en firebase-config.js)';
+document.getElementById('302 5677053').textContent = typeof PAYMENT_CONFIG !== 'undefined' ? PAYMENT_CONFIG.nequi : '(configura en firebase-config.js)';
 
 function toggleFaq(el){
   const ans = el.nextElementSibling;
