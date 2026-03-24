@@ -14,728 +14,565 @@
 *{box-sizing:border-box;margin:0;padding:0}
 
 [data-theme="light"]{
-  --bg:#eef2f6;
-  --panel:#fbfdff;
-  --panel-2:#f4f7fb;
-  --panel-3:#e8eef5;
-  --panel-4:#d7e0ea;
-  --line:#d7dee7;
-  --line-strong:#c4d0dc;
-  --text:#122033;
-  --text-soft:#526176;
-  --text-muted:#7b889b;
-  --accent:#0f8b72;
-  --accent-2:#12b28f;
-  --accent-soft:#ddf7f1;
-  --warn:#b86a17;
-  --warn-soft:#fff3dd;
-  --danger:#c24f4f;
-  --danger-soft:#ffe7e7;
-  --shadow:0 20px 60px rgba(18,32,51,0.08);
-  --editor-bg:#f8fbff;
-  --editor-surface:#ffffff;
-  --editor-ink:#122033;
-  --preview-paper:#ffffff;
-  --status-bg:#142131;
-  --status-ink:#c8d2de;
+  --bg:#eef2f6;--panel:#fbfdff;--panel-2:#f4f7fb;--panel-3:#e8eef5;--panel-4:#d7e0ea;
+  --line:#d7dee7;--line-strong:#c4d0dc;--text:#122033;--text-soft:#526176;--text-muted:#7b889b;
+  --accent:#0f8b72;--accent-2:#12b28f;--accent-soft:#ddf7f1;--warn:#b86a17;--warn-soft:#fff3dd;
+  --danger:#c24f4f;--danger-soft:#ffe7e7;--shadow:0 20px 60px rgba(18,32,51,0.08);
+  --editor-bg:#f8fbff;--editor-surface:#ffffff;--editor-ink:#122033;
+  --status-bg:#142131;--status-ink:#c8d2de;
+  --topbar:#f0f4f8;--topbar-border:#d0d9e4;--sidebar:#f7fafc;--sidebar-border:#dce5ef;
+  --tool-bg:#eef2f7;--tool-border:#cdd5e0;--tab-active:#0f8b72;--file-active:#dff7f0;
+  --pkg-pill:#e2f9f3;--pkg-pill-border:#a8e8d8;--pkg-pill-text:#0f6b57;
 }
 
 [data-theme="dark"]{
-  --bg:#0e1722;
-  --panel:#111d2a;
-  --panel-2:#0b1520;
-  --panel-3:#162232;
-  --panel-4:#233246;
-  --line:#243447;
-  --line-strong:#30465f;
-  --text:#edf3fa;
-  --text-soft:#b8c5d4;
-  --text-muted:#8ea0b4;
-  --accent:#1ac7a0;
-  --accent-2:#3ce4bc;
-  --accent-soft:#12342f;
-  --warn:#ffb457;
-  --warn-soft:#352411;
-  --danger:#ff8c8c;
-  --danger-soft:#351b1b;
-  --shadow:0 26px 70px rgba(0,0,0,0.34);
-  --editor-bg:#0b1520;
-  --editor-surface:#0f1c29;
-  --editor-ink:#edf3fa;
-  --preview-paper:#0f1b28;
-  --status-bg:#08111a;
-  --status-ink:#b4c2d2;
+  --bg:#0e1722;--panel:#111d2a;--panel-2:#0b1520;--panel-3:#162232;--panel-4:#233246;
+  --line:#243447;--line-strong:#30465f;--text:#edf3fa;--text-soft:#b8c5d4;--text-muted:#8ea0b4;
+  --accent:#1ac7a0;--accent-2:#3ce4bc;--accent-soft:#12342f;--warn:#ffb457;--warn-soft:#352411;
+  --danger:#ff8c8c;--danger-soft:#351b1b;--shadow:0 26px 70px rgba(0,0,0,0.34);
+  --editor-bg:#0b1520;--editor-surface:#0f1c29;--editor-ink:#edf3fa;
+  --status-bg:#08111a;--status-ink:#b4c2d2;
+  --topbar:#0d1520;--topbar-border:#1e2d3d;--sidebar:#111923;--sidebar-border:#1e2d3d;
+  --tool-bg:#131e2b;--tool-border:#1e2d3d;--tab-active:#1ac7a0;--file-active:#0f2d25;
+  --pkg-pill:#0f2d25;--pkg-pill-border:#1a5444;--pkg-pill-text:#3ce4bc;
 }
 
-html,body{height:100%}
-body{
-  font-family:'IBM Plex Sans',sans-serif;
-  background:#111318;
-  color:var(--text);
+html,body{height:100%;overflow:hidden}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--text)}
+button,input,select,textarea{font:inherit}
+a{color:inherit;text-decoration:none}
+
+.app-shell{height:100%;display:flex;flex-direction:column}
+
+/* ── TOP BAR ── */
+.app-topbar{
+  display:flex;align-items:center;gap:6px;flex-wrap:nowrap;
+  padding:0 12px;height:46px;flex-shrink:0;
+  background:var(--topbar);border-bottom:1px solid var(--topbar-border);
   overflow:hidden;
 }
 
-button,input,select,textarea{font:inherit}
-a{color:inherit}
-
-.app-shell{height:100%;display:flex;flex-direction:column;background:#171a20}
-.app-topbar{
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
-  padding:10px 16px;background:#0f1116;border-bottom:1px solid #262a33;
-  backdrop-filter:blur(18px);flex-shrink:0;
-}
-[data-theme="dark"] .app-topbar{background:#0f1116}
-
-.brand-group{display:flex;align-items:center;gap:18px;min-width:0}
 .brand{
-  display:inline-flex;align-items:center;gap:10px;font-family:'IBM Plex Mono',monospace;
-  font-size:15px;font-weight:500;letter-spacing:-0.02em;text-decoration:none;
+  display:inline-flex;align-items:center;font-family:'IBM Plex Mono',monospace;
+  font-size:15px;font-weight:600;letter-spacing:-0.04em;color:var(--text);
+  white-space:nowrap;margin-right:2px;flex-shrink:0;
 }
-.brand-mark{
-  width:32px;height:32px;border-radius:10px;display:grid;place-items:center;
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;
-  box-shadow:0 10px 24px rgba(15,139,114,0.28);
-}
-.brand span:last-child{color:var(--text)}
+.brand-tex{color:var(--accent)}
 
-.project-header{min-width:0;display:flex;flex-direction:column;gap:6px}
-.project-name{
-  border:none;background:transparent;color:var(--text);font-size:16px;font-weight:600;outline:none;
-  min-width:220px;max-width:320px;
+.project-name-input{
+  height:28px;padding:0 8px;border-radius:6px;border:1px solid transparent;
+  background:transparent;color:var(--text);font-size:13px;font-weight:600;
+  outline:none;min-width:100px;max-width:180px;flex-shrink:1;
 }
-.project-name::placeholder{color:var(--text-muted)}
-.project-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px;color:var(--text-muted)}
-
-.badge{
-  display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;border:1px solid transparent;
-  font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.05em;
+.project-name-input:hover,.project-name-input:focus{
+  background:var(--panel-3);border-color:var(--line);
 }
-.badge.free{background:var(--panel-3);color:var(--text-soft);border-color:var(--line)}
-.badge.premium{background:var(--warn-soft);color:var(--warn);border-color:rgba(184,106,23,0.24)}
 
-.save-indicator{display:inline-flex;align-items:center;gap:8px}
-.save-dot{width:8px;height:8px;border-radius:999px;background:var(--text-muted)}
+.topbar-sep{width:1px;height:20px;background:var(--line);margin:0 3px;flex-shrink:0}
+
+.tpl-select{
+  height:30px;padding:0 8px;border-radius:7px;border:1px solid var(--line);
+  background:var(--panel);color:var(--text);font-size:12px;cursor:pointer;
+  outline:none;flex-shrink:0;max-width:150px;
+}
+.tpl-select:hover{border-color:var(--line-strong)}
+
+.btn,.icon-btn{
+  height:30px;border-radius:7px;border:1px solid var(--line);background:var(--panel);
+  color:var(--text);font-size:12px;font-weight:500;cursor:pointer;
+  display:inline-flex;align-items:center;gap:5px;padding:0 10px;white-space:nowrap;
+  transition:background .15s,border-color .15s;flex-shrink:0;
+}
+.btn:hover,.icon-btn:hover{background:var(--panel-3);border-color:var(--line-strong)}
+.btn.primary{background:var(--accent);color:#fff;border-color:transparent}
+.btn.primary:hover{background:var(--accent-2)}
+.btn.accent{background:var(--warn-soft);color:var(--warn);border-color:rgba(184,106,23,0.24)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.icon-btn{width:30px;padding:0;justify-content:center}
+
+.save-indicator{
+  display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--text-soft);
+  white-space:nowrap;flex-shrink:0;
+}
+.save-dot{width:7px;height:7px;border-radius:999px;background:var(--text-muted);flex-shrink:0}
 .save-dot.saved{background:var(--accent)}
 .save-dot.saving{background:var(--warn);animation:blink .9s infinite}
 .save-dot.dirty{background:var(--danger)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.32}}
 
-.topbar-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
-.select-wrap{display:flex;flex-direction:column;gap:4px;min-width:170px}
-.select-wrap span{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em}
+.compil-count{font-size:12px;color:var(--text-muted);white-space:nowrap;flex-shrink:0}
 
-.select-wrap select,.btn,.icon-btn{
-  height:38px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--text);
-  transition:background .18s,border-color .18s,color .18s,transform .18s,box-shadow .18s;
+.badge{
+  display:inline-flex;align-items:center;padding:3px 8px;border-radius:999px;
+  font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.05em;
+  white-space:nowrap;flex-shrink:0;
 }
-.select-wrap select{padding:0 14px;outline:none;cursor:pointer}
-.btn,.icon-btn{
-  padding:0 14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:500;
-}
-.btn:hover,.icon-btn:hover,.select-wrap select:hover{border-color:var(--line-strong);background:var(--panel-2)}
-.btn:disabled{cursor:not-allowed;opacity:.64}
-.btn.primary{
-  background:linear-gradient(135deg,var(--accent),var(--accent-2));color:#fff;border-color:transparent;
-  box-shadow:0 12px 24px rgba(15,139,114,0.2);
-}
-.btn.primary:hover{transform:translateY(-1px);box-shadow:0 16px 32px rgba(15,139,114,0.28)}
-.btn.accent{background:var(--warn-soft);color:var(--warn);border-color:rgba(184,106,23,0.2)}
-.btn.small{height:34px;font-size:13px;padding:0 12px}
-.icon-btn{width:38px;padding:0}
+.badge.free{background:var(--panel-3);color:var(--text-soft);border:1px solid var(--line)}
+.badge.premium{background:var(--warn-soft);color:var(--warn);border:1px solid rgba(184,106,23,0.24)}
 
-.user-chip{
-  max-width:180px;padding:0 12px;height:38px;display:inline-flex;align-items:center;border-radius:12px;
-  border:1px solid var(--line);background:var(--panel);color:var(--text-soft);font-size:13px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-}
+.user-chip{font-size:12px;color:var(--text-muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:140px;flex-shrink:1}
+.topbar-spacer{flex:1}
 
-.mobile-switch{
-  display:none;
-  gap:10px;
-  padding:12px 18px;
-  border-bottom:1px solid var(--line);
-  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+/* ── TOOLBAR ── */
+.editor-toolbar{
+  display:flex;align-items:center;gap:3px;flex-wrap:nowrap;overflow-x:auto;
+  padding:5px 10px;height:38px;flex-shrink:0;
+  background:var(--tool-bg);border-bottom:1px solid var(--tool-border);
 }
+.editor-toolbar::-webkit-scrollbar{height:3px}
+.editor-toolbar::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:4px}
 
-.mobile-switch-btn{
-  flex:1;
-  height:38px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  background:var(--panel);
-  color:var(--text-soft);
-  cursor:pointer;
-  font-weight:500;
-  transition:background .18s,border-color .18s,color .18s;
+.tool-btn{
+  height:26px;padding:0 8px;border-radius:5px;border:1px solid var(--tool-border);
+  background:var(--panel);color:var(--text-soft);font-family:'IBM Plex Mono',monospace;
+  font-size:11px;cursor:pointer;white-space:nowrap;flex-shrink:0;
+  transition:background .12s,color .12s,border-color .12s;
 }
+.tool-btn:hover{background:var(--panel-3);border-color:var(--line-strong);color:var(--text)}
+.tool-sep{width:1px;height:16px;background:var(--tool-border);margin:0 3px;flex-shrink:0}
 
-.mobile-switch-btn.active{
-  background:var(--accent-soft);
-  border-color:rgba(15,139,114,0.24);
-  color:var(--accent);
-}
+/* ── WORKSPACE ── */
+.workspace{flex:1;min-height:0;display:grid;grid-template-columns:190px minmax(0,1fr)}
 
-.workspace{flex:1;min-height:0;display:grid;grid-template-columns:280px minmax(0,1fr)}
+/* ── SIDEBAR ── */
 .sidebar{
-  min-width:0;border-right:1px solid #2b3038;background:#1a1d23;
-  padding:14px;display:flex;flex-direction:column;gap:14px;overflow:auto;
+  background:var(--sidebar);border-right:1px solid var(--sidebar-border);
+  display:flex;flex-direction:column;overflow:hidden;
 }
-.sidebar-card{background:#1f232a;border:1px solid #2b3038;border-radius:10px;padding:14px;box-shadow:none}
-.card-label{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;
-  color:var(--text-muted);margin-bottom:12px;
+.sidebar-header{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:10px 12px 8px;border-bottom:1px solid var(--sidebar-border);flex-shrink:0;
+}
+.sidebar-header-label{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;
+  letter-spacing:0.09em;color:var(--text-muted);
+}
+.sidebar-header-count{
+  font-size:11px;color:var(--text-muted);background:var(--panel-3);
+  padding:2px 7px;border-radius:999px;border:1px solid var(--line);
+}
+.sidebar-body{flex:1;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column}
+.sidebar-body::-webkit-scrollbar{width:4px}
+.sidebar-body::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:4px}
+
+.sidebar-section{padding:8px 0 4px}
+.section-label{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--text-muted);padding:0 12px 5px;
+}
+.file-item{
+  display:flex;align-items:center;gap:8px;padding:5px 12px;cursor:pointer;
+  font-size:12.5px;color:var(--text-soft);border-left:2px solid transparent;
+  transition:background .12s,color .12s;
+}
+.file-item:hover{background:var(--panel-3);color:var(--text)}
+.file-item.active{background:var(--file-active);color:var(--accent);border-left-color:var(--accent);font-weight:500}
+.file-icon{font-size:11px;flex-shrink:0;opacity:0.7}
+
+.img-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;padding:0 10px 6px}
+.img-thumb{
+  border-radius:6px;overflow:hidden;border:1px solid var(--line);
+  background:var(--panel);aspect-ratio:4/3;position:relative;cursor:pointer;
+  transition:border-color .15s;
+}
+.img-thumb:hover{border-color:var(--line-strong)}
+.img-thumb-inner{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:var(--panel-2)}
+.img-thumb-label{
+  position:absolute;bottom:0;left:0;right:0;padding:3px 5px;
+  background:rgba(0,0,0,0.55);color:#fff;font-size:9px;
+  font-family:'IBM Plex Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.sidebar-bottom{margin-top:auto;padding-top:12px;border-top:1px solid var(--sidebar-border)}
+.shortcuts-grid{padding:0 12px;display:grid;gap:5px;font-size:11px;color:var(--text-muted)}
+.shortcut-row{display:flex;justify-content:space-between;align-items:center}
+.shortcut-row code{
+  font-family:'IBM Plex Mono',monospace;font-size:10px;background:var(--panel-3);
+  padding:1px 5px;border-radius:4px;border:1px solid var(--line);
+}
+.sidebar-actions{padding:10px 12px;display:grid;gap:6px}
+.sidebar-actions .btn{width:100%;height:28px;font-size:11px;justify-content:center}
+
+/* ── MAIN STACK ── */
+.main-stack{
+  min-width:0;min-height:0;display:grid;
+  grid-template-columns:minmax(0,1fr) 8px minmax(320px,42%);
 }
 
-.file-card{
-  display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 12px;border-radius:8px;
-  background:#181c22;border:1px solid #2b3038;margin-bottom:12px;
-}
-.file-info{display:flex;align-items:center;gap:12px;min-width:0}
-.file-badge{
-  width:30px;height:30px;border-radius:6px;display:grid;place-items:center;background:#0f2d2a;
-  color:#3ce4bc;font-family:'IBM Plex Mono',monospace;font-size:11px;
-}
-.file-name{font-weight:600;font-size:14px;color:var(--text)}
-.file-subtitle{font-size:12px;color:var(--text-muted);margin-top:2px}
-.stack-actions{display:grid;gap:10px}
-.stack-actions .btn{width:100%}
+/* ── EDITOR PANEL ── */
+.editor-panel{min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--editor-surface)}
 
-.outline-list{display:flex;flex-direction:column;gap:8px}
-.outline-empty,.activity-empty,.pdf-empty{
-  padding:18px;border-radius:16px;background:var(--panel-2);border:1px dashed var(--line-strong);
-  color:var(--text-muted);font-size:13px;line-height:1.6;
+.file-tabs-bar{
+  display:flex;align-items:stretch;background:var(--tool-bg);
+  border-bottom:1px solid var(--tool-border);flex-shrink:0;overflow-x:auto;
 }
-.outline-item{
-  width:100%;border:none;background:transparent;border:1px solid transparent;border-radius:6px;
-  padding:8px 10px;text-align:left;color:var(--text);cursor:pointer;
-  transition:background .18s,border-color .18s,transform .18s;
+.file-tabs-bar::-webkit-scrollbar{height:3px}
+.file-tab{
+  display:inline-flex;align-items:center;gap:6px;padding:0 14px;height:34px;
+  font-size:12px;color:var(--text-muted);cursor:pointer;white-space:nowrap;
+  border-right:1px solid var(--tool-border);border-bottom:2px solid transparent;
+  transition:color .12s,background .12s;flex-shrink:0;
 }
-.outline-item:hover{background:#20252c;border-color:#2d333c;transform:none}
-.outline-level{
-  display:block;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#738396;
-  text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;
-}
-.outline-item.level-section{padding-left:16px}
-.outline-item.level-subsection{padding-left:28px}
-
-.shortcut-list{list-style:none;display:grid;gap:10px;font-size:13px;color:var(--text-soft)}
-.shortcut-list li{display:flex;justify-content:space-between;gap:10px;align-items:center}
-.shortcut-list code{
-  font-family:'IBM Plex Mono',monospace;background:var(--panel-2);border:1px solid var(--line);
-  padding:4px 8px;border-radius:9px;font-size:11px;color:var(--text);
-}
-
-.main-stack{min-width:0;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) 10px minmax(380px,46%);gap:0;background:#15181d}
-.workspace-panel{min-width:0;min-height:0;display:flex;flex-direction:column;background:#1d2128}
-
-.panel-head{
-  padding:16px 18px 12px;border-bottom:1px solid var(--line);display:flex;align-items:center;
-  justify-content:space-between;gap:16px;background:linear-gradient(180deg,var(--panel),var(--panel-2));
-}
-.panel-title{font-size:16px;font-weight:600;color:var(--text)}
-.panel-caption{font-size:12px;color:var(--text-muted);margin-top:4px}
-.panel-pillbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.file-tab:hover{color:var(--text-soft);background:var(--panel-3)}
+.file-tab.active{color:var(--tab-active);background:var(--editor-surface);border-bottom-color:var(--tab-active);font-weight:500}
+.file-tab-dot{width:6px;height:6px;border-radius:999px;background:currentColor;flex-shrink:0}
 
 .editor-headbar{
-  padding:0 14px;
-  height:42px;
-  background:#15181d;
-  border-bottom:1px solid #2b3038;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 12px;height:28px;background:var(--tool-bg);border-bottom:1px solid var(--tool-border);
+  flex-shrink:0;gap:10px;
 }
+.editor-path{font-size:11px;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.editor-path .star{color:var(--accent)}
+.editor-cursor{font-size:11px;color:var(--text-muted);font-family:'IBM Plex Mono',monospace;flex-shrink:0}
 
-.editor-tab{
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  height:100%;
-  padding:0 14px;
-  border-right:1px solid #2b3038;
-  background:#1d2128;
-  font-size:13px;
-  color:#d9e0ea;
-}
-
-.editor-tab-dot{
-  width:8px;
-  height:8px;
-  border-radius:999px;
-  background:var(--accent);
-}
-
-.editor-meta{
-  color:#8b98a9;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-}
-
-.preview-headbar{
-  display:block;
-  padding:10px 12px;
-  background:#15181d;
-  border-bottom:1px solid #2b3038;
-}
-
-.browser-toolbar{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.browser-dots{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-.browser-dots span{
-  width:10px;
-  height:10px;
-  border-radius:999px;
-  display:block;
-}
-
-.browser-dots span:nth-child(1){background:#ff5f57}
-.browser-dots span:nth-child(2){background:#febc2e}
-.browser-dots span:nth-child(3){background:#28c840}
-
-.browser-address{
-  flex:1;
-  height:32px;
-  display:flex;
-  align-items:center;
-  padding:0 12px;
-  border-radius:8px;
-  background:#20252c;
-  border:1px solid #2e353f;
-  color:#aab7c8;
-  font-size:12px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.preview-meta{
-  margin-top:10px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  flex-wrap:wrap;
-}
-
-.preview-status{
-  font-size:11px;
-  color:#93a2b6;
-  font-family:'IBM Plex Mono',monospace;
-}
-
-.metric-pill,.tab-btn{
-  border-radius:999px;border:1px solid var(--line);background:var(--panel);padding:8px 12px;
-  font-size:12px;color:var(--text-soft);
-}
-.metric-pill{font-family:'IBM Plex Mono',monospace}
-.tab-btn{cursor:pointer;transition:background .18s,border-color .18s,color .18s}
-.tab-btn:hover{background:var(--panel-2);border-color:var(--line-strong)}
-.tab-btn.active{background:var(--accent-soft);color:var(--accent);border-color:rgba(15,139,114,0.26)}
-
-.editor-toolbar{
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #2b3038;
-  background:#181c22;
-}
-.tool-btn{
-  height:30px;padding:0 10px;border-radius:6px;border:1px solid #2d333c;background:#20252c;
-  color:#b8c5d4;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer;
-  transition:background .18s,border-color .18s,color .18s;
-}
-.tool-btn:hover{background:#262c34;border-color:#3b4552;color:#fff}
-
-.editor-surface{flex:1;min-height:0;padding:0;background:#1d2128}
-.editor-frame{
-  height:100%;border:none;border-radius:0;overflow:hidden;background:#1d2128;box-shadow:none;
-}
-.CodeMirror{
-  height:100%;font-family:'IBM Plex Mono',monospace;font-size:14px;line-height:1.65;color:var(--editor-ink);background:var(--editor-surface);
-}
+.editor-surface{flex:1;min-height:0}
+.CodeMirror{height:100%;font-family:'IBM Plex Mono',monospace;font-size:13.5px;line-height:1.7;color:var(--editor-ink);background:var(--editor-surface)}
 .CodeMirror-gutters{background:var(--editor-bg);border-right:1px solid var(--line)}
 .CodeMirror-linenumber{color:var(--text-muted)}
 .CodeMirror-cursor{border-left:2px solid var(--accent)}
-.CodeMirror-selected{background:rgba(15,139,114,0.14)}
+.CodeMirror-selected{background:rgba(26,199,160,0.12)}
 [data-theme="dark"] .CodeMirror{background:#0f1c29}
 
+/* ── PANE RESIZER ── */
 .pane-resizer{
-  width:10px;cursor:col-resize;position:relative;background:#15181d;border-left:1px solid #2b3038;border-right:1px solid #2b3038;
+  width:8px;cursor:col-resize;background:var(--tool-bg);
+  border-left:1px solid var(--tool-border);border-right:1px solid var(--tool-border);
+  position:relative;flex-shrink:0;
 }
 .pane-resizer::before{
-  content:"";position:absolute;inset:50% 50% auto auto;transform:translate(50%,-50%);
-  width:4px;height:52px;border-radius:999px;background:linear-gradient(180deg,var(--line),var(--line-strong),var(--line));
+  content:"";position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:3px;height:40px;border-radius:999px;background:var(--line-strong);
 }
 
-.preview-actions{
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid #d7dce2;background:#f2f4f7;
-}
-.preview-actions .btn.small{
-  height:30px;
-  background:#fff;
-  border-color:#cfd5de;
-  color:#475569;
-  box-shadow:none;
-}
-.preview-actions .btn.small:hover{
-  background:#f8fafc;
-  border-color:#b9c3cf;
-}
-.preview-body{flex:1;min-height:0;position:relative;background:#dfe4ea}
-.tab-panel{display:none;height:100%;overflow:auto}
-.tab-panel.active{display:block}
-.preview-render{padding:24px;min-height:100%;display:flex;justify-content:center}
+/* ── PREVIEW PANEL ── */
+.preview-panel{min-width:0;min-height:0;display:flex;flex-direction:column;background:var(--panel)}
 
-.preview-sheet{
-  width:min(100%,860px);
-  min-height:100%;
-  display:flex;
-  justify-content:center;
-  padding:0;
-  background:transparent;
-  border:none;
-  box-shadow:none;
+.preview-tabs-bar{
+  display:flex;align-items:stretch;background:var(--tool-bg);
+  border-bottom:1px solid var(--tool-border);flex-shrink:0;
 }
-
-.paper-page{
-  width:min(100%,760px);
-  min-height:980px;
-  background:#fff;
-  border:1px solid #d2d8e0;
-  box-shadow:0 20px 44px rgba(15,23,42,0.12);
-  padding:52px 56px 60px;
+.preview-tab{
+  display:inline-flex;align-items:center;padding:0 16px;height:38px;
+  font-size:12.5px;font-weight:500;color:var(--text-muted);cursor:pointer;
+  border-bottom:2px solid transparent;transition:color .12s;background:transparent;border-top:none;border-left:none;border-right:none;
 }
+.preview-tab:hover{color:var(--text-soft)}
+.preview-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
 
-.paper-topline{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  font-family:'IBM Plex Mono',monospace;
-  font-size:11px;
-  color:#7b8796;
-  margin-bottom:28px;
+.preview-body{flex:1;min-height:0;display:flex;flex-direction:column}
+.tab-panel{display:none;flex:1;overflow-y:auto}
+.tab-panel.active{display:flex;flex-direction:column}
+.tab-panel::-webkit-scrollbar{width:5px}
+.tab-panel::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:4px}
+
+/* Structural view */
+.struct-view{padding:16px 14px;display:flex;flex-direction:column;gap:14px}
+.doc-class-chip{
+  display:inline-flex;align-items:center;height:26px;padding:0 10px;
+  border-radius:5px;background:var(--accent-soft);color:var(--accent);
+  font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;
+  border:1px solid rgba(26,199,160,0.2);align-self:flex-start;
 }
-
-.sheet-header{border-bottom:1px solid #e5e7eb;padding-bottom:18px;margin-bottom:22px}
-.sheet-kicker{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#0f8b72;margin-bottom:10px;
+.doc-title-large{font-size:22px;font-weight:600;color:var(--text);line-height:1.2;margin-top:2px}
+.doc-subtitle{font-size:13px;color:var(--text-muted);margin-top:4px}
+.struct-section-label{
+  font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--text-muted);margin-bottom:6px;
 }
-.sheet-title{font-family:'Source Serif 4',serif;font-size:34px;line-height:1.15;color:#111827}
-.sheet-subtitle{margin-top:10px;font-size:14px;color:#4b5563}
-
-.paper-summary{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:22px;
+.packages-row{display:flex;flex-wrap:wrap;gap:6px}
+.pkg-pill{
+  display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;
+  background:var(--pkg-pill);color:var(--pkg-pill-text);font-size:12px;font-weight:500;
+  border:1px solid var(--pkg-pill-border);
 }
+.pkg-dot{width:8px;height:8px;border-radius:999px;background:var(--warn);flex-shrink:0}
 
-.paper-chip{
-  border:1px solid #d6dce4;
-  background:#f8fafc;
-  color:#475569;
-  border-radius:999px;
-  padding:7px 12px;
-  font-size:12px;
+.struct-list{display:flex;flex-direction:column;gap:0}
+.struct-item{
+  display:flex;align-items:center;padding:9px 10px;border-radius:6px;cursor:pointer;
+  font-size:13.5px;font-weight:500;color:var(--text-soft);
+  border:none;background:transparent;text-align:left;width:100%;
+  transition:background .12s,color .12s;
 }
+.struct-item:hover{background:var(--panel-3);color:var(--text)}
+.struct-item.level-subsection{padding-left:26px;font-size:12.5px;font-weight:400}
+.struct-item.level-chapter{font-size:14.5px}
 
-.preview-block{margin-top:24px;padding-top:24px;border-top:1px solid #eceff3}
-.preview-block:first-of-type{margin-top:0;padding-top:0;border-top:none}
-.block-label{
-  font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.08em;color:#6b7280;margin-bottom:12px;
+/* PDF tab */
+.pdf-panel{flex:1;display:flex;flex-direction:column;padding:12px;gap:10px}
+.pdf-empty-msg{
+  padding:18px;border-radius:10px;background:var(--panel-2);border:1px dashed var(--line-strong);
+  color:var(--text-muted);font-size:13px;line-height:1.6;
 }
-.abstract-box{
-  padding:18px;border-radius:4px;background:#f8fafc;border-left:4px solid #0f8b72;
-  color:#475569;line-height:1.75;font-size:14px;
-}
+.pdf-frame-wrap{flex:1;min-height:0;border-radius:8px;overflow:hidden;border:1px solid var(--line);background:#fff}
+#pdf-frame{width:100%;height:100%;border:none}
 
-.outline-preview{display:grid;gap:10px}
-.outline-preview-item{padding:0;border:none;background:transparent}
-.outline-preview-item strong{display:block;color:#111827;font-size:20px;font-family:'Source Serif 4',serif;font-weight:600}
-.outline-preview-item span{display:block;margin-top:8px;font-size:14px;color:#4b5563;line-height:1.75}
+/* Activity */
+.activity-list{padding:12px;display:grid;gap:10px}
+.activity-item{border:1px solid var(--line);background:var(--panel);border-radius:8px;padding:12px 14px}
+.activity-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:5px;font-size:11px;color:var(--text-muted)}
+.activity-head strong{color:var(--text-soft);font-weight:600}
+.activity-body{color:var(--text-soft);line-height:1.6;font-size:12.5px}
+.activity-empty{padding:16px;border-radius:10px;background:var(--panel-2);border:1px dashed var(--line-strong);color:var(--text-muted);font-size:13px}
 
-.equation-grid{display:grid;gap:12px}
-.equation-card{border:1px solid #e5e7eb;background:#fbfdff;border-radius:4px;padding:16px;overflow:auto}
-
-.env-list,.inline-list,.hint-list{display:flex;flex-wrap:wrap;gap:10px}
-.env-pill,.inline-pill{
-  border-radius:999px;border:1px solid #d6dce4;background:#f8fafc;padding:8px 12px;font-size:12px;color:#475569;
-}
-.hint-item{
-  width:100%;padding:14px 16px;border-radius:4px;border:1px solid #f4d7a5;background:#fff7e8;
-  color:#9a5b12;font-size:13px;line-height:1.6;
-}
-.preview-note{margin-top:18px;font-size:12px;color:#6b7280}
-
-.pdf-panel{height:100%;padding:14px;display:flex;flex-direction:column;gap:12px}
-.pdf-frame-wrap{
-  flex:1;min-height:0;border-radius:8px;overflow:hidden;border:1px solid #cfd5de;box-shadow:0 14px 28px rgba(15,23,42,0.1);background:#fff;
-}
-#pdf-frame{width:100%;height:100%;border:none;background:#fff}
-
-.activity-list{padding:14px;display:grid;gap:12px;background:#f4f6f8}
-.activity-item{border:1px solid #d7dce2;background:#fff;border-radius:8px;padding:14px 16px}
-.activity-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:6px;font-size:12px;color:#6b7280}
-.activity-body{color:#475569;line-height:1.6;font-size:13px}
-
+/* ── STATUS BAR ── */
 .statusbar{
-  height:34px;padding:0 16px;display:flex;align-items:center;gap:14px;background:var(--status-bg);color:var(--status-ink);
-  border-top:1px solid rgba(255,255,255,0.06);font-family:'IBM Plex Mono',monospace;font-size:11px;flex-shrink:0;
+  height:26px;padding:0 14px;display:flex;align-items:center;gap:12px;
+  background:var(--status-bg);color:var(--status-ink);flex-shrink:0;
+  border-top:1px solid rgba(255,255,255,0.05);font-family:'IBM Plex Mono',monospace;font-size:11px;
 }
 .statusbar .accent{color:#67f0cc}
 .statusbar .error{color:#ff9d9d}
 .statusbar .spacer{flex:1}
 
-.modal{
-  position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,10,18,0.72);
-  padding:20px;z-index:100;
-}
+/* ── MODAL ── */
+.modal{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(3,10,18,0.72);padding:20px;z-index:100}
 .modal.show{display:flex}
-.modal-box{
-  width:min(460px,100%);background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:24px;box-shadow:var(--shadow);
-}
-.modal-box h2{font-size:22px;margin-bottom:10px}
+.modal-box{width:min(460px,100%);background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:24px;box-shadow:var(--shadow)}
+.modal-box h2{font-size:20px;margin-bottom:8px}
 .modal-box p{color:var(--text-soft);line-height:1.7;font-size:14px}
-.payment-card{
-  margin:18px 0;border:1px solid rgba(184,106,23,0.22);border-radius:18px;background:var(--warn-soft);
-  color:var(--warn);padding:16px;line-height:1.7;font-size:14px;
-}
-.modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}
-.modal-actions .btn{flex:1;min-width:160px}
+.payment-card{margin:16px 0;border:1px solid rgba(184,106,23,0.22);border-radius:14px;background:var(--warn-soft);color:var(--warn);padding:14px;line-height:1.7;font-size:14px}
+.modal-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.modal-actions .btn{flex:1;min-width:140px;height:36px;justify-content:center}
 
-@media (max-width:1240px){
-  .mobile-switch{display:flex}
-  .workspace{display:block}
-  .sidebar,
-  #main-stack{display:none}
+/* ── MOBILE ── */
+.mobile-switch{display:none;gap:8px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--panel)}
+.mobile-switch-btn{flex:1;height:34px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--text-soft);cursor:pointer;font-weight:500;font-size:13px;transition:background .15s,color .15s}
+.mobile-switch-btn.active{background:var(--accent-soft);border-color:rgba(26,199,160,0.24);color:var(--accent)}
+
+@media(max-width:1200px){.workspace{grid-template-columns:175px minmax(0,1fr)}.main-stack{grid-template-columns:minmax(0,1fr) 8px minmax(280px,40%)}}
+@media(max-width:960px){
+  .mobile-switch{display:flex}.workspace{display:block}.sidebar,#main-stack{display:none}
   .app-shell[data-mobile-panel="sidebar"] .sidebar{display:flex}
   .app-shell[data-mobile-panel="editor"] #main-stack,
   .app-shell[data-mobile-panel="preview"] #main-stack{display:grid}
-  .app-shell[data-mobile-panel="editor"] #main-stack,
+  .app-shell[data-mobile-panel="editor"] #main-stack{grid-template-columns:1fr}
+  .app-shell[data-mobile-panel="editor"] #preview-panel,.app-shell[data-mobile-panel="editor"] #pane-resizer{display:none}
   .app-shell[data-mobile-panel="preview"] #main-stack{grid-template-columns:1fr}
-  .app-shell[data-mobile-panel="editor"] #preview-panel{display:none}
-  .app-shell[data-mobile-panel="editor"] #pane-resizer{display:none}
-  .app-shell[data-mobile-panel="preview"] #editor-panel{display:none}
-  .app-shell[data-mobile-panel="preview"] #pane-resizer{display:none}
+  .app-shell[data-mobile-panel="preview"] #editor-panel,.app-shell[data-mobile-panel="preview"] #pane-resizer{display:none}
 }
-@media (max-width:980px){
-  .main-stack{grid-template-columns:1fr}
-  .pane-resizer{display:none}
-  .preview-actions,.editor-toolbar,.panel-head,.app-topbar{padding-left:14px;padding-right:14px}
-  .paper-page{padding:38px 28px 44px}
-}
-@media (max-width:720px){
-  .app-topbar{align-items:flex-start;flex-direction:column}
-  .brand-group,.topbar-actions{width:100%}
-  .project-name{max-width:none;width:100%}
-  .topbar-actions{justify-content:flex-start}
-  .select-wrap{min-width:0;width:100%}
-  .select-wrap select,.btn,.icon-btn,.user-chip{width:100%}
-  .preview-actions{display:grid;grid-template-columns:1fr}
-  .paper-page{padding:28px 18px 36px}
-  .paper-summary{gap:8px}
-  .paper-chip{width:100%;border-radius:8px}
-  .preview-meta{align-items:flex-start}
-}
+@media(max-width:640px){.app-topbar{overflow-x:auto}.user-chip,.compil-count{display:none}.topbar-sep{display:none}}
 </style>
 </head>
 <body>
 <div class="app-shell" data-mobile-panel="editor">
+
+  <!-- ═══ TOP BAR ═══ -->
   <header class="app-topbar">
-    <div class="brand-group">
-      <a href="index.html" class="brand">
-        <span class="brand-mark">L</span>
-        <span>LaTeXify</span>
-      </a>
-      <div class="project-header">
-        <input id="project-name" class="project-name" type="text" value="Proyecto LaTeX" placeholder="Nombre del proyecto">
-        <div class="project-meta">
-          <span id="plan-badge" class="badge free">FREE</span>
-          <span id="compil-count">0/5 hoy</span>
-          <span class="save-indicator">
-            <span id="save-dot" class="save-dot"></span>
-            <span id="save-label">Sin cambios</span>
-          </span>
-        </div>
-      </div>
-    </div>
-    <div class="topbar-actions">
-      <label class="select-wrap">
-        <span>Plantilla</span>
-        <select id="tpl-sel">
-          <option value="article">Articulo cientifico</option>
-          <option value="lab">Reporte de laboratorio</option>
-          <option value="thesis">Tesis (Premium)</option>
-          <option value="beamer">Beamer (Premium)</option>
-          <option value="ieee">IEEE (Premium)</option>
-          <option value="apa">APA Report (Premium)</option>
-        </select>
-      </label>
-      <button id="load-template-btn" class="btn" type="button">Cargar</button>
-      <button id="save-btn" class="btn" type="button">Guardar</button>
-      <button id="theme-btn" class="icon-btn" type="button" title="Cambiar tema">Tema</button>
-      <button id="compile-btn" class="btn primary" type="button">Compilar PDF</button>
-      <button id="overleaf-btn" class="btn accent" type="button">Abrir en Overleaf</button>
-      <span id="user-name" class="user-chip">Cargando usuario...</span>
-      <button id="logout-btn" class="btn" type="button">Salir</button>
-    </div>
+    <a href="index.html" class="brand">LaTeX<span class="brand-tex">ify</span></a>
+    <input id="project-name" class="project-name-input" type="text" value="Proyecto LaTeX" placeholder="Nombre del proyecto">
+    <div class="topbar-sep"></div>
+    <select id="tpl-sel" class="tpl-select">
+      <option value="article">Artículo científico</option>
+      <option value="lab">Reporte de laboratorio</option>
+      <option value="thesis">Tesis (Premium)</option>
+      <option value="beamer">Beamer (Premium)</option>
+      <option value="ieee">IEEE (Premium)</option>
+      <option value="apa">APA Report (Premium)</option>
+    </select>
+    <button id="load-template-btn" class="btn" type="button">Cargar plantilla</button>
+    <div class="topbar-sep"></div>
+    <span class="save-indicator">
+      <span id="save-dot" class="save-dot"></span>
+      <span id="save-label">Guardado</span>
+    </span>
+    <span id="compil-count" class="compil-count">0/5 hoy</span>
+    <span id="plan-badge" class="badge free">FREE</span>
+    <span id="user-name" class="user-chip">Cargando...</span>
+    <button id="theme-btn" class="icon-btn" type="button" title="Cambiar tema">☀️</button>
+    <div class="topbar-spacer"></div>
+    <button id="compile-btn" class="btn primary" type="button">◯ Compilar PDF</button>
+    <button id="overleaf-btn" class="btn accent" type="button">↗ Overleaf</button>
+    <button id="logout-btn" class="btn" type="button">Salir</button>
   </header>
 
-  <div class="mobile-switch">
-    <button class="mobile-switch-btn" type="button" data-mobile-panel="sidebar">Navegacion</button>
-    <button class="mobile-switch-btn active" type="button" data-mobile-panel="editor">Editor</button>
-    <button class="mobile-switch-btn" type="button" data-mobile-panel="preview">Preview</button>
+  <!-- ═══ TOOLBAR ═══ -->
+  <div class="editor-toolbar">
+    <button class="tool-btn" type="button" data-before="\textbf{" data-after="}"><b>B</b></button>
+    <button class="tool-btn" type="button" data-before="\textit{" data-after="}"><i>I</i></button>
+    <button class="tool-btn" type="button" data-before="\underline{" data-after="}">U̲</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" type="button" data-before="$" data-after="$">$x$</button>
+    <button class="tool-btn" type="button" data-before="\[\n" data-after="\n\]">$$$$</button>
+    <button class="tool-btn" type="button" data-before="\begin{equation}\n" data-after="\n\end{equation}">Eq.</button>
+    <button class="tool-btn" type="button" data-before="\int_{" data-after="}">∫</button>
+    <button class="tool-btn" type="button" data-before="\sqrt{" data-after="}">√</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" type="button" data-before="\begin{itemize}\n  \item " data-after="\n\end{itemize}">• Lista</button>
+    <button class="tool-btn" type="button" data-before="\begin{enumerate}\n  \item " data-after="\n\end{enumerate}">1. Lista</button>
+    <button class="tool-btn" type="button" data-before="\begin{table}[h]\n  \centering\n  \caption{Titulo}\n  \begin{tabular}{|c|c|}\n  \hline\n  Col1 & Col2 \\\\\n  \hline\n  Dato & Dato \\\\\n  \hline\n  \end{tabular}\n" data-after="\end{table}">Tabla</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" type="button" data-before="\cite{" data-after="}">\cite</button>
+    <button class="tool-btn" type="button" data-before="\ref{" data-after="}">\ref</button>
+    <button class="tool-btn" type="button" data-before="\label{" data-after="}">\label</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" type="button" data-before="\section{" data-after="}">§ Sec</button>
+    <button class="tool-btn" type="button" data-before="\subsection{" data-after="}">§§ Sub</button>
+    <div class="tool-sep"></div>
+    <button class="tool-btn" type="button" data-before="\begin{figure}[h]\n  \centering\n  \includegraphics[width=0.65\textwidth]{" data-after="}\n  \caption{Descripcion}\n  \label{fig:etiqueta}\n\end{figure}">🖼 img</button>
+    <div class="tool-sep"></div>
+    <button id="search-btn" class="tool-btn" type="button">Buscar</button>
+    <button id="comment-btn" class="tool-btn" type="button">Comentar</button>
+    <button id="indent-btn" class="tool-btn" type="button">Indentar</button>
   </div>
 
+  <!-- ═══ MOBILE ═══ -->
+  <div class="mobile-switch">
+    <button class="mobile-switch-btn" type="button" data-mobile-panel="sidebar">Archivos</button>
+    <button class="mobile-switch-btn active" type="button" data-mobile-panel="editor">Editor</button>
+    <button class="mobile-switch-btn" type="button" data-mobile-panel="preview">Vista</button>
+  </div>
+
+  <!-- ═══ WORKSPACE ═══ -->
   <div class="workspace">
+
+    <!-- ── SIDEBAR ── -->
     <aside id="sidebar-panel" class="sidebar">
-      <section class="sidebar-card">
-        <div class="card-label">Proyecto</div>
-        <div class="file-card">
-          <div class="file-info">
-            <div class="file-badge">.tex</div>
-            <div>
-              <div class="file-name">main.tex</div>
-              <div id="last-saved-label" class="file-subtitle">Sincronizado localmente</div>
+      <div class="sidebar-header">
+        <span class="sidebar-header-label">Proyecto</span>
+        <span id="sidebar-file-count" class="sidebar-header-count">1 archivo</span>
+      </div>
+      <div class="sidebar-body">
+
+        <div class="sidebar-section">
+          <div class="section-label">Documentos</div>
+          <div id="doc-list">
+            <div class="file-item active" data-file="main.tex">
+              <span class="file-icon">📄</span><span>main.tex</span>
             </div>
           </div>
-          <button id="copy-code-btn" class="btn small" type="button">Copiar</button>
         </div>
-        <div class="stack-actions">
-          <button id="download-tex-btn" class="btn" type="button">Descargar .tex</button>
-          <button id="new-doc-btn" class="btn" type="button">Nuevo documento</button>
-        </div>
-      </section>
 
-      <section class="sidebar-card">
-        <div class="card-label">Archivos y estructura</div>
-        <div id="outline-list" class="outline-list">
-          <div class="outline-empty">Agrega secciones o capitulos para ver un esquema navegable aqui.</div>
+        <div class="sidebar-section">
+          <div class="section-label">Imágenes</div>
+          <div id="img-grid" class="img-grid"></div>
+          <div id="img-empty" style="padding:0 12px 6px;font-size:11px;color:var(--text-muted)">Sin imágenes</div>
         </div>
-      </section>
 
-      <section class="sidebar-card">
-        <div class="card-label">Atajos utiles</div>
-        <ul class="shortcut-list">
-          <li><span>Compilar PDF</span><code>Ctrl/Cmd + Enter</code></li>
-          <li><span>Guardar</span><code>Ctrl/Cmd + S</code></li>
-          <li><span>Buscar</span><code>Ctrl/Cmd + F</code></li>
-          <li><span>Comentar bloque</span><code>Ctrl/Cmd + /</code></li>
-          <li><span>Indentar</span><code>Tab</code></li>
-        </ul>
-      </section>
+        <div class="sidebar-section">
+          <div class="section-label">Otros</div>
+          <div id="otros-list"></div>
+        </div>
+
+        <div class="sidebar-bottom">
+          <div class="section-label" style="padding:0 12px 6px">Atajos</div>
+          <div class="shortcuts-grid">
+            <div class="shortcut-row"><span>Compilar</span><code>Ctrl+↵</code></div>
+            <div class="shortcut-row"><span>Guardar</span><code>Ctrl+S</code></div>
+            <div class="shortcut-row"><span>Buscar</span><code>Ctrl+F</code></div>
+            <div class="shortcut-row"><span>Comentar</span><code>Ctrl+/</code></div>
+          </div>
+          <div class="sidebar-actions">
+            <button id="copy-code-btn" class="btn" type="button">Copiar código</button>
+            <button id="download-tex-btn" class="btn" type="button">Descargar .tex</button>
+            <button id="new-doc-btn" class="btn" type="button">Nuevo documento</button>
+          </div>
+        </div>
+
+      </div>
     </aside>
 
+    <!-- ── MAIN STACK ── -->
     <div id="main-stack" class="main-stack">
-      <section id="editor-panel" class="workspace-panel">
-        <div class="panel-head editor-headbar">
-          <div class="editor-tab">
-            <span class="editor-tab-dot"></span>
-            <span>main.tex</span>
-          </div>
-          <div class="panel-pillbar">
-            <span id="doc-metrics" class="metric-pill editor-meta">0 lineas - 0 palabras</span>
-            <span id="cursor-info" class="metric-pill editor-meta">L1 C1</span>
+
+      <!-- EDITOR -->
+      <section id="editor-panel" class="editor-panel">
+        <div class="file-tabs-bar">
+          <div class="file-tab active" data-file="main.tex">
+            <span class="file-tab-dot"></span>main.tex
           </div>
         </div>
-
-        <div class="editor-toolbar">
-          <button class="tool-btn" type="button" data-before="\textbf{" data-after="}">\textbf</button>
-          <button class="tool-btn" type="button" data-before="\textit{" data-after="}">\textit</button>
-          <button class="tool-btn" type="button" data-before="$" data-after="$">$ x $</button>
-          <button class="tool-btn" type="button" data-before="\[\n" data-after="\n\]">Bloque math</button>
-          <button class="tool-btn" type="button" data-before="\begin{equation}\n" data-after="\n\end{equation}">Ecuacion</button>
-          <button class="tool-btn" type="button" data-before="\section{" data-after="}">Seccion</button>
-          <button class="tool-btn" type="button" data-before="\subsection{" data-after="}">Subsec.</button>
-          <button class="tool-btn" type="button" data-before="\begin{itemize}\n  \item " data-after="\n\end{itemize}">Lista</button>
-          <button class="tool-btn" type="button" data-before="\begin{enumerate}\n  \item " data-after="\n\end{enumerate}">Lista 1.</button>
-          <button class="tool-btn" type="button" data-before="\begin{figure}[h]\n  \centering\n  \includegraphics[width=0.65\textwidth]{" data-after="}\n  \caption{Descripcion}\n  \label{fig:etiqueta}\n\end{figure}">Figura</button>
-          <button class="tool-btn" type="button" data-before="\begin{table}[h]\n  \centering\n  \caption{Titulo}\n  \begin{tabular}{|c|c|}\n    \hline\n    Col1 & Col2 \\\n    \hline\n    Dato & Dato \\\n    \hline\n  \end{tabular}\n" data-after="\end{table}">Tabla</button>
-          <button class="tool-btn" type="button" data-before="\cite{" data-after="}">\cite</button>
-          <button class="tool-btn" type="button" data-before="\label{" data-after="}">\label</button>
-          <button id="search-btn" class="tool-btn" type="button">Buscar</button>
-          <button id="comment-btn" class="tool-btn" type="button">Comentar</button>
-          <button id="indent-btn" class="tool-btn" type="button">Indentar</button>
+        <div class="editor-headbar">
+          <span id="editor-path" class="editor-path">main.tex <span class="star">★</span> (principal)</span>
+          <div style="display:flex;gap:8px;align-items:center">
+            <span id="doc-metrics" class="editor-cursor">0 líneas</span>
+            <span id="cursor-info" class="editor-cursor">L1 C1</span>
+          </div>
         </div>
-
         <div class="editor-surface">
-          <div class="editor-frame">
-            <textarea id="editor-source" spellcheck="false"></textarea>
-          </div>
+          <textarea id="editor-source" spellcheck="false"></textarea>
         </div>
       </section>
 
-      <div id="pane-resizer" class="pane-resizer" role="separator" aria-orientation="vertical" aria-label="Redimensionar panel"></div>
+      <!-- PANE RESIZER -->
+      <div id="pane-resizer" class="pane-resizer" role="separator" aria-orientation="vertical"></div>
 
-      <section id="preview-panel" class="workspace-panel">
-        <div class="panel-head preview-headbar">
-          <div class="browser-toolbar">
-            <div class="browser-dots" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div class="browser-address">latexify://preview/main.tex</div>
-          </div>
-          <div class="preview-meta">
-            <div id="preview-caption" class="preview-status">Vista estructural del documento</div>
-            <div class="panel-pillbar">
-              <button class="tab-btn active" type="button" data-tab="preview">Vista</button>
-              <button class="tab-btn" type="button" data-tab="pdf">PDF</button>
-              <button class="tab-btn" type="button" data-tab="activity">Actividad</button>
-            </div>
-          </div>
+      <!-- PREVIEW -->
+      <section id="preview-panel" class="preview-panel">
+        <div class="preview-tabs-bar">
+          <button class="preview-tab active" type="button" data-tab="preview">Vista previa</button>
+          <button class="preview-tab" type="button" data-tab="pdf">PDF compilado</button>
+          <button class="preview-tab" type="button" data-tab="activity">Actividad</button>
         </div>
-
-        <div class="preview-actions">
-          <button id="refresh-preview-btn" class="btn small" type="button">Actualizar vista</button>
-          <button id="pdf-tab-btn" class="btn small" type="button">Ir al PDF</button>
-          <button id="open-pdf-btn" class="btn small" type="button">PDF en nueva pestana</button>
-          <button id="copy-selection-btn" class="btn small" type="button">Copiar seleccion</button>
-        </div>
-
         <div class="preview-body">
+
+          <!-- VISTA PREVIA -->
           <div id="tab-preview" class="tab-panel active">
-            <div id="preview-render" class="preview-render"></div>
+            <div id="preview-render" class="struct-view">
+              <div class="doc-class-chip" id="struct-docclass">\documentclass{...}</div>
+              <div>
+                <div id="struct-title" class="doc-title-large">Sin título</div>
+                <div id="struct-author" class="doc-subtitle">Autor sin definir</div>
+              </div>
+              <div>
+                <div class="struct-section-label">Paquetes</div>
+                <div id="struct-packages" class="packages-row">
+                  <span style="font-size:12px;color:var(--text-muted)">Ninguno detectado</span>
+                </div>
+              </div>
+              <div>
+                <div class="struct-section-label">Estructura del documento</div>
+                <div id="outline-list" class="struct-list">
+                  <div style="font-size:12px;color:var(--text-muted);padding:8px 10px">
+                    Agrega secciones para ver la estructura aquí.
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
+
+          <!-- PDF -->
           <div id="tab-pdf" class="tab-panel">
             <div class="pdf-panel">
-              <div id="pdf-empty" class="pdf-empty">Compila el documento para cargar aqui el PDF real generado por el motor de LaTeX.</div>
+              <div id="pdf-empty" class="pdf-empty-msg">Compila el documento para ver el PDF aquí.</div>
               <div class="pdf-frame-wrap">
                 <iframe id="pdf-frame" name="latex-frame" title="PDF compilado"></iframe>
               </div>
             </div>
           </div>
+
+          <!-- ACTIVIDAD -->
           <div id="tab-activity" class="tab-panel">
             <div id="activity-list" class="activity-list">
-              <div class="activity-empty">Las acciones importantes del editor apareceran aqui.</div>
+              <div class="activity-empty">Las acciones importantes del editor aparecerán aquí.</div>
             </div>
           </div>
+
         </div>
       </section>
     </div>
   </div>
 
+  <!-- STATUS BAR -->
   <footer class="statusbar">
     <span id="status-msg">Listo</span>
     <span id="status-ok" class="accent"></span>
     <span id="status-err" class="error"></span>
     <span class="spacer"></span>
-    <span id="footer-summary">0 palabras</span>
+    <span id="footer-summary">0 palabras · 0 líneas</span>
+    <span>LaTeX</span>
     <span>UTF-8</span>
   </footer>
 </div>
 
+<!-- MODAL -->
 <div id="upgrade-modal" class="modal" aria-hidden="true">
   <div class="modal-box">
-    <h2>Limite del plan gratuito</h2>
-    <p>Ya consumiste las 5 compilaciones del dia. Puedes seguir editando, guardar y exportar el codigo, pero para compilar mas veces necesitas Premium.</p>
-    <div id="modal-payment-info" class="payment-card">Cargando informacion de pago...</div>
+    <h2>Límite del plan gratuito</h2>
+    <p>Ya consumiste las 5 compilaciones del día. Puedes seguir editando, guardar y exportar el código, pero para compilar más veces necesitas Premium.</p>
+    <div id="modal-payment-info" class="payment-card">Cargando información de pago...</div>
     <div class="modal-actions">
-      <a href="index.html#payment" target="_blank" class="btn primary">Ver como activar Premium</a>
+      <a href="index.html#payment" target="_blank" class="btn primary">Ver cómo activar Premium</a>
       <button id="close-modal-btn" class="btn" type="button">Seguir editando</button>
     </div>
   </div>
@@ -745,6 +582,7 @@ a{color:inherit}
   <input id="form-code" type="hidden" name="code">
 </form>
 
+<!-- SCRIPTS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/stex/stex.min.js"></script>
@@ -752,6 +590,7 @@ a{color:inherit}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -916,11 +755,9 @@ Resumen ejecutivo de la tesis.
 \begin{frame}
   \titlepage
 \end{frame}
-
 \begin{frame}{Contenido}
   \tableofcontents
 \end{frame}
-
 \section{Introduccion}
 \begin{frame}{Motivacion}
   \begin{itemize}
@@ -928,14 +765,10 @@ Resumen ejecutivo de la tesis.
     \item Punto 2
   \end{itemize}
 \end{frame}
-
 \section{Resultados}
 \begin{frame}{Ecuaciones}
-  \[
-  \hat{f}(\xi) = \int_{-\infty}^{\infty} f(x)e^{-2\pi i x \xi}\,dx
-  \]
+  \[\hat{f}(\xi) = \int_{-\infty}^{\infty} f(x)e^{-2\pi i x \xi}\,dx\]
 \end{frame}
-
 \end{document}`,
 
   ieee: String.raw`\documentclass[conference]{IEEEtran}
@@ -948,24 +781,13 @@ Resumen ejecutivo de la tesis.
 
 \begin{document}
 \maketitle
-
-\begin{abstract}
-Abstract of the paper.
-\end{abstract}
-
-\begin{IEEEkeywords}
-keyword1, keyword2, keyword3
-\end{IEEEkeywords}
-
+\begin{abstract}Abstract of the paper.\end{abstract}
+\begin{IEEEkeywords}keyword1, keyword2, keyword3\end{IEEEkeywords}
 \section{Introduction}
-\begin{equation}
-P = \frac{V^2}{R}
-\end{equation}
-
+\begin{equation}P = \frac{V^2}{R}\end{equation}
 \section{Methodology}
 \section{Results}
 \section{Conclusion}
-
 \bibliographystyle{IEEEtran}
 \begin{thebibliography}{1}
 \bibitem{ref} A. Author, \textit{Title}, Journal, 2024.
@@ -984,16 +806,12 @@ P = \frac{V^2}{R}
 
 \begin{document}
 \maketitle
-
 \section{Introduccion}
 Planteamiento del problema y objetivos.
-
 \section{Desarrollo}
 Cuerpo del reporte con analisis y discusion.
-
 \section{Conclusiones}
 Sintesis de los hallazgos principales.
-
 \end{document}`
 };
 
@@ -1018,834 +836,554 @@ const state = {
   activity: []
 };
 
+// ── ELEMENT REFS (null-safe for removed elements) ──
+const el = id => document.getElementById(id);
 const els = {
-  appShell: document.querySelector(".app-shell"),
-  projectName: document.getElementById("project-name"),
-  planBadge: document.getElementById("plan-badge"),
-  compilCount: document.getElementById("compil-count"),
-  saveDot: document.getElementById("save-dot"),
-  saveLabel: document.getElementById("save-label"),
-  userName: document.getElementById("user-name"),
-  templateSelect: document.getElementById("tpl-sel"),
-  loadTemplateBtn: document.getElementById("load-template-btn"),
-  saveBtn: document.getElementById("save-btn"),
-  themeBtn: document.getElementById("theme-btn"),
-  compileBtn: document.getElementById("compile-btn"),
-  overleafBtn: document.getElementById("overleaf-btn"),
-  logoutBtn: document.getElementById("logout-btn"),
-  lastSavedLabel: document.getElementById("last-saved-label"),
-  copyCodeBtn: document.getElementById("copy-code-btn"),
-  downloadTexBtn: document.getElementById("download-tex-btn"),
-  newDocBtn: document.getElementById("new-doc-btn"),
-  outlineList: document.getElementById("outline-list"),
-  docMetrics: document.getElementById("doc-metrics"),
-  cursorInfo: document.getElementById("cursor-info"),
-  editorSource: document.getElementById("editor-source"),
-  searchBtn: document.getElementById("search-btn"),
-  commentBtn: document.getElementById("comment-btn"),
-  indentBtn: document.getElementById("indent-btn"),
-  previewCaption: document.getElementById("preview-caption"),
-  refreshPreviewBtn: document.getElementById("refresh-preview-btn"),
-  pdfTabBtn: document.getElementById("pdf-tab-btn"),
-  openPdfBtn: document.getElementById("open-pdf-btn"),
-  copySelectionBtn: document.getElementById("copy-selection-btn"),
-  previewRender: document.getElementById("preview-render"),
-  pdfEmpty: document.getElementById("pdf-empty"),
-  pdfFrame: document.getElementById("pdf-frame"),
-  activityList: document.getElementById("activity-list"),
-  statusMsg: document.getElementById("status-msg"),
-  statusOk: document.getElementById("status-ok"),
-  statusErr: document.getElementById("status-err"),
-  footerSummary: document.getElementById("footer-summary"),
-  upgradeModal: document.getElementById("upgrade-modal"),
-  modalPaymentInfo: document.getElementById("modal-payment-info"),
-  closeModalBtn: document.getElementById("close-modal-btn"),
-  compileForm: document.getElementById("compile-form"),
-  formCode: document.getElementById("form-code"),
-  paneResizer: document.getElementById("pane-resizer"),
-  mainStack: document.getElementById("main-stack"),
+  appShell:        document.querySelector(".app-shell"),
+  projectName:     el("project-name"),
+  planBadge:       el("plan-badge"),
+  compilCount:     el("compil-count"),
+  saveDot:         el("save-dot"),
+  saveLabel:       el("save-label"),
+  userName:        el("user-name"),
+  templateSelect:  el("tpl-sel"),
+  loadTemplateBtn: el("load-template-btn"),
+  themeBtn:        el("theme-btn"),
+  compileBtn:      el("compile-btn"),
+  overleafBtn:     el("overleaf-btn"),
+  logoutBtn:       el("logout-btn"),
+  copyCodeBtn:     el("copy-code-btn"),
+  downloadTexBtn:  el("download-tex-btn"),
+  newDocBtn:       el("new-doc-btn"),
+  // Structural preview elements
+  structDocclass:  el("struct-docclass"),
+  structTitle:     el("struct-title"),
+  structAuthor:    el("struct-author"),
+  structPackages:  el("struct-packages"),
+  outlineList:     el("outline-list"),
+  // Editor
+  docMetrics:      el("doc-metrics"),
+  cursorInfo:      el("cursor-info"),
+  editorSource:    el("editor-source"),
+  searchBtn:       el("search-btn"),
+  commentBtn:      el("comment-btn"),
+  indentBtn:       el("indent-btn"),
+  // PDF / tabs
+  pdfEmpty:        el("pdf-empty"),
+  pdfFrame:        el("pdf-frame"),
+  activityList:    el("activity-list"),
+  // Status
+  statusMsg:       el("status-msg"),
+  statusOk:        el("status-ok"),
+  statusErr:       el("status-err"),
+  footerSummary:   el("footer-summary"),
+  // Modal
+  upgradeModal:    el("upgrade-modal"),
+  modalPaymentInfo:el("modal-payment-info"),
+  closeModalBtn:   el("close-modal-btn"),
+  // Form
+  compileForm:     el("compile-form"),
+  formCode:        el("form-code"),
+  // Resizer
+  paneResizer:     el("pane-resizer"),
+  mainStack:       el("main-stack"),
   mobileSwitchButtons: Array.from(document.querySelectorAll(".mobile-switch-btn"))
 };
 
+// ── UTILS ──
 function getTodayKey(){
-  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Bogota" }).format(new Date());
+  return new Intl.DateTimeFormat("en-CA",{timeZone:"America/Bogota"}).format(new Date());
 }
-
 function getEditorTheme(){
-  return document.documentElement.getAttribute("data-theme") === "dark" ? "material-darker" : "default";
+  return document.documentElement.getAttribute("data-theme")==="dark"?"material-darker":"default";
 }
-
-function escapeHtml(value = ""){
-  return value
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#39;");
+function escapeHtml(v=""){
+  return v.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 }
-
-function cleanLatexText(value = ""){
-  return value
-    .replace(/%.*$/gm," ")
+function cleanLatexText(v=""){
+  return v.replace(/%.*$/gm," ")
     .replace(/\\(?:textbf|textit|emph|underline|caption|section|subsection|chapter|title|author|course|professor|affiliation)\{([^}]*)\}/g,"$1")
-    .replace(/\\date\{([^}]*)\}/g,"$1")
-    .replace(/\\\\/g," ")
-    .replace(/\\[a-zA-Z*]+(\[[^\]]*\])?/g," ")
-    .replace(/[{}]/g," ")
-    .replace(/\s+/g," ")
-    .trim();
+    .replace(/\\date\{([^}]*)\}/g,"$1").replace(/\\\\/g," ").replace(/\\[a-zA-Z*]+(\[[^\]]*\])?/g," ")
+    .replace(/[{}]/g," ").replace(/\s+/g," ").trim();
 }
-
 function wordCount(code){
-  const words = cleanLatexText(code).match(/[A-Za-z0-9]+/g);
-  return words ? words.length : 0;
+  const w=cleanLatexText(code).match(/[A-Za-z0-9]+/g);return w?w.length:0;
 }
-
 function getProjectFilename(){
-  const base = (els.projectName.value || "proyecto-latex")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g,"-")
-    .replace(/^-+|-+$/g,"");
-  return `${base || "proyecto-latex"}.tex`;
+  const base=(els.projectName?.value||"proyecto-latex").toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+  return`${base||"proyecto-latex"}.tex`;
 }
-
 function updateWindowTitle(){
-  document.title = `${els.projectName.value || "Proyecto LaTeX"} - LaTeXify`;
+  document.title=`${els.projectName?.value||"Proyecto LaTeX"} - LaTeXify`;
 }
-
-function setStatus(message, kind = ""){
-  els.statusMsg.textContent = message;
-  els.statusOk.textContent = kind === "ok" ? "OK" : "";
-  els.statusErr.textContent = kind === "error" ? "ERROR" : "";
+function setStatus(msg,kind=""){
+  if(els.statusMsg) els.statusMsg.textContent=msg;
+  if(els.statusOk)  els.statusOk.textContent=kind==="ok"?"OK":"";
+  if(els.statusErr) els.statusErr.textContent=kind==="error"?"ERROR":"";
 }
-
-function setSaveState(mode, label){
-  els.saveDot.className = "save-dot";
-  if(mode){ els.saveDot.classList.add(mode); }
-  els.saveLabel.textContent = label;
+function setSaveState(mode,label){
+  if(!els.saveDot||!els.saveLabel) return;
+  els.saveDot.className="save-dot";
+  if(mode) els.saveDot.classList.add(mode);
+  els.saveLabel.textContent=label;
 }
-
 function formatTime(date){
-  return new Intl.DateTimeFormat("es-CO", { hour: "2-digit", minute: "2-digit" }).format(date);
+  return new Intl.DateTimeFormat("es-CO",{hour:"2-digit",minute:"2-digit"}).format(date);
 }
 
-function addActivity(title, body){
-  const entry = { id: Date.now() + Math.random(), title, body, time: formatTime(new Date()) };
+// ── ACTIVITY ──
+function addActivity(title,body){
+  const entry={id:Date.now()+Math.random(),title,body,time:formatTime(new Date())};
   state.activity.unshift(entry);
-  state.activity = state.activity.slice(0, 20);
+  state.activity=state.activity.slice(0,20);
   renderActivity();
 }
-
 function renderActivity(){
+  if(!els.activityList) return;
   if(!state.activity.length){
-    els.activityList.innerHTML = '<div class="activity-empty">Las acciones importantes del editor apareceran aqui.</div>';
+    els.activityList.innerHTML='<div class="activity-empty">Las acciones importantes del editor aparecerán aquí.</div>';
     return;
   }
-  els.activityList.innerHTML = state.activity.map(entry => `
+  els.activityList.innerHTML=state.activity.map(e=>`
     <article class="activity-item">
-      <div class="activity-head">
-        <strong>${escapeHtml(entry.title)}</strong>
-        <span>${escapeHtml(entry.time)}</span>
-      </div>
-      <div class="activity-body">${escapeHtml(entry.body)}</div>
-    </article>
-  `).join("");
+      <div class="activity-head"><strong>${escapeHtml(e.title)}</strong><span>${escapeHtml(e.time)}</span></div>
+      <div class="activity-body">${escapeHtml(e.body)}</div>
+    </article>`).join("");
 }
 
+// ── PLAN UI ──
 function getCompilationUsage(){
-  const today = getTodayKey();
-  if(state.userData.compilationsDate !== today){ return 0; }
-  return state.userData.compilationsToday || 0;
+  const today=getTodayKey();
+  if(state.userData.compilationsDate!==today) return 0;
+  return state.userData.compilationsToday||0;
 }
-
 function updatePlanUI(){
-  const used = getCompilationUsage();
+  const used=getCompilationUsage();
   if(state.userData.premium){
-    els.planBadge.textContent = "PREMIUM";
-    els.planBadge.className = "badge premium";
-    els.compilCount.textContent = "Compilaciones ilimitadas";
+    if(els.planBadge){els.planBadge.textContent="PREMIUM";els.planBadge.className="badge premium";}
+    if(els.compilCount) els.compilCount.textContent="Compilaciones ilimitadas";
   }else{
-    els.planBadge.textContent = "FREE";
-    els.planBadge.className = "badge free";
-    els.compilCount.textContent = `${used}/${FREE_LIMIT} hoy`;
+    if(els.planBadge){els.planBadge.textContent="FREE";els.planBadge.className="badge free";}
+    if(els.compilCount) els.compilCount.textContent=`${used}/${FREE_LIMIT} hoy`;
   }
 }
-
-function showUpgradeModal(message){
-  els.modalPaymentInfo.innerHTML = message || `Activa Premium enviando <strong>$8.000 COP</strong> por Nequi o Daviplata al numero <strong>${PAYMENT_NUM}</strong> con tu correo registrado como referencia.`;
-  els.upgradeModal.classList.add("show");
-  els.upgradeModal.setAttribute("aria-hidden","false");
+function showUpgradeModal(msg){
+  if(els.modalPaymentInfo) els.modalPaymentInfo.innerHTML=msg||`Activa Premium enviando <strong>$8.000 COP</strong> por Nequi o Daviplata al numero <strong>${PAYMENT_NUM}</strong> con tu correo registrado como referencia.`;
+  if(els.upgradeModal){els.upgradeModal.classList.add("show");els.upgradeModal.setAttribute("aria-hidden","false");}
 }
-
 function closeUpgradeModal(){
-  els.upgradeModal.classList.remove("show");
-  els.upgradeModal.setAttribute("aria-hidden","true");
+  if(els.upgradeModal){els.upgradeModal.classList.remove("show");els.upgradeModal.setAttribute("aria-hidden","true");}
 }
 
+// ── OUTLINE & STRUCTURAL PREVIEW ──
 function extractOutline(code){
-  const lines = code.split(/\r?\n/);
-  const outline = [];
-  lines.forEach((line, index) => {
-    const match = line.match(/\\(chapter|section|subsection)\{([^}]*)\}/);
-    if(match){
-      outline.push({ level: match[1], title: cleanLatexText(match[2]) || "(sin titulo)", line: index });
-    }
+  const lines=code.split(/\r?\n/);
+  const outline=[];
+  lines.forEach((line,index)=>{
+    const match=line.match(/\\(chapter|section|subsection)\{([^}]*)\}/);
+    if(match) outline.push({level:match[1],title:cleanLatexText(match[2])||"(sin título)",line:index});
   });
   return outline;
 }
 
-function renderOutline(outline){
-  if(!outline.length){
-    els.outlineList.innerHTML = '<div class="outline-empty">Agrega secciones o capitulos para ver un esquema navegable aqui.</div>';
-    return;
-  }
-  els.outlineList.innerHTML = outline.map(item => `
-    <button class="outline-item level-${escapeHtml(item.level)}" type="button" data-line="${item.line}">
-      <span class="outline-level">${escapeHtml(item.level)}</span>
-      <span>${escapeHtml(item.title)}</span>
-    </button>
-  `).join("");
-}
-
-function renderKatex(){
-  if(typeof katex === "undefined"){ return; }
-  els.previewRender.querySelectorAll("[data-math]").forEach(node => {
-    const expr = node.getAttribute("data-math") || "";
-    const displayMode = node.getAttribute("data-display") === "true";
-    try{
-      katex.render(expr, node, { displayMode, throwOnError: false });
-    }catch(error){
-      node.textContent = expr;
-    }
-  });
-}
-
-function extractSections(code){
-  const matches = Array.from(code.matchAll(/\\(chapter|section|subsection)\{([^}]*)\}/g));
-  return matches.slice(0, 8).map((match, index) => {
-    const start = (match.index || 0) + match[0].length;
-    const nextStart = matches[index + 1]?.index;
-    const documentEnd = code.search(/\\end\{document\}/);
-    const end = typeof nextStart === "number" ? nextStart : (documentEnd === -1 ? code.length : documentEnd);
-    let excerpt = cleanLatexText(code.slice(start, end));
-    if(excerpt.length > 260){
-      excerpt = `${excerpt.slice(0, 260).trim()}...`;
-    }
-    return {
-      level: match[1],
-      title: cleanLatexText(match[2]) || "(sin titulo)",
-      excerpt: excerpt || "Contenido pendiente en esta seccion."
-    };
-  });
-}
-
 function updatePreview(){
-  const code = state.editor.getValue();
-  const title = (code.match(/\\title\{([\s\S]*?)\}/) || [])[1];
-  const author = (code.match(/\\author\{([\s\S]*?)\}/) || [])[1];
-  const date = (code.match(/\\date\{([\s\S]*?)\}/) || [])[1];
-  const abstract = (code.match(/\\begin\{abstract\}([\s\S]*?)\\end\{abstract\}/) || [])[1];
-  const outline = extractOutline(code);
-  const sections = extractSections(code);
-  const displayMath = [
-    ...Array.from(code.matchAll(/\\\[([\s\S]*?)\\\]/g), match => match[1].trim()),
-    ...Array.from(code.matchAll(/\\begin\{equation\*?\}([\s\S]*?)\\end\{equation\*?\}/g), match => match[1].trim())
-  ].filter(Boolean).slice(0, 3);
-  const inlineMath = Array.from(new Set(
-    Array.from(code.matchAll(/\$([^$\n]{1,90})\$/g), match => match[1].trim()).filter(Boolean)
-  )).slice(0, 6);
-  const envs = Array.from(new Set(
-    Array.from(code.matchAll(/\\begin\{([^}]+)\}/g), match => match[1])
-      .filter(env => !["document","abstract","equation","equation*","itemize","enumerate","table","tabular","figure","frame","thebibliography","IEEEkeywords"].includes(env))
-  ));
-  const lines = state.editor.lineCount();
-  const words = wordCount(code);
-  const figures = (code.match(/\\includegraphics/g) || []).length;
-  const tables = (code.match(/\\begin\{table\}/g) || []).length;
+  const code=state.editor.getValue();
 
-  els.previewRender.innerHTML = `
-    <article class="preview-sheet">
-      <div class="paper-page">
-        <div class="paper-topline">
-          <span>${escapeHtml(els.projectName.value || "Proyecto LaTeX")}</span>
-          <span>${escapeHtml(state.currentTemplate.toUpperCase())}</span>
-        </div>
+  // docclass
+  const dc=(code.match(/\\documentclass(?:\[[^\]]*\])?\{([^}]*)\}/)||[])[1]||"...";
+  if(els.structDocclass) els.structDocclass.textContent=`\\documentclass{${dc}}`;
 
-        <header class="sheet-header">
-          <div class="sheet-kicker">Vista previa del documento</div>
-          <h1 class="sheet-title">${escapeHtml(cleanLatexText(title) || "Documento sin titulo")}</h1>
-          <div class="sheet-subtitle">${escapeHtml(cleanLatexText(author) || "Autor sin definir")}${date ? ` - ${escapeHtml(cleanLatexText(date))}` : ""}</div>
-        </header>
+  // title & author
+  const rawTitle=(code.match(/\\title\{([\s\S]*?)\}/)||[])[1];
+  const rawAuthor=(code.match(/\\author\{([\s\S]*?)\}/)||[])[1];
+  if(els.structTitle) els.structTitle.textContent=cleanLatexText(rawTitle)||"Sin título";
+  if(els.structAuthor) els.structAuthor.textContent=cleanLatexText(rawAuthor)||"Autor sin definir";
 
-        <section class="paper-summary">
-          <span class="paper-chip">${lines} lineas</span>
-          <span class="paper-chip">${words} palabras</span>
-          <span class="paper-chip">${outline.length} bloques</span>
-          <span class="paper-chip">${displayMath.length + inlineMath.length} expresiones</span>
-          <span class="paper-chip">${figures} figuras</span>
-          <span class="paper-chip">${tables} tablas</span>
-        </section>
+  // packages
+  const pkgs=[...code.matchAll(/\\usepackage(?:\[[^\]]*\])?\{([^}]*)\}/g)].flatMap(m=>m[1].split(",").map(s=>s.trim())).filter(Boolean);
+  if(els.structPackages){
+    if(pkgs.length){
+      els.structPackages.innerHTML=pkgs.map(p=>`<span class="pkg-pill"><span class="pkg-dot"></span>${escapeHtml(p)}</span>`).join("");
+    }else{
+      els.structPackages.innerHTML='<span style="font-size:12px;color:var(--text-muted)">Ninguno detectado</span>';
+    }
+  }
 
-        ${abstract ? `
-        <section class="preview-block">
-          <div class="block-label">Resumen</div>
-          <div class="abstract-box">${escapeHtml(cleanLatexText(abstract))}</div>
-        </section>` : ""}
-
-        ${sections.length ? sections.map((section, index) => `
-        <section class="preview-block">
-          <div class="block-label">${escapeHtml(section.level)}</div>
-          <div class="outline-preview-item">
-            <strong>${escapeHtml(section.title)}</strong>
-            <span>${escapeHtml(section.excerpt)}</span>
-          </div>
-          ${displayMath[index] ? `<div class="equation-card" data-math="${escapeHtml(displayMath[index])}" data-display="true"></div>` : ""}
-        </section>`).join("") : `
-        <section class="preview-block">
-          <div class="block-label">Contenido</div>
-          <div class="abstract-box">Escribe secciones con \\section{}, \\subsection{} o \\chapter{} para ver una vista previa mas cercana al documento final.</div>
-        </section>`}
-
-        ${inlineMath.length ? `
-        <section class="preview-block">
-          <div class="block-label">Expresiones inline</div>
-          <div class="inline-list">
-            ${inlineMath.map(expr => `<span class="inline-pill" data-math="${escapeHtml(expr)}" data-display="false"></span>`).join("")}
-          </div>
-        </section>` : ""}
-
-        <section class="preview-block">
-          <div class="block-label">Activos del documento</div>
-          <div class="env-list">
-            ${envs.length ? envs.map(env => `<span class="env-pill">${escapeHtml(env)}</span>`).join("") : '<span class="env-pill">Sin entornos especiales</span>'}
-            <span class="env-pill">figures: ${figures}</span>
-            <span class="env-pill">tables: ${tables}</span>
-          </div>
-        </section>
-
-        <div class="preview-note">Esta vista busca parecerse a una pagina real. Para el resultado definitivo usa la pestana PDF.</div>
-      </div>
-    </article>
-  `;
-  renderKatex();
-  renderOutline(outline);
-}
-
-function updateMetrics(){
-  const code = state.editor.getValue();
-  const cursor = state.editor.getCursor();
-  const lines = state.editor.lineCount();
-  const words = wordCount(code);
-  els.docMetrics.textContent = `${lines} lineas - ${words} palabras`;
-  els.cursorInfo.textContent = `L${cursor.line + 1} C${cursor.ch + 1}`;
-  els.footerSummary.textContent = `${words} palabras - ${lines} lineas`;
-  updateWindowTitle();
+  // outline / structure
+  const outline=extractOutline(code);
+  if(els.outlineList){
+    if(!outline.length){
+      els.outlineList.innerHTML='<div style="font-size:12px;color:var(--text-muted);padding:8px 10px">Agrega secciones para ver la estructura aquí.</div>';
+    }else{
+      els.outlineList.innerHTML=outline.map(item=>`
+        <button class="struct-item level-${escapeHtml(item.level)}" type="button" data-line="${item.line}">
+          ${escapeHtml(item.title)}
+        </button>`).join("");
+    }
+  }
 }
 
 function schedulePreview(){
   window.clearTimeout(state.previewTimer);
-  state.previewTimer = window.setTimeout(() => updatePreview(), 120);
+  state.previewTimer=window.setTimeout(()=>updatePreview(),120);
 }
 
-async function persistDocument(logMessage = "", isManual = false){
-  if(!state.currentUser){ return; }
+// ── SAVE ──
+async function persistDocument(logMessage="",isManual=false){
+  if(!state.currentUser) return;
   setSaveState("saving","Guardando...");
-  const payload = {
-    lastCode: state.editor.getValue(),
-    lastSavedAt: new Date().toISOString(),
-    lastTemplate: state.currentTemplate,
-    projectName: els.projectName.value || "Proyecto LaTeX"
+  const payload={
+    lastCode:state.editor.getValue(),
+    lastSavedAt:new Date().toISOString(),
+    lastTemplate:state.currentTemplate,
+    projectName:els.projectName?.value||"Proyecto LaTeX"
   };
   try{
-    await setDoc(doc(db,"users",state.currentUser.uid), payload, { merge: true });
-    state.lastSavedAt = payload.lastSavedAt;
-    const saveTime = formatTime(new Date(payload.lastSavedAt));
-    els.lastSavedLabel.textContent = `Ultimo guardado a las ${saveTime}`;
+    await setDoc(doc(db,"users",state.currentUser.uid),payload,{merge:true});
+    state.lastSavedAt=payload.lastSavedAt;
     setSaveState("saved","Todo guardado");
-    if(isManual || Date.now() - state.lastManualLogAt > 45000){
-      addActivity("Guardado", logMessage || "Cambios sincronizados en la nube.");
-      state.lastManualLogAt = Date.now();
+    if(isManual||Date.now()-state.lastManualLogAt>45000){
+      addActivity("Guardado",logMessage||"Cambios sincronizados en la nube.");
+      state.lastManualLogAt=Date.now();
     }
-  }catch(error){
-    console.error(error);
+  }catch(err){
+    console.error(err);
     setSaveState("dirty","Sin guardar");
-    setStatus("No fue posible guardar los cambios", "error");
+    setStatus("No fue posible guardar los cambios","error");
   }
 }
-
 function scheduleSave(){
-  if(state.suspendAutosave){ return; }
+  if(state.suspendAutosave) return;
   setSaveState("dirty","Cambios pendientes");
   window.clearTimeout(state.saveTimer);
-  state.saveTimer = window.setTimeout(() => {
-    persistDocument("Autosave completado.");
-  }, 1400);
+  state.saveTimer=window.setTimeout(()=>persistDocument("Autosave completado."),1400);
 }
-
 function applyEditorValue(value){
-  state.suspendAutosave = true;
+  state.suspendAutosave=true;
   state.editor.setValue(value);
-  state.suspendAutosave = false;
+  state.suspendAutosave=false;
   updateMetrics();
   updatePreview();
 }
 
+// ── METRICS ──
+function updateMetrics(){
+  if(!state.editor) return;
+  const code=state.editor.getValue();
+  const cursor=state.editor.getCursor();
+  const lines=state.editor.lineCount();
+  const words=wordCount(code);
+  if(els.docMetrics) els.docMetrics.textContent=`${lines} líneas - ${words} palabras`;
+  if(els.cursorInfo) els.cursorInfo.textContent=`L${cursor.line+1} C${cursor.ch+1}`;
+  if(els.footerSummary) els.footerSummary.textContent=`${words} palabras · ${lines} líneas`;
+  updateWindowTitle();
+}
+
+// ── THEME ──
 function setTheme(theme){
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem("ltx-theme", theme);
-  state.editor.setOption("theme", getEditorTheme());
+  document.documentElement.setAttribute("data-theme",theme);
+  localStorage.setItem("ltx-theme",theme);
+  if(state.editor) state.editor.setOption("theme",getEditorTheme());
   syncThemeButton();
 }
-
 function toggleTheme(){
-  const next = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  const next=document.documentElement.getAttribute("data-theme")==="dark"?"light":"dark";
   setTheme(next);
-  addActivity("Tema", `Interfaz cambiada a modo ${next}.`);
+  addActivity("Tema",`Interfaz cambiada a modo ${next}.`);
 }
-
 function syncThemeButton(){
-  const dark = document.documentElement.getAttribute("data-theme") === "dark";
-  els.themeBtn.textContent = dark ? "Claro" : "Oscuro";
-  els.themeBtn.title = dark ? "Cambiar a modo claro" : "Cambiar a modo oscuro";
+  if(!els.themeBtn) return;
+  const dark=document.documentElement.getAttribute("data-theme")==="dark";
+  els.themeBtn.textContent=dark?"☀️":"🌙";
+  els.themeBtn.title=dark?"Cambiar a modo claro":"Cambiar a modo oscuro";
 }
 
+// ── MOBILE ──
 function setMobilePanel(panel){
-  els.appShell.dataset.mobilePanel = panel;
-  els.mobileSwitchButtons.forEach(button => {
-    button.classList.toggle("active", button.dataset.mobilePanel === panel);
-  });
+  els.appShell.dataset.mobilePanel=panel;
+  els.mobileSwitchButtons.forEach(b=>b.classList.toggle("active",b.dataset.mobilePanel===panel));
 }
 
-function decodeSnippet(value = ""){
-  return value.replace(/\\n/g,"\n");
+// ── TABS (right panel) ──
+function setActiveTab(tab){
+  state.currentTab=tab;
+  document.querySelectorAll(".preview-tab").forEach(b=>b.classList.toggle("active",b.dataset.tab===tab));
+  document.querySelectorAll(".tab-panel").forEach(p=>p.classList.toggle("active",p.id===`tab-${tab}`));
+  if(tab==="pdf"&&window.innerWidth<=960) setMobilePanel("preview");
 }
 
-function insertSnippet(before, after = ""){
-  const docEditor = state.editor.getDoc();
-  const selection = docEditor.getSelection();
-  const from = docEditor.getCursor("from");
-  before = decodeSnippet(before);
-  after = decodeSnippet(after);
-  docEditor.replaceSelection(`${before}${selection}${after}`, "around");
+// ── SNIPPET INSERT ──
+function decodeSnippet(v=""){return v.replace(/\\n/g,"\n");}
+function insertSnippet(before,after=""){
+  const d=state.editor.getDoc();
+  const selection=d.getSelection();
+  const from=d.getCursor("from");
+  before=decodeSnippet(before);
+  after=decodeSnippet(after);
+  d.replaceSelection(`${before}${selection}${after}`,"around");
   if(selection){
-    const to = docEditor.getCursor("to");
-    docEditor.setSelection(
-      { line: from.line, ch: from.ch + before.length },
-      { line: to.line, ch: Math.max(to.ch - after.length, 0) }
-    );
+    const to=d.getCursor("to");
+    d.setSelection({line:from.line,ch:from.ch+before.length},{line:to.line,ch:Math.max(to.ch-after.length,0)});
   }else{
-    docEditor.setCursor({ line: from.line, ch: from.ch + before.length });
+    d.setCursor({line:from.line,ch:from.ch+before.length});
   }
   state.editor.focus();
 }
 
-async function copyText(text, successMessage){
+// ── COPY / DOWNLOAD ──
+async function copyText(text,successMsg){
   try{
-    if(navigator.clipboard?.writeText){
-      await navigator.clipboard.writeText(text);
-    }else{
-      const helper = document.createElement("textarea");
-      helper.value = text;
-      helper.style.position = "fixed";
-      helper.style.left = "-9999px";
-      document.body.appendChild(helper);
-      helper.select();
-      document.execCommand("copy");
-      document.body.removeChild(helper);
+    if(navigator.clipboard?.writeText) await navigator.clipboard.writeText(text);
+    else{
+      const h=document.createElement("textarea");h.value=text;h.style.position="fixed";h.style.left="-9999px";
+      document.body.appendChild(h);h.select();document.execCommand("copy");document.body.removeChild(h);
     }
-    setStatus(successMessage, "ok");
-    addActivity("Portapapeles", successMessage);
-  }catch(error){
-    console.error(error);
-    setStatus("No fue posible copiar al portapapeles", "error");
-  }
+    setStatus(successMsg,"ok");
+    addActivity("Portapapeles",successMsg);
+  }catch(err){console.error(err);setStatus("No fue posible copiar","error");}
 }
-
 function downloadTex(){
-  const blob = new Blob([state.editor.getValue()], { type: "application/x-tex;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = getProjectFilename();
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
-  setStatus("Archivo .tex descargado", "ok");
-  addActivity("Descarga", `Se genero ${getProjectFilename()} para descarga local.`);
+  const blob=new Blob([state.editor.getValue()],{type:"application/x-tex;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");a.href=url;a.download=getProjectFilename();
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  setStatus("Archivo .tex descargado","ok");
+  addActivity("Descarga",`Se generó ${getProjectFilename()} para descarga local.`);
 }
 
+// ── OVERLEAF ──
 function openOverleaf(){
-  const form = document.createElement("form");
-  const input = document.createElement("input");
-  form.method = "POST";
-  form.action = "https://www.overleaf.com/docs";
-  form.target = "_blank";
-  input.type = "hidden";
-  input.name = "snip";
-  input.value = state.editor.getValue();
-  form.appendChild(input);
-  document.body.appendChild(form);
-  form.submit();
-  document.body.removeChild(form);
-  addActivity("Overleaf", "Se abrio una copia del proyecto en Overleaf.");
+  const form=document.createElement("form");const input=document.createElement("input");
+  form.method="POST";form.action="https://www.overleaf.com/docs";form.target="_blank";
+  input.type="hidden";input.name="snip";input.value=state.editor.getValue();
+  form.appendChild(input);document.body.appendChild(form);form.submit();document.body.removeChild(form);
+  addActivity("Overleaf","Se abrió una copia del proyecto en Overleaf.");
 }
 
+// ── SEARCH ──
 function searchInEditor(){
-  const query = window.prompt("Buscar en el documento:", state.lastSearchQuery);
-  if(query === null){ return; }
-  const term = query.trim();
-  if(!term){
-    setStatus("Busqueda cancelada");
-    return;
-  }
-  const sameQuery = state.lastSearchQuery === term;
-  state.lastSearchQuery = term;
-  const content = state.editor.getValue();
-  const lowerContent = content.toLowerCase();
-  const lowerTerm = term.toLowerCase();
-  const cursorIndex = state.editor.indexFromPos(state.editor.getCursor());
-  let foundIndex = lowerContent.indexOf(lowerTerm, sameQuery ? cursorIndex + 1 : cursorIndex);
-  if(foundIndex === -1){
-    foundIndex = lowerContent.indexOf(lowerTerm);
-  }
-  if(foundIndex === -1){
-    setStatus(`No se encontro "${term}"`, "error");
-    return;
-  }
-  const from = state.editor.posFromIndex(foundIndex);
-  const to = state.editor.posFromIndex(foundIndex + term.length);
-  state.editor.focus();
-  state.editor.getDoc().setSelection(from, to);
-  state.editor.scrollIntoView({ from, to }, 120);
-  setStatus(`Coincidencia encontrada para "${term}"`, "ok");
+  const query=window.prompt("Buscar en el documento:",state.lastSearchQuery);
+  if(query===null) return;
+  const term=query.trim();
+  if(!term){setStatus("Búsqueda cancelada");return;}
+  const sameQuery=state.lastSearchQuery===term;
+  state.lastSearchQuery=term;
+  const content=state.editor.getValue();
+  const lc=content.toLowerCase();
+  const lt=term.toLowerCase();
+  const ci=state.editor.indexFromPos(state.editor.getCursor());
+  let fi=lc.indexOf(lt,sameQuery?ci+1:ci);
+  if(fi===-1) fi=lc.indexOf(lt);
+  if(fi===-1){setStatus(`No se encontró "${term}"`,"error");return;}
+  const from=state.editor.posFromIndex(fi);
+  const to=state.editor.posFromIndex(fi+term.length);
+  state.editor.focus();state.editor.getDoc().setSelection(from,to);
+  state.editor.scrollIntoView({from,to},120);
+  setStatus(`Coincidencia encontrada para "${term}"`,"ok");
 }
 
+// ── COMPILE ──
 async function registerCompilation(){
-  if(state.userData.premium || !state.currentUser){ return; }
-  const today = getTodayKey();
-  const used = getCompilationUsage() + 1;
-  state.userData.compilationsToday = used;
-  state.userData.compilationsDate = today;
-  await setDoc(doc(db,"users",state.currentUser.uid), {
-    compilationsToday: used,
-    compilationsDate: today
-  }, { merge: true });
+  if(state.userData.premium||!state.currentUser) return;
+  const today=getTodayKey();
+  const used=getCompilationUsage()+1;
+  state.userData.compilationsToday=used;
+  state.userData.compilationsDate=today;
+  await setDoc(doc(db,"users",state.currentUser.uid),{compilationsToday:used,compilationsDate:today},{merge:true});
   updatePlanUI();
 }
-
-async function compilePDF(target = "latex-frame"){
-  if(!state.currentUser){ return; }
-  const used = getCompilationUsage();
-  if(!state.userData.premium && used >= FREE_LIMIT){
-    showUpgradeModal();
-    return;
-  }
+async function compilePDF(target="latex-frame"){
+  if(!state.currentUser) return;
+  const used=getCompilationUsage();
+  if(!state.userData.premium&&used>=FREE_LIMIT){showUpgradeModal();return;}
   setStatus("Compilando PDF...");
-  els.compileBtn.disabled = true;
-  els.openPdfBtn.disabled = true;
-  els.formCode.value = state.editor.getValue();
-  const previousTarget = els.compileForm.target;
-  els.compileForm.target = target;
-  state.awaitingPdfLoad = target === "latex-frame";
-  if(target === "latex-frame"){
-    if(window.innerWidth <= 1240){ setMobilePanel("preview"); }
+  if(els.compileBtn) els.compileBtn.disabled=true;
+  els.formCode.value=state.editor.getValue();
+  const prev=els.compileForm.target;
+  els.compileForm.target=target;
+  state.awaitingPdfLoad=target==="latex-frame";
+  if(target==="latex-frame"){
+    if(window.innerWidth<=960) setMobilePanel("preview");
     setActiveTab("pdf");
-    els.pdfEmpty.style.display = "none";
+    if(els.pdfEmpty) els.pdfEmpty.style.display="none";
     window.clearTimeout(state.compileTimer);
-    state.compileTimer = window.setTimeout(() => {
-      els.compileBtn.disabled = false;
-      els.openPdfBtn.disabled = false;
-      if(state.awaitingPdfLoad){
-        state.awaitingPdfLoad = false;
-        setStatus("La compilacion tardo mas de lo normal. Revisa el panel PDF o intenta de nuevo.", "error");
-      }
-    }, 15000);
+    state.compileTimer=window.setTimeout(()=>{
+      if(els.compileBtn) els.compileBtn.disabled=false;
+      if(state.awaitingPdfLoad){state.awaitingPdfLoad=false;setStatus("La compilación tardó más de lo normal. Revisa el panel PDF.","error");}
+    },15000);
   }
-  try {
-  const code = state.editor.getValue();
-  const response = await fetch("http://46.183.116.172:3000/compile", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ code })
-  });
-  const data = await response.json();
-  if(data.pdf){
-    const pdfBlob = new Blob([Uint8Array.from(atob(data.pdf), c => c.charCodeAt(0))], {type:"application/pdf"});
-    const pdfUrl = URL.createObjectURL(pdfBlob);
-    if(target === "latex-frame"){
-      document.getElementById("latex-frame").src = pdfUrl;
-    } else {
-      window.open(pdfUrl, "_blank");
-    }
-    setStatus("PDF compilado exitosamente", "ok");
-  } else {
-    setStatus(data.error || "Error al compilar", "error");
-  }
-} catch(e) {
-  setStatus("Error conectando con el compilador", "error");
-}
-  els.compileForm.target = previousTarget;
-  try{
-    await registerCompilation();
-  }catch(error){
-    console.error(error);
-  }
-  addActivity("Compilacion", target === "latex-frame" ? "Se envio el documento al compilador PDF integrado." : "Se compilo el documento en una nueva pestana.");
-  if(target !== "latex-frame"){
-    els.compileBtn.disabled = false;
-    els.openPdfBtn.disabled = false;
-    setStatus("PDF abierto en una nueva pestana", "ok");
+  els.compileForm.submit();
+  els.compileForm.target=prev;
+  try{await registerCompilation();}catch(err){console.error(err);}
+  addActivity("Compilación",target==="latex-frame"?"Se envió el documento al compilador PDF integrado.":"Se compiló el documento en una nueva pestaña.");
+  if(target!=="latex-frame"){
+    if(els.compileBtn) els.compileBtn.disabled=false;
+    setStatus("PDF abierto en una nueva pestaña","ok");
   }
 }
 
-function setActiveTab(tab){
-  state.currentTab = tab;
-  if(window.innerWidth <= 1240){
-    setMobilePanel("preview");
+// ── TEMPLATE ──
+function loadTemplate(force=false){
+  const selected=els.templateSelect.value;
+  if(PRO_TEMPLATES.has(selected)&&!state.userData.premium){
+    showUpgradeModal("Las plantillas avanzadas forman parte del plan Premium.");return;
   }
-  document.querySelectorAll(".tab-btn").forEach(button => {
-    button.classList.toggle("active", button.dataset.tab === tab);
-  });
-  document.querySelectorAll(".tab-panel").forEach(panel => {
-    panel.classList.toggle("active", panel.id === `tab-${tab}`);
-  });
-  const captions = {
-    preview: "Vista previa del documento",
-    pdf: "PDF real compilado con el motor externo",
-    activity: "Actividad reciente del editor"
-  };
-  els.previewCaption.textContent = captions[tab] || "";
-}
-
-function jumpToLine(line){
-  state.editor.focus();
-  state.editor.setCursor({ line, ch: 0 });
-  state.editor.scrollIntoView({ line, ch: 0 }, 120);
-}
-
-function loadTemplate(force = false){
-  const selected = els.templateSelect.value;
-  if(PRO_TEMPLATES.has(selected) && !state.userData.premium){
-    showUpgradeModal("Las plantillas avanzadas forman parte del plan Premium. Puedes seguir usando las plantillas gratuitas o activar el plan para habilitarlas.");
-    return;
-  }
-  if(!force){
-    const confirmReplace = window.confirm("Cargar esta plantilla reemplazara el contenido actual. Deseas continuar?");
-    if(!confirmReplace){ return; }
-  }
-  state.currentTemplate = selected;
-  applyEditorValue(TEMPLATES[selected] || TEMPLATES.article);
+  if(!force&&!window.confirm("Cargar esta plantilla reemplazará el contenido actual. ¿Continuar?")) return;
+  state.currentTemplate=selected;
+  applyEditorValue(TEMPLATES[selected]||TEMPLATES.article);
   scheduleSave();
-  setStatus("Plantilla cargada", "ok");
-  addActivity("Plantilla", `Se aplico la plantilla ${selected}.`);
+  setStatus("Plantilla cargada","ok");
+  addActivity("Plantilla",`Se aplicó la plantilla ${selected}.`);
 }
-
 function createNewDocument(){
-  const confirmed = window.confirm("Se reiniciara el documento usando la plantilla seleccionada. Continuar?");
-  if(!confirmed){ return; }
+  if(!window.confirm("Se reiniciará el documento usando la plantilla seleccionada. ¿Continuar?")) return;
   loadTemplate(true);
 }
 
+// ── JUMP TO LINE ──
+function jumpToLine(line){
+  state.editor.focus();
+  state.editor.setCursor({line,ch:0});
+  state.editor.scrollIntoView({line,ch:0},120);
+}
+
+// ── RESIZER ──
 function initResizer(){
-  const minEditor = 420;
-  const minPreview = 360;
-  let dragging = false;
-  const storageKey = "ltx-pane-ratio";
-
-  const applySavedRatio = () => {
-    if(window.innerWidth <= 980){ return; }
-    const savedRatio = Number(localStorage.getItem(storageKey));
-    if(!savedRatio || savedRatio < 0.28 || savedRatio > 0.62){ return; }
-    const bounds = els.mainStack.getBoundingClientRect();
-    if(!bounds.width){ return; }
-    const previewWidth = Math.round(bounds.width * savedRatio);
-    const editorWidth = bounds.width - previewWidth - 10;
-    if(editorWidth < minEditor || previewWidth < minPreview){ return; }
-    els.mainStack.style.gridTemplateColumns = `${editorWidth}px 10px ${previewWidth}px`;
+  const minEditor=380, minPreview=300;
+  let dragging=false;
+  const key="ltx-pane-ratio";
+  const applySaved=()=>{
+    if(window.innerWidth<=960) return;
+    const r=Number(localStorage.getItem(key));
+    if(!r||r<0.25||r>0.65) return;
+    const b=els.mainStack.getBoundingClientRect();if(!b.width) return;
+    const pw=Math.round(b.width*r);const ew=b.width-pw-8;
+    if(ew<minEditor||pw<minPreview) return;
+    els.mainStack.style.gridTemplateColumns=`${ew}px 8px ${pw}px`;
   };
-
-  const onMove = event => {
-    if(!dragging || window.innerWidth <= 980){ return; }
-    const bounds = els.mainStack.getBoundingClientRect();
-    const editorWidth = Math.min(Math.max(event.clientX - bounds.left, minEditor), bounds.width - minPreview - 10);
-    const previewWidth = bounds.width - editorWidth - 10;
-    els.mainStack.style.gridTemplateColumns = `${editorWidth}px 10px ${previewWidth}px`;
+  const onMove=e=>{
+    if(!dragging||window.innerWidth<=960) return;
+    const b=els.mainStack.getBoundingClientRect();
+    const ew=Math.min(Math.max(e.clientX-b.left,minEditor),b.width-minPreview-8);
+    const pw=b.width-ew-8;
+    els.mainStack.style.gridTemplateColumns=`${ew}px 8px ${pw}px`;
   };
-
-  els.paneResizer.addEventListener("pointerdown", event => {
-    dragging = true;
-    els.paneResizer.setPointerCapture(event.pointerId);
-    document.body.style.userSelect = "none";
-  });
-
-  window.addEventListener("pointermove", onMove);
-  window.addEventListener("pointerup", () => {
-    if(dragging && window.innerWidth > 980){
-      const bounds = els.mainStack.getBoundingClientRect();
-      const columns = getComputedStyle(els.mainStack).gridTemplateColumns.split(" ");
-      const previewWidth = Number.parseFloat(columns[2]);
-      if(bounds.width && previewWidth){
-        localStorage.setItem(storageKey, String(previewWidth / bounds.width));
-      }
+  els.paneResizer.addEventListener("pointerdown",e=>{dragging=true;els.paneResizer.setPointerCapture(e.pointerId);document.body.style.userSelect="none";});
+  window.addEventListener("pointermove",onMove);
+  window.addEventListener("pointerup",()=>{
+    if(dragging&&window.innerWidth>960){
+      const b=els.mainStack.getBoundingClientRect();
+      const cols=getComputedStyle(els.mainStack).gridTemplateColumns.split(" ");
+      const pw=parseFloat(cols[2]);
+      if(b.width&&pw) localStorage.setItem(key,String(pw/b.width));
     }
-    dragging = false;
-    document.body.style.userSelect = "";
+    dragging=false;document.body.style.userSelect="";
   });
-
-  applySavedRatio();
-  window.addEventListener("resize", applySavedRatio);
+  applySaved();
+  window.addEventListener("resize",applySaved);
 }
 
+// ── EDITOR INIT ──
 function initEditor(){
-  state.editor = CodeMirror.fromTextArea(els.editorSource, {
-    mode: "stex",
-    lineNumbers: true,
-    lineWrapping: false,
-    indentUnit: 2,
-    tabSize: 2,
-    smartIndent: true,
-    autofocus: true,
-    styleActiveLine: true,
-    autoCloseBrackets: true,
-    matchBrackets: true,
-    theme: getEditorTheme(),
-    extraKeys: {
-      Tab(cm){
-        if(cm.somethingSelected()){ cm.indentSelection("add"); }
-        else{ cm.replaceSelection("  ", "end"); }
-      },
-      "Shift-Tab"(cm){ cm.indentSelection("subtract"); },
-      "Ctrl-F"(){ searchInEditor(); },
-      "Cmd-F"(){ searchInEditor(); },
-      "Ctrl-S"(){ persistDocument("Guardado manual ejecutado.", true); },
-      "Cmd-S"(){ persistDocument("Guardado manual ejecutado.", true); },
-      "Ctrl-Enter"(){ compilePDF(); },
-      "Cmd-Enter"(){ compilePDF(); },
-      "Ctrl-/"(cm){ cm.toggleComment(); },
-      "Cmd-/"(cm){ cm.toggleComment(); }
+  state.editor=CodeMirror.fromTextArea(els.editorSource,{
+    mode:"stex",lineNumbers:true,lineWrapping:false,indentUnit:2,tabSize:2,
+    smartIndent:true,autofocus:true,styleActiveLine:true,autoCloseBrackets:true,
+    matchBrackets:true,theme:getEditorTheme(),
+    extraKeys:{
+      Tab(cm){if(cm.somethingSelected())cm.indentSelection("add");else cm.replaceSelection("  ","end");},
+      "Shift-Tab"(cm){cm.indentSelection("subtract");},
+      "Ctrl-F"(){searchInEditor();},"Cmd-F"(){searchInEditor();},
+      "Ctrl-S"(){persistDocument("Guardado manual ejecutado.",true);},"Cmd-S"(){persistDocument("Guardado manual ejecutado.",true);},
+      "Ctrl-Enter"(){compilePDF();},"Cmd-Enter"(){compilePDF();},
+      "Ctrl-/"(cm){cm.toggleComment();},"Cmd-/"(cm){cm.toggleComment();}
     }
   });
-
   applyEditorValue(TEMPLATES.article);
-  state.editor.on("change", () => {
-    updateMetrics();
-    schedulePreview();
-    scheduleSave();
-  });
-  state.editor.on("cursorActivity", updateMetrics);
+  state.editor.on("change",()=>{updateMetrics();schedulePreview();scheduleSave();});
+  state.editor.on("cursorActivity",updateMetrics);
 }
 
+// ── LOAD USER DOC ──
 async function loadUserDocument(uid){
-  const userRef = doc(db,"users",uid);
-  const snapshot = await getDoc(userRef);
-  if(snapshot.exists()){
-    state.userData = { premium: false, compilationsToday: 0, compilationsDate: "", ...snapshot.data() };
-  }
+  const snap=await getDoc(doc(db,"users",uid));
+  if(snap.exists()) state.userData={premium:false,compilationsToday:0,compilationsDate:"",...snap.data()};
   updatePlanUI();
-  els.templateSelect.value = state.userData.lastTemplate && TEMPLATES[state.userData.lastTemplate] ? state.userData.lastTemplate : "article";
-  state.currentTemplate = els.templateSelect.value;
-  els.projectName.value = state.userData.projectName || "Proyecto LaTeX";
+  if(els.templateSelect) els.templateSelect.value=state.userData.lastTemplate&&TEMPLATES[state.userData.lastTemplate]?state.userData.lastTemplate:"article";
+  state.currentTemplate=els.templateSelect?.value||"article";
+  if(els.projectName) els.projectName.value=state.userData.projectName||"Proyecto LaTeX";
   updateWindowTitle();
-  const code = state.userData.lastCode || TEMPLATES[state.currentTemplate] || TEMPLATES.article;
+  const code=state.userData.lastCode||TEMPLATES[state.currentTemplate]||TEMPLATES.article;
   applyEditorValue(code);
   if(state.userData.lastSavedAt){
-    state.lastSavedAt = state.userData.lastSavedAt;
-    els.lastSavedLabel.textContent = `Ultimo guardado a las ${formatTime(new Date(state.userData.lastSavedAt))}`;
+    state.lastSavedAt=state.userData.lastSavedAt;
     setSaveState("saved","Todo guardado");
   }else{
-    setSaveState("", "Sin cambios");
+    setSaveState("","Sin cambios");
   }
-  addActivity("Proyecto cargado", "Se restauro la ultima sesion del editor.");
+  addActivity("Proyecto cargado","Se restauró la última sesión del editor.");
 }
 
+// ── BIND EVENTS ──
 function bindEvents(){
-  const savedTheme = localStorage.getItem("ltx-theme");
-  if(savedTheme){
-    document.documentElement.setAttribute("data-theme", savedTheme);
-    state.editor.setOption("theme", getEditorTheme());
-  }
+  const saved=localStorage.getItem("ltx-theme");
+  if(saved){document.documentElement.setAttribute("data-theme",saved);if(state.editor) state.editor.setOption("theme",getEditorTheme());}
   syncThemeButton();
-  setMobilePanel(window.innerWidth <= 1240 ? "editor" : els.appShell.dataset.mobilePanel || "editor");
+  setMobilePanel(window.innerWidth<=960?"editor":els.appShell.dataset.mobilePanel||"editor");
 
-  els.themeBtn.addEventListener("click", toggleTheme);
-  els.loadTemplateBtn.addEventListener("click", () => loadTemplate());
-  els.saveBtn.addEventListener("click", () => persistDocument("Guardado manual ejecutado.", true));
-  els.compileBtn.addEventListener("click", () => compilePDF());
-  els.overleafBtn.addEventListener("click", openOverleaf);
-  els.logoutBtn.addEventListener("click", async () => {
-    await signOut(auth);
-    window.location.href = "login.html";
-  });
-  els.copyCodeBtn.addEventListener("click", () => copyText(state.editor.getValue(), "Codigo completo copiado"));
-  els.downloadTexBtn.addEventListener("click", downloadTex);
-  els.newDocBtn.addEventListener("click", createNewDocument);
-  els.projectName.addEventListener("input", () => {
-    updateWindowTitle();
-    scheduleSave();
-  });
-  els.searchBtn.addEventListener("click", searchInEditor);
-  els.commentBtn.addEventListener("click", () => {
-    state.editor.toggleComment();
-    state.editor.focus();
-  });
-  els.indentBtn.addEventListener("click", () => {
-    state.editor.indentSelection("add");
-    state.editor.focus();
-  });
-  els.refreshPreviewBtn.addEventListener("click", () => {
-    updatePreview();
-    setStatus("Vista previa actualizada", "ok");
-    addActivity("Preview", "Se actualizo la vista previa estructural.");
-  });
-  els.pdfTabBtn.addEventListener("click", () => setActiveTab("pdf"));
-  els.openPdfBtn.addEventListener("click", () => compilePDF("_blank"));
-  els.copySelectionBtn.addEventListener("click", () => {
-    const selection = state.editor.getSelection() || state.editor.getValue();
-    copyText(selection, state.editor.getSelection() ? "Seleccion copiada" : "No habia seleccion: se copio todo el documento");
-  });
-  els.mobileSwitchButtons.forEach(button => {
-    button.addEventListener("click", () => setMobilePanel(button.dataset.mobilePanel));
-  });
-  els.closeModalBtn.addEventListener("click", closeUpgradeModal);
-  els.upgradeModal.addEventListener("click", event => {
-    if(event.target === els.upgradeModal){ closeUpgradeModal(); }
+  if(els.themeBtn)        els.themeBtn.addEventListener("click",toggleTheme);
+  if(els.loadTemplateBtn) els.loadTemplateBtn.addEventListener("click",()=>loadTemplate());
+  if(els.compileBtn)      els.compileBtn.addEventListener("click",()=>compilePDF());
+  if(els.overleafBtn)     els.overleafBtn.addEventListener("click",openOverleaf);
+  if(els.logoutBtn)       els.logoutBtn.addEventListener("click",async()=>{await signOut(auth);window.location.href="login.html";});
+  if(els.copyCodeBtn)     els.copyCodeBtn.addEventListener("click",()=>copyText(state.editor.getValue(),"Código completo copiado"));
+  if(els.downloadTexBtn)  els.downloadTexBtn.addEventListener("click",downloadTex);
+  if(els.newDocBtn)       els.newDocBtn.addEventListener("click",createNewDocument);
+  if(els.projectName)     els.projectName.addEventListener("input",()=>{updateWindowTitle();scheduleSave();});
+  if(els.searchBtn)       els.searchBtn.addEventListener("click",searchInEditor);
+  if(els.commentBtn)      els.commentBtn.addEventListener("click",()=>{state.editor.toggleComment();state.editor.focus();});
+  if(els.indentBtn)       els.indentBtn.addEventListener("click",()=>{state.editor.indentSelection("add");state.editor.focus();});
+  if(els.closeModalBtn)   els.closeModalBtn.addEventListener("click",closeUpgradeModal);
+  if(els.upgradeModal)    els.upgradeModal.addEventListener("click",e=>{if(e.target===els.upgradeModal)closeUpgradeModal();});
+
+  // Preview tabs (right panel)
+  document.querySelectorAll(".preview-tab[data-tab]").forEach(b=>{
+    b.addEventListener("click",()=>setActiveTab(b.dataset.tab));
   });
 
-  document.querySelectorAll("[data-before]").forEach(button => {
-    button.addEventListener("click", () => insertSnippet(button.dataset.before || "", button.dataset.after || ""));
+  // Tool buttons
+  document.querySelectorAll("[data-before]").forEach(b=>{
+    b.addEventListener("click",()=>insertSnippet(b.dataset.before||"",b.dataset.after||""));
   });
 
-  document.querySelectorAll(".tab-btn").forEach(button => {
-    button.addEventListener("click", () => setActiveTab(button.dataset.tab));
-  });
+  // Outline click → jump
+  if(els.outlineList){
+    els.outlineList.addEventListener("click",e=>{
+      const btn=e.target.closest("[data-line]");
+      if(btn){jumpToLine(Number(btn.dataset.line));if(window.innerWidth<=960)setMobilePanel("editor");}
+    });
+  }
 
-  els.outlineList.addEventListener("click", event => {
-    const button = event.target.closest("[data-line]");
-    if(button){
-      jumpToLine(Number(button.dataset.line));
-      if(window.innerWidth <= 1240){ setMobilePanel("editor"); }
-    }
-  });
+  // Mobile switch
+  els.mobileSwitchButtons.forEach(b=>{b.addEventListener("click",()=>setMobilePanel(b.dataset.mobilePanel));});
 
-  els.pdfFrame.addEventListener("load", () => {
-    if(!state.awaitingPdfLoad){ return; }
-    state.awaitingPdfLoad = false;
-    window.clearTimeout(state.compileTimer);
-    els.compileBtn.disabled = false;
-    els.openPdfBtn.disabled = false;
-    setStatus("PDF compilado y actualizado", "ok");
-    addActivity("PDF listo", "El panel derecho ya contiene la version compilada mas reciente.");
-  });
+  // PDF frame loaded
+  if(els.pdfFrame){
+    els.pdfFrame.addEventListener("load",()=>{
+      if(!state.awaitingPdfLoad) return;
+      state.awaitingPdfLoad=false;
+      window.clearTimeout(state.compileTimer);
+      if(els.compileBtn) els.compileBtn.disabled=false;
+      setStatus("PDF compilado y actualizado","ok");
+      addActivity("PDF listo","El panel derecho ya contiene la versión compilada más reciente.");
+    });
+  }
 
-  window.addEventListener("beforeunload", event => {
-    if(els.saveLabel.textContent === "Cambios pendientes"){
-      event.preventDefault();
-      event.returnValue = "";
-    }
+  window.addEventListener("beforeunload",e=>{
+    if(els.saveLabel?.textContent==="Cambios pendientes"){e.preventDefault();e.returnValue="";}
   });
 }
 
+// ── BOOTSTRAP ──
 initEditor();
 bindEvents();
 initResizer();
@@ -1853,19 +1391,16 @@ updateMetrics();
 updatePreview();
 renderActivity();
 
-onAuthStateChanged(auth, async user => {
-  if(!user){
-    window.location.href = "login.html";
-    return;
-  }
-  state.currentUser = user;
-  els.userName.textContent = user.displayName || user.email || "Usuario";
+onAuthStateChanged(auth,async user=>{
+  if(!user){window.location.href="login.html";return;}
+  state.currentUser=user;
+  if(els.userName) els.userName.textContent=user.displayName||user.email||"Usuario";
   try{
     await loadUserDocument(user.uid);
-  }catch(error){
-    console.error(error);
-    setStatus("No fue posible cargar la ultima sesion", "error");
-    addActivity("Carga parcial", "Se abrio el editor con la plantilla base por un problema al leer la nube.");
+  }catch(err){
+    console.error(err);
+    setStatus("No fue posible cargar la última sesión","error");
+    addActivity("Carga parcial","Se abrió el editor con la plantilla base por un problema al leer la nube.");
   }
 });
 </script>
