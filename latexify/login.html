@@ -56,21 +56,6 @@ input:focus{border-color:var(--teal-m);background:var(--paper)}
 footer{text-align:center;padding:20px;font-size:12px;color:var(--ink3)}
 footer a{color:var(--ink3);text-decoration:none}
 footer a:hover{color:var(--teal)}
-/* ── Payment styles ── */
-.pay-divider{display:flex;align-items:center;gap:10px;margin:16px 0 12px}
-.pay-divider::before,.pay-divider::after{content:'';flex:1;height:1px;background:var(--border)}
-.pay-divider span{font-size:11px;color:var(--ink3);white-space:nowrap}
-.pay-tabs{display:flex;gap:8px;margin-bottom:4px}
-.pay-tab{flex:1;padding:9px 8px;font-family:var(--sans);font-size:13px;font-weight:500;color:var(--ink3);background:var(--paper2);border:1.5px solid var(--border);border-radius:8px;cursor:pointer;transition:all .2s}
-.pay-tab.active{color:var(--teal);border-color:var(--teal-m);background:var(--teal-l)}
-.bank-card{background:var(--paper2);border:1px solid var(--border);border-radius:10px;padding:12px 14px}
-.bank-row2{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border);font-size:13px}
-.bank-row2:last-child{border-bottom:none}
-.bank-row2 span{color:var(--ink3)}
-.bank-row2 strong{color:var(--ink);font-weight:500;display:flex;align-items:center;gap:8px}
-.cp-btn{background:none;border:none;color:var(--teal);font-family:var(--sans);font-size:11px;font-weight:500;cursor:pointer;padding:2px 6px;border-radius:4px;transition:background .2s}
-.cp-btn:hover{background:var(--teal-l)}
-.bank-note{font-size:11px;color:var(--ink3);line-height:1.6;margin-top:10px;padding:10px 12px;background:var(--amber-l);border-radius:8px;border-left:3px solid var(--amber)}
 </style>
 </head>
 <body>
@@ -133,41 +118,6 @@ footer a:hover{color:var(--teal)}
             </div>
           </div>
         </div>
-
-        <!-- SECCIÓN DE PAGO (solo visible con Premium) -->
-        <div id="payment-section" style="display:none">
-          <div class="pay-divider"><span>Método de pago — $8.000 COP/mes</span></div>
-          <div class="pay-tabs">
-            <button class="pay-tab active" id="ptab-card" onclick="setPayMethod('card')">💳 Tarjeta</button>
-            <button class="pay-tab" id="ptab-bank" onclick="setPayMethod('bank')">🏦 Transferencia</button>
-          </div>
-          <!-- Tarjeta -->
-          <div id="ppanel-card">
-            <div class="field" style="margin-top:12px">
-              <label>Número de tarjeta</label>
-              <input type="text" id="pay-number" placeholder="0000 0000 0000 0000" maxlength="19" oninput="fmtCard(this)">
-            </div>
-            <div class="field">
-              <label>Titular</label>
-              <input type="text" id="pay-holder" placeholder="Nombre en la tarjeta">
-            </div>
-            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" class="field">
-              <div><label>Vencimiento</label><input type="text" id="pay-exp" placeholder="MM/AA" maxlength="5" oninput="fmtExp(this)"></div>
-              <div><label>CVV</label><input type="text" id="pay-cvv" placeholder="•••" maxlength="4" oninput="this.value=this.value.replace(/\D/g,'')"></div>
-            </div>
-          </div>
-          <!-- Transferencia -->
-          <div id="ppanel-bank" style="display:none;margin-top:12px">
-            <div class="bank-card">
-              <div class="bank-row2"><span>Banco</span><strong>Bancolombia</strong></div>
-              <div class="bank-row2"><span>Tipo</span><strong>Ahorros</strong></div>
-              <div class="bank-row2"><span>Cuenta</span><strong>123-456789-00 <button class="cp-btn" onclick="copyVal('123-456789-00',this)">Copiar</button></strong></div>
-              <div class="bank-row2"><span>NIT</span><strong>900.123.456-7 <button class="cp-btn" onclick="copyVal('900.123.456-7',this)">Copiar</button></strong></div>
-            </div>
-            <p class="bank-note">⚡ Tras crear tu cuenta, envíanos el comprobante por WhatsApp o correo para activar Premium.</p>
-          </div>
-        </div>
-
         <button class="btn btn-primary" id="reg-btn" onclick="doRegister()">Crear cuenta gratis</button>
         <p style="font-size:11px;color:var(--ink3);margin-top:14px;text-align:center;line-height:1.5">Al registrarte aceptas los términos de uso. Si elegiste Premium, activaremos tu cuenta tras confirmar tu pago.</p>
       </div>
@@ -301,45 +251,9 @@ function selectPlan(plan){
   document.getElementById('opt-free').classList.toggle('selected',    plan==='free');
   document.getElementById('opt-premium').classList.toggle('selected', plan==='premium');
   const btn = document.getElementById('reg-btn');
-  const paySection = document.getElementById('payment-section');
-  if(plan === 'premium'){
-    btn.textContent = 'Crear cuenta y pagar Premium';
-    paySection.style.display = 'block';
-  } else {
-    btn.textContent = 'Crear cuenta gratis';
-    paySection.style.display = 'none';
-  }
+  btn.textContent = plan==='premium' ? 'Crear cuenta y pagar Premium' : 'Crear cuenta gratis';
 }
 window.selectPlan = selectPlan;
-
-function setPayMethod(method){
-  ['card','bank'].forEach(m => {
-    document.getElementById('ptab-' + m).classList.toggle('active', m === method);
-    document.getElementById('ppanel-' + m).style.display = m === method ? 'block' : 'none';
-  });
-}
-window.setPayMethod = setPayMethod;
-
-function fmtCard(input){
-  let v = input.value.replace(/\D/g,'').slice(0,16);
-  input.value = v.replace(/(.{4})/g,'$1 ').trim();
-}
-window.fmtCard = fmtCard;
-
-function fmtExp(input){
-  let v = input.value.replace(/\D/g,'').slice(0,4);
-  if(v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2);
-  input.value = v;
-}
-window.fmtExp = fmtExp;
-
-function copyVal(text, btn){
-  navigator.clipboard.writeText(text).then(() => {
-    btn.textContent = '✓ Copiado';
-    setTimeout(() => btn.textContent = 'Copiar', 2000);
-  });
-}
-window.copyVal = copyVal;
 
 // Keyboard enter
 document.addEventListener('keydown', e=>{

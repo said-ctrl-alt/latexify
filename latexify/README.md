@@ -185,3 +185,49 @@ Si quieres usar un dominio como `latexify.co`:
 ---
 
 *LaTeXify — Hecho para estudiantes universitarios*
+
+
+## Endurecimiento agregado en esta versión
+
+Se añadieron archivos nuevos para corregir primero los riesgos críticos:
+
+- `firestore.rules`: reglas más estrictas con subcolección `projects` y claims de admin.
+- `functions/index.js`: Cloud Functions para:
+  - `listUsers`
+  - `setPremiumStatus`
+  - `setAdminRole`
+  - `createProject`
+  - `healthcheck`
+- `functions/package.json`: dependencias mínimas del backend.
+
+### Despliegue de funciones
+
+```bash
+cd functions
+npm install
+firebase deploy --only functions
+```
+
+### Despliegue de reglas
+
+```bash
+firebase deploy --only firestore:rules
+```
+
+### Cómo crear el primer admin
+
+1. Registra un usuario normal.
+2. Obtén su UID desde Firebase Authentication.
+3. Ejecuta una sola vez desde un entorno con Admin SDK o Cloud Shell:
+
+```js
+await admin.auth().setCustomUserClaims('UID_DEL_USUARIO', { admin: true })
+await admin.firestore().collection('users').doc('UID_DEL_USUARIO').set({ role: 'admin' }, { merge: true })
+```
+
+4. Cierra sesión y vuelve a entrar para refrescar claims.
+
+### Cambio funcional importante
+
+El editor ahora guarda en `users/{uid}/projects/{projectId}` y deja de depender solo de `lastCode`.
+El panel admin ya no lee `users` directamente desde el cliente; ahora usa Cloud Functions.
