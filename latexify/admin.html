@@ -128,9 +128,8 @@ tr:hover td{background:var(--paper2)}
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, collection, getDocs, doc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
 
-// ── CONFIGURA AQUÍ ────────────────────────────────────────────────────────────
 const FIREBASE_CONFIG = {
   apiKey:            "AIzaSyAaezwe-pPDi1rsS3uFopk9JMY199LLoqk",
   authDomain:        "latexify-4bfc9.firebaseapp.com",
@@ -139,20 +138,39 @@ const FIREBASE_CONFIG = {
   messagingSenderId: "292044762895",
   appId:             "1:292044762895:web:a7a0ed9489331e2e88d87a"
 };
-const ADMIN_EMAILS = ["tu@correo.com"]; // Correos que pueden acceder al admin
-// ─────────────────────────────────────────────────────────────────────────────
 
-const app  = initializeApp(FIREBASE_CONFIG);
+const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
-const db   = getFirestore(app);
+const functions = getFunctions(app);
+const listUsersFn = httpsCallable(functions, 'listUsers');
+const setPremiumStatusFn = httpsCallable(functions, 'setPremiumStatus');
 let allUsers = [];
 
-onAuthStateChanged(auth, async user => {
-  if(!user){ window.location.href='login.html'; return; }
-  if(!ADMIN_EMAILS.includes(user.email)){
-    alert('Acceso denegado. Solo administradores.');
-    window.location.href='editor.html'; return;
+function fmtDate(value){
+  if(!value) return '—';
+  const d = new Date(value);
+  return Number.isNaN(d.getTime()) ? value : d.toLocaleDateString('es-CO',{year:'numeric',month:'short',day:'numeric'});
+}
+
+function showError(message){
+  const loading = document.getElementById('loading');
+  loading.style.display='block';
+  loading.textContent=message;
+}
+
+async function assertAdmin(user){
+  const token = await user.getIdTokenResult(true);
+  if(token.claims.admin !== true){
+    alert('Acceso denegado. Esta vista ahora exige custom claims de administrador.');
+    window.location.href='editor.html';
+    return false;
   }
+  return true;
+}
+
+onAuthStateChanged(auth, async (user) => {
+  if(!user){ window.location.href='login.html'; return; }
+  if(!(await assertAdmin(user))) return;
   loadUsers();
 });
 
@@ -160,15 +178,17 @@ window.loadUsers = async function(){
   document.getElementById('loading').style.display='block';
   document.getElementById('user-table').style.display='none';
   try{
-    const snap = await getDocs(collection(db,'users'));
-    allUsers = snap.docs.map(d=>({id:d.id,...d.data()}));
+    const result = await listUsersFn();
+    allUsers = result.data.users || [];
     renderTable(allUsers);
-    // Stats
     const premium = allUsers.filter(u=>u.premium).length;
     document.getElementById('stat-total').textContent   = allUsers.length;
     document.getElementById('stat-premium').textContent = premium;
     document.getElementById('stat-free').textContent    = allUsers.length - premium;
-  }catch(e){ document.getElementById('loading').textContent='Error: '+e.message; }
+  }catch(e){
+    console.error(e);
+    showError('No fue posible cargar usuarios. Verifica que desplegaste las Cloud Functions y tengas custom claims de admin.');
+  }
 };
 
 function renderTable(users){
@@ -180,7 +200,7 @@ function renderTable(users){
       <td>${u.name||'—'}</td>
       <td style="font-family:var(--mono);font-size:12px">${u.email||'—'}</td>
       <td><span class="badge ${u.role==='admin'?'badge-admin':u.premium?'badge-premium':'badge-free'}">${u.role==='admin'?'ADMIN':u.premium?'PREMIUM':'FREE'}</span></td>
-      <td style="font-size:12px;color:var(--ink3)">${u.premiumExpiry||'—'}</td>
+      <td style="font-size:12px;color:var(--ink3)">${fmtDate(u.premiumExpiry)}</td>
       <td style="font-size:12px;text-align:center">${u.compilationsToday||0}</td>
       <td>
         <div class="action-row">
@@ -199,15 +219,7 @@ window.filterTable = function(){
 };
 
 async function setUserPremium(uid, active, months){
-  const expiry = active ? (() => {
-    const d = new Date(); d.setMonth(d.getMonth() + months);
-    return d.toLocaleDateString('es-CO',{year:'numeric',month:'short',day:'numeric'});
-  })() : null;
-  await updateDoc(doc(db,'users',uid), {
-    premium: active,
-    premiumExpiry: expiry,
-    premiumActivated: active ? new Date().toISOString() : null
-  });
+  await setPremiumStatusFn({ uid, active, months });
 }
 
 window.activateUser = async function(uid, months){
@@ -215,7 +227,7 @@ window.activateUser = async function(uid, months){
     await setUserPremium(uid, true, months);
     await loadUsers();
     alert(`Premium activado por ${months} mes(es) ✓`);
-  }catch(e){ alert('Error: '+e.message); }
+  }catch(e){ alert('Error: '+(e.message||e)); }
 };
 
 window.revokeUser = async function(uid){
@@ -224,7 +236,7 @@ window.revokeUser = async function(uid){
     await setUserPremium(uid, false, 0);
     await loadUsers();
     alert('Premium revocado.');
-  }catch(e){ alert('Error: '+e.message); }
+  }catch(e){ alert('Error: '+(e.message||e)); }
 };
 
 window.activateByEmail = async function(){
@@ -242,7 +254,7 @@ window.activateByEmail = async function(){
     ok.textContent=`✓ Premium activado para ${email} por ${months} mes(es).`;
     ok.classList.add('show');
     document.getElementById('act-email').value='';
-  }catch(e){ err.textContent='Error: '+e.message; err.classList.add('show'); }
+  }catch(e){ err.textContent='Error: '+(e.message||e); err.classList.add('show'); }
 };
 
 window.doLogout = async function(){ await signOut(auth); window.location.href='login.html'; };
