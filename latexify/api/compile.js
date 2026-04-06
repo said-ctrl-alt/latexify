@@ -6,6 +6,15 @@ const { promisify } = require("util");
 
 const execFileAsync = promisify(execFile);
 
+// Vercel: aumenta el límite del body para proyectos con imágenes y .cls pesados.
+module.exports.config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "50mb",
+    },
+  },
+};
+
 // ─────────────────────────────────────────────
 // Configuración
 // ─────────────────────────────────────────────
