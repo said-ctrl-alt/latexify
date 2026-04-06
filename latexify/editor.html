@@ -440,72 +440,587 @@ a{color:inherit}
 .activity-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:6px;font-size:12px;color:#8fa3ba}
 .activity-body{color:#c4d1de;line-height:1.6;font-size:13px}
 
-.statusbar{
-  height:34px;padding:0 16px;display:flex;align-items:center;gap:14px;background:var(--status-bg);color:var(--status-ink);
-  border-top:1px solid rgba(255,255,255,0.06);font-family:'IBM Plex Mono',monospace;font-size:11px;flex-shrink:0;
+.app-shell{
+  background:#0f131a;
 }
+
+.project-name-hidden{
+  position:absolute;
+  opacity:0;
+  pointer-events:none;
+  width:1px;
+  height:1px;
+}
+
+.app-topbar{
+  min-height:60px;
+  padding:10px 12px;
+  background:#121720;
+  border-bottom:1px solid #20293a;
+}
+
+.topbar-left,
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+
+.topbar-left{flex:1}
+.topbar-right{justify-content:flex-end}
+
+.brand{
+  min-width:max-content;
+  gap:8px;
+}
+
+.brand-mark{
+  width:28px;
+  height:28px;
+  border-radius:8px;
+}
+
+.compact-select{
+  min-width:190px;
+}
+
+.compact-select select{
+  height:36px;
+  border-radius:8px;
+  border-color:#2a3346;
+  background:#121a28;
+  font-size:14px;
+}
+
+.btn,
+.icon-btn{
+  height:36px;
+  border-radius:8px;
+  border-color:#2a3346;
+  background:#151d2c;
+  color:#d7e2f0;
+  font-size:14px;
+  font-weight:500;
+}
+
+.btn.subtle{
+  background:#101723;
+}
+
+.btn.primary{
+  background:#1ba97f;
+  border-color:#1ba97f;
+  color:#fff;
+  box-shadow:none;
+}
+
+.btn.primary:hover{
+  transform:none;
+  box-shadow:none;
+  background:#18a177;
+}
+
+.btn.accent{
+  background:#dd8706;
+  border-color:#dd8706;
+  color:#fff;
+}
+
+.zip-btn{
+  background:#8c42e8;
+  border-color:#8c42e8;
+  color:#fff;
+}
+
+.today-usage{
+  color:#91a4ba;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+}
+
+.badge.open{
+  background:#0c111a;
+  border-color:#20293a;
+  color:#9db0c8;
+  letter-spacing:0;
+}
+
+.user-chip{
+  max-width:170px;
+  border-radius:8px;
+  border-color:#2a3346;
+  background:#121a28;
+}
+
+.inline-save{
+  color:#8fb0cf;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+}
+
+.save-dot{
+  width:7px;
+  height:7px;
+}
+
+.quick-toolbar{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  flex-wrap:wrap;
+  padding:8px 10px;
+  border-bottom:1px solid #20293a;
+  background:#101620;
+}
+
+.tool-chip{
+  height:30px;
+  padding:0 10px;
+  border-radius:7px;
+  border:1px solid #2a3346;
+  background:#111a29;
+  color:#b7c6d9;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+  cursor:pointer;
+}
+
+.tool-chip:hover{
+  background:#182438;
+  border-color:#34425b;
+  color:#edf5ff;
+}
+
+.tool-chip-ghost{
+  margin-left:auto;
+}
+
+.workspace{
+  grid-template-columns:214px minmax(0,1fr);
+}
+
+.repo-sidebar{
+  padding:10px 8px;
+  background:#0f1520;
+  border-right:1px solid #20293a;
+  gap:12px;
+}
+
+.sidebar-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  color:#7f95ae;
+  padding:0 2px;
+}
+
+.sidebar-title{
+  letter-spacing:0.04em;
+}
+
+.sidebar-count{
+  color:#7f95ae;
+}
+
+.sidebar-group{
+  display:grid;
+  gap:8px;
+}
+
+.sidebar-label{
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.08em;
+  color:#5c7594;
+}
+
+.docs-list,.others-list{
+  display:grid;
+  gap:4px;
+}
+
+.doc-item,
+.other-item{
+  width:100%;
+  text-align:left;
+  border:1px solid transparent;
+  border-radius:8px;
+  background:transparent;
+  color:#c4d2e3;
+  padding:8px 10px;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.doc-item:hover,
+.other-item:hover{
+  background:#131f31;
+  border-color:#24344c;
+}
+
+.doc-item.active{
+  background:#0f4f3f;
+  border-color:#1d8b74;
+  color:#dcfff5;
+}
+
+.doc-item .ext,
+.other-item .ext{
+  color:#82a0c0;
+  margin-right:8px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px;
+}
+
+.images-list{
+  display:grid;
+  gap:8px;
+}
+
+.img-thumb{
+  width:100%;
+  height:74px;
+  object-fit:cover;
+  border-radius:8px;
+  border:1px solid #2a3346;
+  background:#0b1119;
+}
+
+.img-name{
+  font-size:12px;
+  color:#7f95ae;
+  font-family:'IBM Plex Mono',monospace;
+}
+
+.empty-mini{
+  color:#5e738d;
+  font-size:12px;
+  font-family:'IBM Plex Mono',monospace;
+}
+
+.sidebar-actions{
+  margin-top:auto;
+}
+
+.sidebar-actions .btn{
+  width:100%;
+}
+
+.main-stack{
+  grid-template-columns:minmax(0,1fr) 10px minmax(420px,50%);
+  background:#0d131d;
+}
+
+.editor-panel-shell,
+.preview-panel-shell{
+  background:#111822;
+}
+
+.editor-file-tabs{
+  min-height:40px;
+  display:flex;
+  align-items:flex-end;
+  gap:1px;
+  padding:0 10px;
+  border-bottom:1px solid #263145;
+  background:#111722;
+  overflow:auto;
+}
+
+.file-tab{
+  height:36px;
+  border:1px solid #263145;
+  border-bottom:none;
+  border-radius:8px 8px 0 0;
+  background:#121b29;
+  color:#8ca3bf;
+  padding:0 12px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px;
+  cursor:pointer;
+}
+
+.file-tab.active{
+  background:#1a2333;
+  color:#e7f0fc;
+}
+
+.compact-editor-head{
+  height:38px;
+  padding:0 10px;
+  border-bottom:1px solid #263145;
+  background:#171f2d;
+}
+
+.editor-tab{
+  border-right:none;
+  background:transparent;
+  padding:0;
+  font-size:14px;
+}
+
+.editor-meta{
+  font-size:12px;
+}
+
+.metric-pill{
+  border-radius:999px;
+  background:#111b2a;
+  border-color:#2d3a52;
+  color:#8ea7c4;
+}
+
+.CodeMirror{
+  font-size:17px;
+  line-height:1.65;
+}
+
+.preview-headbar.tabs-only{
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  gap:0;
+  padding:0;
+  background:#111822;
+}
+
+.preview-tabs-row{
+  display:flex;
+  gap:0;
+}
+
+.preview-tabs-row .tab-btn{
+  min-height:44px;
+  border:none;
+  border-right:1px solid #263145;
+  border-radius:0;
+  background:#111822;
+  color:#8ea7c4;
+  font-size:18px;
+  padding:0 18px;
+}
+
+.preview-tabs-row .tab-btn.active{
+  color:#dff9f1;
+  background:#131d2b;
+  box-shadow:inset 0 -3px 0 0 #1ac7a0;
+}
+
+.preview-status{
+  padding:8px 12px;
+  border-top:1px solid #263145;
+  color:#6f88a6;
+}
+
+.preview-body{
+  background:#121a27;
+}
+
+.preview-render{
+  padding:14px;
+}
+
+.preview-sheet{
+  width:100%;
+  max-width:none;
+  min-height:100%;
+}
+
+.paper-page{
+  width:100%;
+  min-height:auto;
+  background:#121a27;
+  border:1px solid #263145;
+  box-shadow:none;
+  padding:16px;
+}
+
+.paper-topline{
+  margin-bottom:14px;
+  color:#77dfc5;
+  font-size:12px;
+}
+
+.sheet-header{
+  margin-bottom:14px;
+  padding-bottom:14px;
+  border-bottom:1px solid #263145;
+}
+
+.sheet-kicker{
+  color:#6f88a6;
+}
+
+.sheet-title{
+  font-family:'IBM Plex Sans',sans-serif;
+  font-size:32px;
+  color:#e6f0fd;
+}
+
+.sheet-subtitle{
+  color:#88a1bf;
+}
+
+.paper-summary{
+  margin-bottom:14px;
+  gap:8px;
+}
+
+.paper-chip{
+  background:#101928;
+  border:1px solid #2a3851;
+  color:#90a8c6;
+}
+
+.preview-block{
+  margin-top:16px;
+  padding-top:16px;
+  border-top:1px solid #263145;
+}
+
+.block-label{
+  color:#6f88a6;
+}
+
+.outline-preview-item strong{
+  font-size:22px;
+  color:#e6f0fd;
+  font-family:'IBM Plex Sans',sans-serif;
+}
+
+.outline-preview-item span{
+  color:#9cb2cd;
+}
+
+.structure-row{
+  padding:10px 0;
+  border-bottom:1px solid #223249;
+}
+
+.structure-row strong{
+  display:block;
+  font-size:18px;
+  font-family:'IBM Plex Sans',sans-serif;
+  color:#e7f1ff;
+  font-weight:600;
+}
+
+.abstract-box{
+  background:#0f1826;
+  border:1px solid #2a3851;
+  border-left:4px solid #1ac7a0;
+  color:#a9bfd9;
+}
+
+.env-pill,.inline-pill{
+  background:#0f1826;
+  border:1px solid #2a3851;
+  color:#8ea7c4;
+}
+
+.preview-note{
+  color:#6f88a6;
+}
+
+.pdf-panel{
+  background:#121a27;
+}
+
+.pdf-frame-wrap{
+  border-color:#263145;
+  box-shadow:none;
+}
+
+.activity-list{
+  background:#121a27;
+}
+
+.activity-item{
+  border-color:#263145;
+  background:#0f1826;
+}
+
+.statusbar{
+  min-height:32px;
+  height:32px;
+  padding:0 10px;
+  gap:12px;
+  background:#0b1119;
+  border-top:1px solid #20293a;
+  color:#7f95ae;
+}
+
 .statusbar .accent{color:#67f0cc}
 .statusbar .error{color:#ff9d9d}
 .statusbar .spacer{flex:1}
 
+@media (max-width:1420px){
+  .topbar-right .today-usage,
+  .topbar-right .badge,
+  .topbar-right .user-chip{
+    display:none;
+  }
+}
+
 @media (max-width:1240px){
   .mobile-switch{display:flex}
   .workspace{display:block}
-  .sidebar,
+  .repo-sidebar,
   #main-stack{display:none}
-  .app-shell[data-mobile-panel="sidebar"] .sidebar{display:flex}
+  .app-shell[data-mobile-panel="sidebar"] .repo-sidebar{display:flex}
   .app-shell[data-mobile-panel="editor"] #main-stack,
-  .app-shell[data-mobile-panel="preview"] #main-stack{display:grid}
-  .app-shell[data-mobile-panel="editor"] #main-stack,
-  .app-shell[data-mobile-panel="preview"] #main-stack{grid-template-columns:1fr}
+  .app-shell[data-mobile-panel="preview"] #main-stack{
+    display:grid;
+    grid-template-columns:1fr;
+  }
   .app-shell[data-mobile-panel="editor"] #preview-panel{display:none}
-  .app-shell[data-mobile-panel="editor"] #pane-resizer{display:none}
   .app-shell[data-mobile-panel="preview"] #editor-panel{display:none}
-  .app-shell[data-mobile-panel="preview"] #pane-resizer{display:none}
-}
-@media (max-width:980px){
-  .main-stack{grid-template-columns:1fr}
   .pane-resizer{display:none}
-  .panel-head,.app-topbar{padding-left:14px;padding-right:14px}
-  .paper-page{padding:38px 28px 44px}
+  .preview-tabs-row .tab-btn{
+    font-size:13px;
+  }
 }
-@media (max-width:720px){
-  .app-topbar{align-items:flex-start;flex-direction:column}
-  .brand-group,.topbar-actions{width:100%}
-  .project-name{max-width:none;width:100%}
-  .topbar-actions{justify-content:flex-start}
-  .select-wrap{min-width:0;width:100%}
-  .select-wrap select,.btn,.icon-btn,.user-chip{width:100%}
-  .paper-page{padding:28px 18px 36px}
-  .paper-summary{gap:8px}
-  .paper-chip{width:100%;border-radius:8px}
-  .preview-headbar{align-items:flex-start}
+
+@media (max-width:900px){
+  .app-topbar{
+    flex-direction:column;
+    align-items:stretch;
+    gap:8px;
+  }
+  .topbar-left,
+  .topbar-right{
+    width:100%;
+    flex-wrap:wrap;
+  }
+  .topbar-right{
+    justify-content:flex-start;
+  }
+  .compact-select{
+    min-width:0;
+    width:100%;
+  }
+  .compact-select select{
+    width:100%;
+  }
+  .tool-chip-ghost{
+    margin-left:0;
+  }
 }
 </style>
 </head>
 <body>
 <div class="app-shell" data-mobile-panel="editor">
   <header class="app-topbar">
-    <div class="brand-group">
+    <input id="project-name" class="project-name project-name-hidden" type="text" value="Proyecto LaTeX" placeholder="Nombre del proyecto">
+    <div class="topbar-left">
       <a href="index.html" class="brand">
         <span class="brand-mark">L</span>
         <span>LaTeXify</span>
       </a>
-      <div class="project-header">
-        <input id="project-name" class="project-name" type="text" value="Proyecto LaTeX" placeholder="Nombre del proyecto">
-        <div class="project-meta">
-          <span id="plan-badge" class="badge open">ABIERTO</span>
-          <span id="compil-count">Todo incluido</span>
-          <span class="save-indicator">
-            <span id="save-dot" class="save-dot"></span>
-            <span id="save-label">Sin cambios</span>
-          </span>
-        </div>
-      </div>
-    </div>
-    <div class="topbar-actions">
-      <label class="select-wrap">
-        <span>Plantilla</span>
+      <label class="select-wrap compact-select">
         <select id="tpl-sel">
           <option value="article">Articulo cientifico</option>
           <option value="lab">Reporte de laboratorio</option>
@@ -515,76 +1030,91 @@ a{color:inherit}
           <option value="apa">APA Report</option>
         </select>
       </label>
-      <button id="load-template-btn" class="btn" type="button">Aplicar</button>
-      <button id="save-btn" class="btn" type="button">Guardar</button>
-      <button id="import-zip-btn" class="btn" type="button">Cargar ZIP</button>
-      <button id="export-zip-btn" class="btn" type="button">Descargar ZIP</button>
-      <button id="theme-btn" class="icon-btn" type="button" title="Cambiar tema">Tema</button>
-      <button id="compile-btn" class="btn primary" type="button">Compilar PDF</button>
-      <button id="overleaf-btn" class="btn accent" type="button">Abrir en Overleaf</button>
+      <button id="load-template-btn" class="btn subtle" type="button">Cargar plantilla</button>
+      <span class="save-indicator inline-save">
+        <span id="save-dot" class="save-dot"></span>
+        <span id="save-label">Guardado</span>
+      </span>
+    </div>
+    <div class="topbar-right">
+      <span id="compil-count" class="today-usage">Ilimitado hoy</span>
+      <span id="plan-badge" class="badge open">FREE</span>
       <span id="user-name" class="user-chip">Cargando usuario...</span>
-      <button id="logout-btn" class="btn" type="button">Salir</button>
+      <button id="theme-btn" class="icon-btn" type="button" title="Cambiar tema">☀</button>
+      <button id="import-zip-btn" class="btn zip-btn" type="button">Cargar proyecto ZIP</button>
+      <button id="compile-btn" class="btn primary" type="button">Compilar PDF</button>
+      <button id="overleaf-btn" class="btn accent" type="button">Overleaf</button>
+      <button id="logout-btn" class="btn subtle" type="button">Salir</button>
     </div>
   </header>
 
+  <div class="quick-toolbar">
+    <button class="tool-chip" type="button" data-before="\textbf{" data-after="}"><strong>B</strong></button>
+    <button class="tool-chip" type="button" data-before="\textit{" data-after="}"><em>I</em></button>
+    <button class="tool-chip" type="button" data-before="\underline{" data-after="}"><u>U</u></button>
+    <button class="tool-chip" type="button" data-before="$" data-after="$">$x$</button>
+    <button class="tool-chip" type="button" data-before="\[\n" data-after="\n\]">$$$$</button>
+    <button class="tool-chip" type="button" data-before="\begin{equation}\n" data-after="\n\end{equation}">Eq.</button>
+    <button class="tool-chip" type="button" data-before="\begin{itemize}\n  \item " data-after="\n\end{itemize}">• Lista</button>
+    <button class="tool-chip" type="button" data-before="\begin{enumerate}\n  \item " data-after="\n\end{enumerate}">1. Lista</button>
+    <button class="tool-chip" type="button" data-before="\begin{table}[h]\n  \centering\n  \caption{Titulo}\n  \begin{tabular}{|c|c|}\n    \hline\n    Col1 & Col2 \\\n    \hline\n    Dato & Dato \\\n    \hline\n  \end{tabular}\n" data-after="\end{table}">Tabla</button>
+    <button class="tool-chip" type="button" data-before="\cite{" data-after="}">\cite</button>
+    <button class="tool-chip" type="button" data-before="\ref{" data-after="}">\ref</button>
+    <button class="tool-chip" type="button" data-before="\label{" data-after="}">\label</button>
+    <button class="tool-chip" type="button" data-before="\section{" data-after="}">§ Sec</button>
+    <button class="tool-chip" type="button" data-before="\subsection{" data-after="}">§§ Sub</button>
+    <button class="tool-chip" type="button" data-before="\begin{figure}[h]\n  \centering\n  \includegraphics[width=0.65\textwidth]{" data-after="}\n  \caption{Descripcion}\n  \label{fig:etiqueta}\n\end{figure}">img</button>
+    <button id="save-btn" class="tool-chip tool-chip-ghost" type="button">Guardar</button>
+    <button id="export-zip-btn" class="tool-chip tool-chip-ghost" type="button">Descargar ZIP</button>
+    <button id="download-tex-btn" class="tool-chip tool-chip-ghost" type="button">Descargar .tex</button>
+  </div>
+
   <div class="mobile-switch">
-    <button class="mobile-switch-btn" type="button" data-mobile-panel="sidebar">Navegacion</button>
+    <button class="mobile-switch-btn" type="button" data-mobile-panel="sidebar">Archivos</button>
     <button class="mobile-switch-btn active" type="button" data-mobile-panel="editor">Editor</button>
     <button class="mobile-switch-btn" type="button" data-mobile-panel="preview">Preview</button>
   </div>
 
   <div class="workspace">
-    <aside id="sidebar-panel" class="sidebar">
-      <section class="sidebar-card">
-        <div class="card-label">Proyecto</div>
-        <div class="file-card">
-          <div class="file-info">
-            <div class="file-badge">.tex</div>
-            <div>
-              <div id="active-file-name" class="file-name">main.tex</div>
-              <div id="last-saved-label" class="file-subtitle">Sincronizado localmente</div>
-            </div>
-          </div>
-          <button id="copy-code-btn" class="btn small" type="button">Copiar</button>
-        </div>
-        <div class="stack-actions">
-          <button id="download-tex-btn" class="btn" type="button">Descargar .tex</button>
-          <button id="new-doc-btn" class="btn" type="button">Nuevo documento</button>
-        </div>
-      </section>
+    <aside id="sidebar-panel" class="sidebar repo-sidebar">
+      <div class="sidebar-head">
+        <span class="sidebar-title">PROYECTO</span>
+        <span id="project-files-count" class="sidebar-count">0 archivos</span>
+      </div>
 
-      <section class="sidebar-card">
-        <div class="card-label">Archivos y estructura</div>
-        <div id="outline-list" class="outline-list">
-          <div class="outline-empty">Agrega secciones o capitulos para ver un esquema navegable aqui.</div>
-        </div>
-      </section>
+      <div class="sidebar-group">
+        <div class="sidebar-label">DOCUMENTOS</div>
+        <div id="docs-list" class="docs-list"></div>
+      </div>
 
-      <section class="sidebar-card">
-        <div class="card-label">Atajos utiles</div>
-        <ul class="shortcut-list">
-          <li><span>Compilar PDF</span><code>Ctrl/Cmd + Enter</code></li>
-          <li><span>Guardar</span><code>Ctrl/Cmd + S</code></li>
-          <li><span>Buscar</span><code>Ctrl/Cmd + F</code></li>
-          <li><span>Comentar bloque</span><code>Ctrl/Cmd + /</code></li>
-          <li><span>Indentar</span><code>Tab</code></li>
-        </ul>
-      </section>
+      <div class="sidebar-group">
+        <div class="sidebar-label">IMAGENES</div>
+        <div id="images-list" class="images-list"></div>
+      </div>
+
+      <div class="sidebar-group">
+        <div class="sidebar-label">OTROS</div>
+        <div id="others-list" class="others-list"></div>
+      </div>
+
+      <div class="sidebar-actions">
+        <button id="new-doc-btn" class="btn subtle" type="button">Nuevo documento</button>
+      </div>
     </aside>
 
     <div id="main-stack" class="main-stack">
-      <section id="editor-panel" class="workspace-panel">
-        <div class="panel-head editor-headbar">
+      <section id="editor-panel" class="workspace-panel editor-panel-shell">
+        <div id="editor-file-tabs" class="editor-file-tabs"></div>
+        <div class="editor-headbar compact-editor-head">
           <div class="editor-tab">
             <span class="editor-tab-dot"></span>
             <span id="editor-file-label">main.tex</span>
           </div>
           <div class="panel-pillbar">
-            <span id="doc-metrics" class="metric-pill editor-meta">0 lineas - 0 palabras</span>
+            <span id="doc-metrics" class="metric-pill editor-meta">0 lineas</span>
             <span id="cursor-info" class="metric-pill editor-meta">L1 C1</span>
           </div>
         </div>
-
         <div class="editor-surface">
           <div class="editor-frame">
             <textarea id="editor-source" spellcheck="false"></textarea>
@@ -594,26 +1124,22 @@ a{color:inherit}
 
       <div id="pane-resizer" class="pane-resizer" role="separator" aria-orientation="vertical" aria-label="Redimensionar panel"></div>
 
-      <section id="preview-panel" class="workspace-panel">
-        <div class="panel-head preview-headbar">
-          <div class="preview-headcopy">
-            <div class="panel-title">Vista del documento</div>
-            <div id="preview-caption" class="preview-status">Resumen visual del archivo activo y salida PDF compilada.</div>
-          </div>
-          <div class="panel-pillbar">
-            <button class="tab-btn active" type="button" data-tab="preview">Vista</button>
-            <button class="tab-btn" type="button" data-tab="pdf">PDF</button>
+      <section id="preview-panel" class="workspace-panel preview-panel-shell">
+        <div class="preview-headbar tabs-only">
+          <div class="panel-pillbar preview-tabs-row">
+            <button class="tab-btn active" type="button" data-tab="preview">Vista previa</button>
+            <button class="tab-btn" type="button" data-tab="pdf">PDF compilado</button>
             <button class="tab-btn" type="button" data-tab="activity">Actividad</button>
           </div>
+          <div id="preview-caption" class="preview-status">Vista estructural del documento activo</div>
         </div>
-
         <div class="preview-body">
           <div id="tab-preview" class="tab-panel active">
             <div id="preview-render" class="preview-render"></div>
           </div>
           <div id="tab-pdf" class="tab-panel">
             <div class="pdf-panel">
-              <div id="pdf-empty" class="pdf-empty">Compila el documento para cargar aqui el PDF real generado por el motor de LaTeX.</div>
+              <div id="pdf-empty" class="pdf-empty">Compila el documento para ver el PDF.</div>
               <div class="pdf-frame-wrap">
                 <iframe id="pdf-frame" name="latex-frame" title="PDF compilado"></iframe>
               </div>
@@ -634,6 +1160,8 @@ a{color:inherit}
     <span id="status-ok" class="accent"></span>
     <span id="status-err" class="error"></span>
     <span class="spacer"></span>
+    <span id="active-file-name">main.tex</span>
+    <span id="last-saved-label">Sincronizado localmente</span>
     <span id="footer-summary">0 palabras</span>
     <span>UTF-8</span>
   </footer>
@@ -904,7 +1432,8 @@ const state = {
   currentTab: "preview",
   activity: [],
   projectFiles: new Map(),
-  activeTexFile: "main.tex"
+  activeTexFile: "main.tex",
+  fileBlobUrls: new Map()
 };
 
 const els = {
@@ -924,13 +1453,16 @@ const els = {
   compileBtn: document.getElementById("compile-btn"),
   overleafBtn: document.getElementById("overleaf-btn"),
   logoutBtn: document.getElementById("logout-btn"),
+  projectFilesCount: document.getElementById("project-files-count"),
+  docsList: document.getElementById("docs-list"),
+  imagesList: document.getElementById("images-list"),
+  othersList: document.getElementById("others-list"),
+  editorFileTabs: document.getElementById("editor-file-tabs"),
   activeFileName: document.getElementById("active-file-name"),
   editorFileLabel: document.getElementById("editor-file-label"),
   lastSavedLabel: document.getElementById("last-saved-label"),
-  copyCodeBtn: document.getElementById("copy-code-btn"),
   downloadTexBtn: document.getElementById("download-tex-btn"),
   newDocBtn: document.getElementById("new-doc-btn"),
-  outlineList: document.getElementById("outline-list"),
   docMetrics: document.getElementById("doc-metrics"),
   cursorInfo: document.getElementById("cursor-info"),
   editorSource: document.getElementById("editor-source"),
@@ -1009,6 +1541,7 @@ function updateActiveFileLabels(){
 function setActiveTexFile(fileName = "main.tex"){
   state.activeTexFile = fileName || "main.tex";
   updateActiveFileLabels();
+  renderProjectFiles();
 }
 
 function createSingleFileProject(content, fileName = "main.tex"){
@@ -1016,6 +1549,7 @@ function createSingleFileProject(content, fileName = "main.tex"){
   state.projectFiles = new Map([
     [state.activeTexFile, { type: "text", content }]
   ]);
+  renderProjectFiles();
 }
 
 function syncCurrentDocumentToProjectFiles(){
@@ -1035,6 +1569,128 @@ function pickPrimaryTexFile(fileNames){
   return texFiles.find(name => /(^|\/)main\.tex$/i.test(name))
     || texFiles.find(name => /(^|\/)(index|document|paper|article|tesis|thesis)\.tex$/i.test(name))
     || texFiles[0];
+}
+
+function getFileExtension(fileName = ""){
+  const normalized = fileName.toLowerCase();
+  const match = normalized.match(/\.([a-z0-9]+)$/);
+  return match ? match[1] : "";
+}
+
+function isImageFile(fileName = ""){
+  return ["png","jpg","jpeg","gif","webp","bmp","svg"].includes(getFileExtension(fileName));
+}
+
+function getBasename(fileName = ""){
+  const parts = fileName.split("/");
+  return parts[parts.length - 1] || fileName;
+}
+
+function createBlobUrlForFile(entry, fileName){
+  const ext = getFileExtension(fileName);
+  const typeMap = {
+    png: "image/png",
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg",
+    gif: "image/gif",
+    webp: "image/webp",
+    bmp: "image/bmp",
+    svg: "image/svg+xml"
+  };
+  if(ext === "svg" && entry.type === "text"){
+    return URL.createObjectURL(new Blob([entry.content || ""], { type: typeMap[ext] }));
+  }
+  if(entry.type === "binary"){
+    return URL.createObjectURL(new Blob([entry.content], { type: typeMap[ext] || "application/octet-stream" }));
+  }
+  return "";
+}
+
+function revokeFileBlobs(){
+  state.fileBlobUrls.forEach(url => URL.revokeObjectURL(url));
+  state.fileBlobUrls.clear();
+}
+
+function renderEditorFileTabs(docFiles){
+  if(!els.editorFileTabs){ return; }
+  if(!docFiles.length){
+    els.editorFileTabs.innerHTML = "";
+    return;
+  }
+  els.editorFileTabs.innerHTML = docFiles.map(fileName => `
+    <button class="file-tab ${fileName === state.activeTexFile ? "active" : ""}" type="button" data-file-tab="${escapeHtml(fileName)}">
+      ${escapeHtml(getBasename(fileName))}
+    </button>
+  `).join("");
+}
+
+function renderProjectFiles(){
+  if(!els.docsList || !els.imagesList || !els.othersList){ return; }
+  const allFiles = Array.from(state.projectFiles.keys()).sort((a,b) => a.localeCompare(b));
+  const docFiles = allFiles.filter(fileName => {
+    const ext = getFileExtension(fileName);
+    return ["tex","bib","cls","sty","bst"].includes(ext);
+  });
+  const imageFiles = allFiles.filter(fileName => isImageFile(fileName));
+  const otherFiles = allFiles.filter(fileName => !docFiles.includes(fileName) && !imageFiles.includes(fileName));
+
+  if(els.projectFilesCount){
+    const imageCount = imageFiles.length;
+    const totalCount = allFiles.length;
+    els.projectFilesCount.textContent = `${totalCount} archivos${imageCount ? ` · ${imageCount} imgs` : ""}`;
+  }
+
+  if(!docFiles.length){
+    els.docsList.innerHTML = '<div class="empty-mini">No hay documentos en el proyecto.</div>';
+  }else{
+    els.docsList.innerHTML = docFiles.map(fileName => `
+      <button class="doc-item ${fileName === state.activeTexFile ? "active" : ""}" type="button" data-open-file="${escapeHtml(fileName)}">
+        <span class="ext">${escapeHtml(getFileExtension(fileName) || "file")}</span>${escapeHtml(getBasename(fileName))}
+      </button>
+    `).join("");
+  }
+
+  revokeFileBlobs();
+  if(!imageFiles.length){
+    els.imagesList.innerHTML = '<div class="empty-mini">Sin imagenes cargadas.</div>';
+  }else{
+    els.imagesList.innerHTML = imageFiles.map(fileName => {
+      const fileEntry = state.projectFiles.get(fileName);
+      const blobUrl = createBlobUrlForFile(fileEntry, fileName);
+      if(blobUrl){ state.fileBlobUrls.set(fileName, blobUrl); }
+      return `
+        <figure>
+          ${blobUrl ? `<img class="img-thumb" src="${blobUrl}" alt="${escapeHtml(getBasename(fileName))}">` : '<div class="img-thumb"></div>'}
+          <figcaption class="img-name">${escapeHtml(getBasename(fileName))}</figcaption>
+        </figure>
+      `;
+    }).join("");
+  }
+
+  if(!otherFiles.length){
+    els.othersList.innerHTML = '<div class="empty-mini">Sin archivos adicionales.</div>';
+  }else{
+    els.othersList.innerHTML = otherFiles.map(fileName => `
+      <div class="other-item">
+        <span class="ext">${escapeHtml(getFileExtension(fileName) || "file")}</span>${escapeHtml(getBasename(fileName))}
+      </div>
+    `).join("");
+  }
+
+  renderEditorFileTabs(docFiles);
+}
+
+function openProjectTextFile(fileName){
+  const entry = state.projectFiles.get(fileName);
+  if(!entry || entry.type !== "text"){
+    setStatus("Este archivo no se puede abrir como texto", "error");
+    return;
+  }
+  if(state.activeTexFile === fileName){ return; }
+  syncCurrentDocumentToProjectFiles();
+  setActiveTexFile(fileName);
+  applyEditorValue(entry.content || "");
+  addActivity("Archivo", `Se abrio ${getBasename(fileName)}.`);
 }
 
 function updateWindowTitle(){
@@ -1081,9 +1737,9 @@ function renderActivity(){
 }
 
 function updatePlanUI(){
-  els.planBadge.textContent = "ABIERTO";
+  els.planBadge.textContent = "FREE";
   els.planBadge.className = "badge open";
-  els.compilCount.textContent = "Todo incluido";
+  els.compilCount.textContent = "Ilimitado hoy";
 }
 
 function extractOutline(code){
@@ -1099,16 +1755,7 @@ function extractOutline(code){
 }
 
 function renderOutline(outline){
-  if(!outline.length){
-    els.outlineList.innerHTML = '<div class="outline-empty">Agrega secciones o capitulos para ver un esquema navegable aqui.</div>';
-    return;
-  }
-  els.outlineList.innerHTML = outline.map(item => `
-    <button class="outline-item level-${escapeHtml(item.level)}" type="button" data-line="${item.line}">
-      <span class="outline-level">${escapeHtml(item.level)}</span>
-      <span>${escapeHtml(item.title)}</span>
-    </button>
-  `).join("");
+  void outline;
 }
 
 function renderKatex(){
@@ -1145,94 +1792,60 @@ function extractSections(code){
 
 function updatePreview(){
   const code = state.editor.getValue();
+  const docclass = (code.match(/\\documentclass(?:\[[^\]]*\])?\{([^}]*)\}/) || [])[1];
   const title = (code.match(/\\title\{([\s\S]*?)\}/) || [])[1];
   const author = (code.match(/\\author\{([\s\S]*?)\}/) || [])[1];
-  const date = (code.match(/\\date\{([\s\S]*?)\}/) || [])[1];
-  const abstract = (code.match(/\\begin\{abstract\}([\s\S]*?)\\end\{abstract\}/) || [])[1];
   const outline = extractOutline(code);
-  const sections = extractSections(code);
-  const displayMath = [
-    ...Array.from(code.matchAll(/\\\[([\s\S]*?)\\\]/g), match => match[1].trim()),
-    ...Array.from(code.matchAll(/\\begin\{equation\*?\}([\s\S]*?)\\end\{equation\*?\}/g), match => match[1].trim())
-  ].filter(Boolean).slice(0, 3);
-  const inlineMath = Array.from(new Set(
-    Array.from(code.matchAll(/\$([^$\n]{1,90})\$/g), match => match[1].trim()).filter(Boolean)
-  )).slice(0, 6);
-  const envs = Array.from(new Set(
-    Array.from(code.matchAll(/\\begin\{([^}]+)\}/g), match => match[1])
-      .filter(env => !["document","abstract","equation","equation*","itemize","enumerate","table","tabular","figure","frame","thebibliography","IEEEkeywords"].includes(env))
-  ));
+  const sectionBlocks = outline.filter(item => item.level === "section" || item.level === "subsection").slice(0, 18);
+  const packages = Array.from(new Set(
+    Array.from(code.matchAll(/\\usepackage(?:\[[^\]]*\])?\{([^}]*)\}/g), match => (match[1] || "").split(","))
+      .flat()
+      .map(pkg => pkg.trim())
+      .filter(Boolean)
+  )).slice(0, 8);
   const lines = state.editor.lineCount();
   const words = wordCount(code);
-  const figures = (code.match(/\\includegraphics/g) || []).length;
-  const tables = (code.match(/\\begin\{table\}/g) || []).length;
 
   els.previewRender.innerHTML = `
     <article class="preview-sheet">
       <div class="paper-page">
         <div class="paper-topline">
-          <span>${escapeHtml(els.projectName.value || "Proyecto LaTeX")}</span>
+          <span>\\documentclass{${escapeHtml(cleanLatexText(docclass) || "article")}}</span>
           <span>${escapeHtml(getVisibleTexFilename())}</span>
         </div>
 
         <header class="sheet-header">
-          <div class="sheet-kicker">Vista previa del documento</div>
-          <h1 class="sheet-title">${escapeHtml(cleanLatexText(title) || "Documento sin titulo")}</h1>
-          <div class="sheet-subtitle">${escapeHtml(cleanLatexText(author) || "Autor sin definir")}${date ? ` - ${escapeHtml(cleanLatexText(date))}` : ""}</div>
+          <div class="sheet-kicker">VISTA PREVIA</div>
+          <h1 class="sheet-title">${escapeHtml(cleanLatexText(title) || "Proyecto sin titulo")}</h1>
+          <div class="sheet-subtitle">${escapeHtml(cleanLatexText(author) || "\\mbox")}</div>
         </header>
 
         <section class="paper-summary">
           <span class="paper-chip">${lines} lineas</span>
           <span class="paper-chip">${words} palabras</span>
-          <span class="paper-chip">${outline.length} bloques</span>
-          <span class="paper-chip">${displayMath.length + inlineMath.length} expresiones</span>
-          <span class="paper-chip">${figures} figuras</span>
-          <span class="paper-chip">${tables} tablas</span>
+          <span class="paper-chip">${sectionBlocks.length} secciones</span>
         </section>
 
-        ${abstract ? `
         <section class="preview-block">
-          <div class="block-label">Resumen</div>
-          <div class="abstract-box">${escapeHtml(cleanLatexText(abstract))}</div>
-        </section>` : ""}
-
-        ${sections.length ? sections.map((section, index) => `
-        <section class="preview-block">
-          <div class="block-label">${escapeHtml(section.level)}</div>
-          <div class="outline-preview-item">
-            <strong>${escapeHtml(section.title)}</strong>
-            <span>${escapeHtml(section.excerpt)}</span>
-          </div>
-          ${displayMath[index] ? `<div class="equation-card" data-math="${escapeHtml(displayMath[index])}" data-display="true"></div>` : ""}
-        </section>`).join("") : `
-        <section class="preview-block">
-          <div class="block-label">Contenido</div>
-          <div class="abstract-box">Escribe secciones con \\section{}, \\subsection{} o \\chapter{} para ver una vista previa mas cercana al documento final.</div>
-        </section>`}
-
-        ${inlineMath.length ? `
-        <section class="preview-block">
-          <div class="block-label">Expresiones inline</div>
-          <div class="inline-list">
-            ${inlineMath.map(expr => `<span class="inline-pill" data-math="${escapeHtml(expr)}" data-display="false"></span>`).join("")}
-          </div>
-        </section>` : ""}
-
-        <section class="preview-block">
-          <div class="block-label">Activos del documento</div>
+          <div class="block-label">PAQUETES</div>
           <div class="env-list">
-            ${envs.length ? envs.map(env => `<span class="env-pill">${escapeHtml(env)}</span>`).join("") : '<span class="env-pill">Sin entornos especiales</span>'}
-            <span class="env-pill">figures: ${figures}</span>
-            <span class="env-pill">tables: ${tables}</span>
+            ${packages.length ? packages.map(pkg => `<span class="env-pill">${escapeHtml(pkg)}</span>`).join("") : '<span class="env-pill">sin paquetes adicionales</span>'}
           </div>
         </section>
 
-        <div class="preview-note">Esta vista busca parecerse a una pagina real. Para el resultado definitivo usa la pestana PDF.</div>
+        <section class="preview-block">
+          <div class="block-label">ESTRUCTURA DEL DOCUMENTO</div>
+          <div class="outline-preview">
+            ${sectionBlocks.length ? sectionBlocks.map(item => `
+              <div class="structure-row">
+                <strong>${escapeHtml(item.title)}</strong>
+              </div>
+            `).join("") : '<div class="abstract-box">Agrega \\section{} o \\subsection{} para construir el esquema del documento.</div>'}
+          </div>
+        </section>
       </div>
     </article>
   `;
-  renderKatex();
-  renderOutline(outline);
 }
 
 function updateMetrics(){
@@ -1240,7 +1853,7 @@ function updateMetrics(){
   const cursor = state.editor.getCursor();
   const lines = state.editor.lineCount();
   const words = wordCount(code);
-  els.docMetrics.textContent = `${lines} lineas - ${words} palabras`;
+  els.docMetrics.textContent = `${lines} lineas`;
   els.cursorInfo.textContent = `L${cursor.line + 1} C${cursor.ch + 1}`;
   els.footerSummary.textContent = `${words} palabras - ${lines} lineas`;
   updateWindowTitle();
@@ -1267,7 +1880,7 @@ async function persistDocument(logMessage = "", isManual = false){
     state.lastSavedAt = payload.lastSavedAt;
     const saveTime = formatTime(new Date(payload.lastSavedAt));
     els.lastSavedLabel.textContent = `Ultimo guardado a las ${saveTime}`;
-    setSaveState("saved","Todo guardado");
+    setSaveState("saved","Guardado");
     if(isManual || Date.now() - state.lastManualLogAt > 45000){
       addActivity("Guardado", logMessage || "Cambios sincronizados en la nube.");
       state.lastManualLogAt = Date.now();
@@ -1312,7 +1925,7 @@ function toggleTheme(){
 
 function syncThemeButton(){
   const dark = document.documentElement.getAttribute("data-theme") === "dark";
-  els.themeBtn.textContent = dark ? "Claro" : "Oscuro";
+  els.themeBtn.textContent = dark ? "☀" : "☾";
   els.themeBtn.title = dark ? "Cambiar a modo claro" : "Cambiar a modo oscuro";
 }
 
@@ -1321,6 +1934,30 @@ function setMobilePanel(panel){
   els.mobileSwitchButtons.forEach(button => {
     button.classList.toggle("active", button.dataset.mobilePanel === panel);
   });
+}
+
+function decodeSnippet(value = ""){
+  return value.replace(/\\n/g,"\n");
+}
+
+function insertSnippet(before, after = ""){
+  if(!state.editor){ return; }
+  const docEditor = state.editor.getDoc();
+  const selection = docEditor.getSelection();
+  const from = docEditor.getCursor("from");
+  const decodedBefore = decodeSnippet(before);
+  const decodedAfter = decodeSnippet(after);
+  docEditor.replaceSelection(`${decodedBefore}${selection}${decodedAfter}`, "around");
+  if(selection){
+    const to = docEditor.getCursor("to");
+    docEditor.setSelection(
+      { line: from.line, ch: from.ch + decodedBefore.length },
+      { line: to.line, ch: Math.max(to.ch - decodedAfter.length, 0) }
+    );
+  }else{
+    docEditor.setCursor({ line: from.line, ch: from.ch + decodedBefore.length });
+  }
+  state.editor.focus();
 }
 
 async function copyText(text, successMessage){
@@ -1701,9 +2338,9 @@ async function loadUserDocument(uid){
   if(state.userData.lastSavedAt){
     state.lastSavedAt = state.userData.lastSavedAt;
     els.lastSavedLabel.textContent = `Ultimo guardado a las ${formatTime(new Date(state.userData.lastSavedAt))}`;
-    setSaveState("saved","Todo guardado");
+    setSaveState("saved","Guardado");
   }else{
-    setSaveState("", "Sin cambios");
+    setSaveState("", "Guardado");
   }
   addActivity("Proyecto cargado", "Se restauro la ultima sesion del editor.");
 }
@@ -1731,7 +2368,6 @@ function bindEvents(){
   els.projectZipInput.addEventListener("change", event => {
     importProjectZip(event.target.files?.[0]);
   });
-  els.copyCodeBtn.addEventListener("click", () => copyText(state.editor.getValue(), "Codigo completo copiado"));
   els.downloadTexBtn.addEventListener("click", downloadTex);
   els.newDocBtn.addEventListener("click", createNewDocument);
   els.projectName.addEventListener("input", () => {
@@ -1746,11 +2382,24 @@ function bindEvents(){
     button.addEventListener("click", () => setActiveTab(button.dataset.tab));
   });
 
-  els.outlineList.addEventListener("click", event => {
-    const button = event.target.closest("[data-line]");
+  document.querySelectorAll("[data-before]").forEach(button => {
+    button.addEventListener("click", () => insertSnippet(button.dataset.before || "", button.dataset.after || ""));
+  });
+
+  els.docsList.addEventListener("click", event => {
+    const button = event.target.closest("[data-open-file]");
     if(button){
-      jumpToLine(Number(button.dataset.line));
-      if(window.innerWidth <= 1240){ setMobilePanel("editor"); }
+      openProjectTextFile(button.dataset.openFile);
+      if(window.innerWidth <= 1240){
+        setMobilePanel("editor");
+      }
+    }
+  });
+
+  els.editorFileTabs.addEventListener("click", event => {
+    const button = event.target.closest("[data-file-tab]");
+    if(button){
+      openProjectTextFile(button.dataset.fileTab);
     }
   });
 
