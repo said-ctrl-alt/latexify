@@ -223,6 +223,9 @@ a{color:inherit}
   padding:18px;border-radius:16px;background:var(--panel-2);border:1px dashed var(--line-strong);
   color:var(--text-muted);font-size:13px;line-height:1.6;
 }
+.pdf-empty{
+  white-space:pre-wrap;
+}
 .outline-item{
   width:100%;border:none;background:transparent;border:1px solid transparent;border-radius:6px;
   padding:8px 10px;text-align:left;color:var(--text);cursor:pointer;
@@ -929,6 +932,20 @@ a{color:inherit}
   background:#121a27;
 }
 
+.pdf-empty.info-state{
+  border-style:solid;
+  border-color:#2a3851;
+  background:#0f1826;
+  color:#9ab2cc;
+}
+
+.pdf-empty.error-state{
+  border-style:solid;
+  border-color:#6b2f35;
+  background:#241217;
+  color:#ffb8c0;
+}
+
 .pdf-frame-wrap{
   border-color:#263145;
   box-shadow:none;
@@ -1140,7 +1157,7 @@ a{color:inherit}
           <div id="tab-pdf" class="tab-panel">
             <div class="pdf-panel">
               <div id="pdf-empty" class="pdf-empty">Compila el documento para ver el PDF.</div>
-              <div class="pdf-frame-wrap">
+              <div id="pdf-frame-wrap" class="pdf-frame-wrap">
                 <iframe id="pdf-frame" name="latex-frame" title="PDF compilado"></iframe>
               </div>
             </div>
@@ -1469,6 +1486,7 @@ const els = {
   previewCaption: document.getElementById("preview-caption"),
   previewRender: document.getElementById("preview-render"),
   pdfEmpty: document.getElementById("pdf-empty"),
+  pdfFrameWrap: document.getElementById("pdf-frame-wrap"),
   pdfFrame: document.getElementById("pdf-frame"),
   activityList: document.getElementById("activity-list"),
   statusMsg: document.getElementById("status-msg"),
@@ -1737,6 +1755,32 @@ function setStatus(message, kind = ""){
   els.statusMsg.textContent = message;
   els.statusOk.textContent = kind === "ok" ? "OK" : "";
   els.statusErr.textContent = kind === "error" ? "ERROR" : "";
+}
+
+function showPdfNotice(message, kind = "info"){
+  els.pdfEmpty.textContent = message;
+  els.pdfEmpty.className = "pdf-empty";
+  if(kind === "error"){
+    els.pdfEmpty.classList.add("error-state");
+  }else if(kind === "info"){
+    els.pdfEmpty.classList.add("info-state");
+  }
+  els.pdfEmpty.style.display = "";
+  if(els.pdfFrameWrap){
+    els.pdfFrameWrap.style.display = "none";
+  }
+  if(kind === "error"){
+    els.pdfFrame.src = "about:blank";
+  }
+}
+
+function showPdfDocument(pdfUrl){
+  els.pdfEmpty.className = "pdf-empty";
+  els.pdfEmpty.style.display = "none";
+  if(els.pdfFrameWrap){
+    els.pdfFrameWrap.style.display = "";
+  }
+  els.pdfFrame.src = pdfUrl;
 }
 
 function setSaveState(mode, label){
@@ -2236,6 +2280,8 @@ async function compilePDF(){
   const compileEntry = state.projectFiles.get(compileFile);
   const codeToCompile = typeof compileEntry?.content === "string" ? compileEntry.content : state.editor.getValue();
   if(!codeToCompile.trim()){
+    setActiveTab("pdf");
+    showPdfNotice("No hay contenido .tex para compilar.", "error");
     setStatus("No hay contenido .tex para compilar", "error");
     return;
   }
@@ -2244,12 +2290,13 @@ async function compilePDF(){
   state.awaitingPdfLoad = true;
   if(window.innerWidth <= 1240){ setMobilePanel("preview"); }
   setActiveTab("pdf");
-  els.pdfEmpty.style.display = "none";
+  showPdfNotice(`Compilando ${getBasename(compileFile)}...\nEspera un momento mientras generamos el PDF.`, "info");
   window.clearTimeout(state.compileTimer);
   state.compileTimer = window.setTimeout(() => {
     els.compileBtn.disabled = false;
     if(state.awaitingPdfLoad){
       state.awaitingPdfLoad = false;
+      showPdfNotice("La compilacion tardo mas de lo normal.\nRevisa el error mostrado o intenta de nuevo.", "error");
       setStatus("La compilacion tardo mas de lo normal. Revisa el panel PDF o intenta de nuevo.", "error");
     }
   }, 15000);
@@ -2258,7 +2305,7 @@ async function compilePDF(){
     if(data.pdf){
       const pdfBlob = new Blob([Uint8Array.from(atob(data.pdf), c => c.charCodeAt(0))], { type:"application/pdf" });
       const pdfUrl = URL.createObjectURL(pdfBlob);
-      els.pdfFrame.src = pdfUrl;
+      showPdfDocument(pdfUrl);
       setStatus("PDF compilado exitosamente", "ok");
       if(compileFile !== state.activeTexFile){
         addActivity("Compilacion", `Se compilo ${getBasename(compileFile)} desde ${endpoint} mientras editabas ${getBasename(state.activeTexFile)}.`);
@@ -2268,19 +2315,18 @@ async function compilePDF(){
     } else {
       state.awaitingPdfLoad = false;
       els.compileBtn.disabled = false;
-      els.pdfEmpty.style.display = "";
-      setStatus(data.error || "Error al compilar", "error");
+      const message = data.error || "Error al compilar";
+      showPdfNotice(message, "error");
+      setStatus(message, "error");
     }
   } catch(error) {
     console.error(error);
     state.awaitingPdfLoad = false;
     els.compileBtn.disabled = false;
-    els.pdfEmpty.style.display = "";
-    const isHttps = window.location.protocol === "https:";
-    const secureHint = "Configura window.LATEXIFY_COMPILER_ENDPOINT con una URL HTTPS valida o monta /api/compile en tu dominio.";
-    const baseMessage = isHttps ? "No fue posible conectar con un compilador seguro." : "Error conectando con el compilador.";
-    setStatus(`${baseMessage} ${secureHint}`, "error");
-    addActivity("Compilacion fallida", error?.message || "Fallo de red al contactar el compilador.");
+    const failureMessage = error?.message || "Fallo de red al contactar el compilador.";
+    showPdfNotice(failureMessage, "error");
+    setStatus(failureMessage, "error");
+    addActivity("Compilacion fallida", failureMessage);
   }
 }
 
