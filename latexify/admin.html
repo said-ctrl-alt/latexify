@@ -110,6 +110,46 @@ const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db = getFirestore(app);
 let allUsers = [];
+let loadedUsersForUid = null;
+let isRedirecting = false;
+const authGuardTimeout = window.setTimeout(() => {
+  redirectTo('login.html');
+}, 4000);
+
+function clearAuthGuardTimeout(){
+  window.clearTimeout(authGuardTimeout);
+}
+
+function redirectTo(path){
+  if(isRedirecting){ return; }
+  isRedirecting = true;
+  clearAuthGuardTimeout();
+  window.location.replace(path);
+}
+
+function denyAdminAccess(){
+  if(isRedirecting){ return; }
+  isRedirecting = true;
+  clearAuthGuardTimeout();
+  alert('Acceso denegado. Solo administradores.');
+  window.location.replace('editor.html');
+}
+
+function handleAdminAccess(user){
+  if(isRedirecting){ return; }
+  clearAuthGuardTimeout();
+  if(!user){
+    redirectTo('login.html');
+    return;
+  }
+  if(!ADMIN_EMAILS.includes((user.email || '').toLowerCase())){
+    denyAdminAccess();
+    return;
+  }
+  if(loadedUsersForUid === user.uid){ return; }
+  loadedUsersForUid = user.uid;
+  loadUsers();
+}
 
 function formatSavedAt(value){
   if(!value){ return '-'; }
@@ -192,21 +232,19 @@ window.filterTable = function(){
 
 window.doLogout = async function(){
   await signOut(auth);
-  window.location.href = 'login.html';
+  redirectTo('login.html');
 };
 
-onAuthStateChanged(auth, user => {
-  if(!user){
-    window.location.href = 'login.html';
-    return;
-  }
-  if(!ADMIN_EMAILS.includes((user.email || '').toLowerCase())){
-    alert('Acceso denegado. Solo administradores.');
-    window.location.href = 'editor.html';
-    return;
-  }
-  loadUsers();
-});
+onAuthStateChanged(auth, handleAdminAccess);
+
+if(typeof auth.authStateReady === 'function'){
+  auth.authStateReady()
+    .then(() => handleAdminAccess(auth.currentUser))
+    .catch(error => {
+      console.error(error);
+      redirectTo('login.html');
+    });
+}
 </script>
 </body>
 </html>
