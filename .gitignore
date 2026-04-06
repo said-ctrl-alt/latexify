@@ -1,0 +1,4 @@
+.chrome-*/
+*.dom.txt
+*.err.txt
+*-shot.png
