@@ -28,6 +28,9 @@ const LOCAL_COMPILE_TIMEOUT_MS = 30_000;
 
 // Compilador LaTeX a usar. Cambia a "xelatex" o "lualatex" si lo necesitas.
 const LATEX_BIN = process.env.LATEXIFY_LATEX_BIN || "pdflatex";
+const SHOULD_TRY_LOCAL_COMPILE =
+  process.env.LATEXIFY_ENABLE_LOCAL_COMPILE === "1" || !process.env.VERCEL;
+const LATEX_ONLINE_SAFE_UPLOAD_BYTES = 900 * 1024;
 
 const DEFAULT_JSON_UPSTREAMS = ["http://46.183.116.172:3000/compile"];
 const LATEX_ONLINE_TEXT_URL = "https://latexonline.cc/compile";
@@ -61,6 +64,46 @@ function sanitizePath(filePath) {
     .filter(Boolean)
     .filter((s) => s !== "." && s !== "..")
     .join("/");
+}
+
+function formatBytes(bytes) {
+  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+function estimateBase64Bytes(content = "") {
+  const normalized = String(content || "").replace(/\s+/g, "");
+  if (!normalized) return 0;
+  const padding = normalized.endsWith("==") ? 2 : normalized.endsWith("=") ? 1 : 0;
+  return Math.max(0, Math.floor((normalized.length * 3) / 4) - padding);
+}
+
+function estimateProjectUploadBytes(projectFiles) {
+  if (!Array.isArray(projectFiles) || !projectFiles.length) return 0;
+  let total = 1024;
+  for (const file of projectFiles) {
+    const safePath = sanitizePath(file?.path);
+    if (!safePath) continue;
+    const contentBytes =
+      file?.type === "binary" && file?.encoding === "base64"
+        ? estimateBase64Bytes(file?.content)
+        : Buffer.byteLength(typeof file?.content === "string" ? file.content : "", "utf8");
+    const padding = contentBytes % 512 === 0 ? 0 : 512 - (contentBytes % 512);
+    total += 512 + contentBytes + padding;
+  }
+  return total + 512;
+}
+
+function requiresProjectBundle(projectFiles, target) {
+  if (!Array.isArray(projectFiles) || !projectFiles.length) return false;
+  const safeTarget = sanitizePath(target) || "main.tex";
+  if (projectFiles.length > 1) return true;
+  return projectFiles.some((file) => sanitizePath(file?.path) !== safeTarget);
+}
+
+function isRequestTooLargeError(message = "") {
+  return /413|request entity too large/i.test(String(message || ""));
 }
 
 // ─────────────────────────────────────────────
@@ -360,22 +403,49 @@ module.exports = async function handler(req, res) {
   }
 
   const errors = [];
+  const needsBundle = requiresProjectBundle(projectFiles, target);
+  const estimatedUploadBytes = estimateProjectUploadBytes(projectFiles);
 
   // ── 1. Compilación local (primera prioridad) ──────────────────────────────
-  try {
-    const result = await compileLocally(projectFiles, code, target);
-    return res.status(200).json(result);
-  } catch (error) {
-    errors.push(`local:${error?.message || "error desconocido"}`);
+  if (SHOULD_TRY_LOCAL_COMPILE) {
+    try {
+      const result = await compileLocally(projectFiles, code, target);
+      return res.status(200).json(result);
+    } catch (error) {
+      errors.push(`local:${error?.message || "error desconocido"}`);
+    }
   }
 
   // ── 2. Tarball a latexonline.cc (fallback con archivos adjuntos) ──────────
   if (projectFiles.length) {
+    if (estimatedUploadBytes > LATEX_ONLINE_SAFE_UPLOAD_BYTES) {
+      return res.status(413).json({
+        error: "El proyecto es demasiado grande para el compilador remoto actual",
+        details:
+          `El paquete estimado pesa ${formatBytes(estimatedUploadBytes)} y supera el tamano seguro del servicio remoto. ` +
+          "Reduce imagenes pesadas o usa un backend propio con LaTeX instalado.",
+      });
+    }
     try {
       const result = await requestLatexOnlineTarball(projectFiles, target);
       return res.status(200).json(result);
     } catch (error) {
-      errors.push(`tarball:${error?.message || "error desconocido"}`);
+      const message = error?.message || "error desconocido";
+      errors.push(`tarball:${message}`);
+      if (isRequestTooLargeError(message)) {
+        return res.status(413).json({
+          error: "El proyecto es demasiado grande para el compilador remoto actual",
+          details:
+            `latexonline.cc rechazo el proyecto por tamano (${formatBytes(estimatedUploadBytes)} estimados). ` +
+            "Reduce imagenes pesadas o usa un backend propio con LaTeX instalado.",
+        });
+      }
+      if (needsBundle) {
+        return res.status(502).json({
+          error: "No fue posible compilar el proyecto completo en este momento",
+          details: errors.slice(0, 4).join(" | "),
+        });
+      }
     }
   }
 
