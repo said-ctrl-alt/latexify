@@ -12,3 +12,7 @@ window.FIREBASE_CONFIG = {
 
 // Emails allowed to access the admin panel.
 window.LATEXIFY_ADMIN_EMAILS = ["tu@correo.com"];
+
+// Compiler endpoint used by the editor when generating PDF.
+// In production under HTTPS, point this to a secure URL or a same-origin proxy like "/api/compile".
+window.LATEXIFY_COMPILER_ENDPOINT = "/api/compile";

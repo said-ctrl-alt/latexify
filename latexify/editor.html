@@ -2147,6 +2147,53 @@ function searchInEditor(){
   setStatus(`Coincidencia encontrada para "${term}"`, "ok");
 }
 
+function getCompilerEndpoints(){
+  const configuredSingle = typeof window.LATEXIFY_COMPILER_ENDPOINT === "string"
+    ? window.LATEXIFY_COMPILER_ENDPOINT.trim()
+    : "";
+  const configuredList = Array.isArray(window.LATEXIFY_COMPILER_ENDPOINTS)
+    ? window.LATEXIFY_COMPILER_ENDPOINTS
+        .map(value => typeof value === "string" ? value.trim() : "")
+        .filter(Boolean)
+    : [];
+  const configured = [configuredSingle, ...configuredList].filter(Boolean);
+  if(configured.length){
+    return configured;
+  }
+  if(window.location.protocol === "https:"){
+    return ["/api/compile", "https://46.183.116.172:3000/compile"];
+  }
+  return ["http://46.183.116.172:3000/compile", "/api/compile"];
+}
+
+async function requestCompilation(code){
+  const endpoints = getCompilerEndpoints();
+  let lastError = null;
+  for(const endpoint of endpoints){
+    try{
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code })
+      });
+      if(!response.ok){
+        throw new Error(`HTTP ${response.status}`);
+      }
+      const data = await response.json();
+      if(data?.pdf){
+        return { data, endpoint };
+      }
+      if(data?.error){
+        throw new Error(data.error);
+      }
+      throw new Error("Respuesta invalida del compilador");
+    }catch(error){
+      lastError = error;
+    }
+  }
+  throw lastError || new Error("No se pudo contactar el compilador");
+}
+
 async function compilePDF(){
   if(!state.currentUser){ return; }
   syncCurrentDocumentToProjectFiles();
@@ -2172,21 +2219,16 @@ async function compilePDF(){
     }
   }, 15000);
   try {
-    const response = await fetch("http://46.183.116.172:3000/compile", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ code: codeToCompile })
-    });
-    const data = await response.json();
+    const { data, endpoint } = await requestCompilation(codeToCompile);
     if(data.pdf){
       const pdfBlob = new Blob([Uint8Array.from(atob(data.pdf), c => c.charCodeAt(0))], { type:"application/pdf" });
       const pdfUrl = URL.createObjectURL(pdfBlob);
       els.pdfFrame.src = pdfUrl;
       setStatus("PDF compilado exitosamente", "ok");
       if(compileFile !== state.activeTexFile){
-        addActivity("Compilacion", `Se compilo ${getBasename(compileFile)} mientras editabas ${getBasename(state.activeTexFile)}.`);
+        addActivity("Compilacion", `Se compilo ${getBasename(compileFile)} desde ${endpoint} mientras editabas ${getBasename(state.activeTexFile)}.`);
       }else{
-        addActivity("Compilacion", `Se compilo ${getBasename(compileFile)}.`);
+        addActivity("Compilacion", `Se compilo ${getBasename(compileFile)} desde ${endpoint}.`);
       }
     } else {
       state.awaitingPdfLoad = false;
@@ -2199,7 +2241,11 @@ async function compilePDF(){
     state.awaitingPdfLoad = false;
     els.compileBtn.disabled = false;
     els.pdfEmpty.style.display = "";
-    setStatus("Error conectando con el compilador", "error");
+    const isHttps = window.location.protocol === "https:";
+    const secureHint = "Configura window.LATEXIFY_COMPILER_ENDPOINT con una URL HTTPS valida o monta /api/compile en tu dominio.";
+    const baseMessage = isHttps ? "No fue posible conectar con un compilador seguro." : "Error conectando con el compilador.";
+    setStatus(`${baseMessage} ${secureHint}`, "error");
+    addActivity("Compilacion fallida", error?.message || "Fallo de red al contactar el compilador.");
   }
 }
 
