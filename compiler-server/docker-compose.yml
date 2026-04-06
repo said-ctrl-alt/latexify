@@ -1,0 +1,14 @@
+services:
+  latexify-compiler:
+    build:
+      context: ..
+      dockerfile: compiler-server/Dockerfile
+    container_name: latexify-compiler
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: "3000"
+      LATEXIFY_ENABLE_LOCAL_COMPILE: "1"
+      LATEXIFY_ENABLE_REMOTE_FALLBACK: "0"
+      LATEXIFY_BODY_SIZE_LIMIT: "50mb"

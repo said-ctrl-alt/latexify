@@ -2332,7 +2332,11 @@ function normalizeCompilerEndpoint(value){
   if(!trimmed){ return ""; }
   try{
     const resolved = new URL(trimmed, window.location.href);
-    if(/^https?:/i.test(trimmed) && resolved.origin !== window.location.origin){
+    const trustedOrigins = Array.isArray(window.LATEXIFY_TRUSTED_COMPILER_ORIGINS)
+      ? window.LATEXIFY_TRUSTED_COMPILER_ORIGINS.filter(origin => typeof origin === "string").map(origin => origin.trim()).filter(Boolean)
+      : [];
+    const isTrustedExternal = trustedOrigins.includes(resolved.origin);
+    if(/^https?:/i.test(trimmed) && resolved.origin !== window.location.origin && !isTrustedExternal){
       return "";
     }
   }catch(_error){

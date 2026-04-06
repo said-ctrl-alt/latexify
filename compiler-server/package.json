@@ -1,0 +1,14 @@
+{
+  "name": "latexify-compiler-server",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Compilador self-hosted para proyectos LaTeX grandes de LaTeXify",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

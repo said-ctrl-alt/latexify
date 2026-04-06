@@ -77,6 +77,45 @@ No necesitas build command. La carpeta de publicacion es la raiz del proyecto.
 3. Usa cualquier plantilla.
 4. Guarda y retoma su proyecto desde la nube.
 
+## Compilador Propio Para Proyectos Grandes
+
+Si tus proyectos incluyen imagenes pesadas, clases `.cls` o varios archivos auxiliares, el compilador serverless puede quedarse corto. Para eso el repo ahora incluye un compilador self-hosted en `compiler-server/`.
+
+### Que incluye
+
+- `compiler-server/server.js`: servidor HTTP para `/compile`
+- `compiler-server/Dockerfile`: imagen con Node + `pdflatex`
+- `compiler-server/docker-compose.yml`: arranque rapido en puerto `3000`
+
+### Despliegue sugerido en tu servidor
+
+Desde la raiz del repo:
+
+```bash
+docker compose -f compiler-server/docker-compose.yml up -d --build
+```
+
+Luego publica ese puerto detras de tu dominio HTTPS, por ejemplo:
+
+- `https://tu-dominio/compile` -> `http://127.0.0.1:3000/compile`
+- `https://tu-dominio/health` -> `http://127.0.0.1:3000/health`
+
+### Conectar el editor al compilador propio
+
+En `firebase-config.js`, cambia a algo como esto:
+
+```js
+window.LATEXIFY_COMPILER_ENDPOINT = "https://tu-dominio/compile";
+window.LATEXIFY_TRUSTED_COMPILER_ORIGINS = ["https://tu-dominio"];
+```
+
+Con eso el editor usara tu compilador externo en vez del serverless.
+
+### Nota importante
+
+- La imagen con `texlive-full` es pesada, pero es la opcion mas robusta para proyectos variados.
+- Si mas adelante quieres reducir el tamano de la imagen, puedes reemplazar `texlive-full` por un subconjunto de paquetes.
+
 ## Notas
 
 - `admin.html` ya no activa cuentas; ahora sirve para monitoreo.

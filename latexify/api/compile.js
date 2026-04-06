@@ -30,6 +30,8 @@ const LOCAL_COMPILE_TIMEOUT_MS = 30_000;
 const LATEX_BIN = process.env.LATEXIFY_LATEX_BIN || "pdflatex";
 const SHOULD_TRY_LOCAL_COMPILE =
   process.env.LATEXIFY_ENABLE_LOCAL_COMPILE === "1" || !process.env.VERCEL;
+const SHOULD_TRY_REMOTE_FALLBACK =
+  process.env.LATEXIFY_ENABLE_REMOTE_FALLBACK === "1" || !!process.env.VERCEL;
 const LATEX_ONLINE_SAFE_UPLOAD_BYTES = 900 * 1024;
 
 const DEFAULT_JSON_UPSTREAMS = ["http://46.183.116.172:3000/compile"];
@@ -412,7 +414,14 @@ module.exports = async function handler(req, res) {
       const result = await compileLocally(projectFiles, code, target);
       return res.status(200).json(result);
     } catch (error) {
-      errors.push(`local:${error?.message || "error desconocido"}`);
+      const message = error?.message || "error desconocido";
+      errors.push(`local:${message}`);
+      if (!SHOULD_TRY_REMOTE_FALLBACK) {
+        return res.status(502).json({
+          error: "La compilacion local fallo en el servidor propio",
+          details: message,
+        });
+      }
     }
   }
 

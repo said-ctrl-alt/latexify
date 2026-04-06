@@ -16,3 +16,9 @@ window.LATEXIFY_ADMIN_EMAILS = ["latexstudio23@gmail.com"];
 // Compiler endpoint used by the editor when generating PDF.
 // In production under HTTPS, point this to a secure URL or a same-origin proxy like "/api/compile".
 window.LATEXIFY_COMPILER_ENDPOINT = "/api/compile";
+
+// Optional allowlist for a self-hosted compiler on another origin.
+// Example:
+// window.LATEXIFY_COMPILER_ENDPOINT = "https://latexify-co.duckdns.org/compile";
+// window.LATEXIFY_TRUSTED_COMPILER_ORIGINS = ["https://latexify-co.duckdns.org"];
+window.LATEXIFY_TRUSTED_COMPILER_ORIGINS = [];
