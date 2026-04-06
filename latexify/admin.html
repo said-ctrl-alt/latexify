@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LaTeXify — Panel Admin</title>
+<title>LaTeXify - Panel Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -12,8 +12,6 @@
   --ink:#0D1117;--ink2:#3D4451;--ink3:#6B7280;
   --paper:#FAFAF8;--paper2:#F3F2EE;--border:#E2DED6;
   --teal:#0B6E5E;--teal-l:#E0F2EE;--teal-m:#1D9E75;
-  --amber:#B45309;--amber-l:#FEF3C7;--amber-m:#D97706;
-  --red:#991B1B;--red-l:#FEE2E2;
   --mono:'DM Mono',monospace;--sans:'DM Sans',sans-serif;
 }
 body{font-family:var(--sans);background:var(--paper2);color:var(--ink);min-height:100vh}
@@ -21,30 +19,22 @@ nav{background:var(--paper);border-bottom:1px solid var(--border);padding:0 24px
 .logo{font-family:var(--mono);font-size:15px;color:var(--ink);text-decoration:none;font-weight:500}
 .logo span{color:var(--teal-m)}
 .admin-tag{font-size:10px;font-family:var(--mono);background:#0D1117;color:#1D9E75;padding:2px 8px;border-radius:4px}
-.main{max-width:1000px;margin:32px auto;padding:0 24px}
+.main{max-width:1080px;margin:32px auto;padding:0 24px}
 h1{font-size:22px;font-weight:500;color:var(--ink);margin-bottom:6px}
 .subtitle{font-size:13px;color:var(--ink3);margin-bottom:28px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:32px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px}
 .stat-card{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:18px}
 .stat-label{font-size:11px;color:var(--ink3);font-family:var(--mono);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:6px}
 .stat-val{font-size:28px;font-weight:500;color:var(--ink)}
 .stat-val.teal{color:var(--teal)}
-.stat-val.amber{color:var(--amber)}
 .card{background:var(--paper);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px}
-.card-title{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.card-title{font-size:14px;font-weight:500;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.card-text{font-size:13px;color:var(--ink3);line-height:1.6}
 .search-row{display:flex;gap:8px;margin-bottom:16px}
-input[type=text],input[type=email]{font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--paper2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;outline:none;transition:border-color .2s}
+input[type=text]{font-family:var(--sans);font-size:13px;color:var(--ink);background:var(--paper2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;outline:none;transition:border-color .2s;flex:1}
 input:focus{border-color:var(--teal-m)}
-.search-row input{flex:1}
 .btn{font-family:var(--sans);font-size:13px;font-weight:500;border:none;border-radius:6px;padding:8px 16px;cursor:pointer;transition:all .15s;white-space:nowrap}
-.btn-teal{background:var(--teal);color:#fff}
-.btn-teal:hover{background:var(--teal-m)}
-.btn-amber{background:var(--amber);color:#fff}
-.btn-amber:hover{background:var(--amber-m)}
-.btn-red{background:#DC2626;color:#fff}
-.btn-red:hover{background:var(--red)}
 .btn-ghost{background:var(--paper2);color:var(--ink2);border:1px solid var(--border)}
-.btn-ghost:hover{background:var(--paper2);border-color:var(--border)}
 .btn-ghost:hover{background:#E8E6E0}
 table{width:100%;border-collapse:collapse;font-size:13px}
 th{text-align:left;font-size:11px;font-family:var(--mono);color:var(--ink3);padding:8px 12px;border-bottom:2px solid var(--border);text-transform:uppercase;letter-spacing:0.05em}
@@ -52,14 +42,8 @@ td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle
 tr:last-child td{border:none}
 tr:hover td{background:var(--paper2)}
 .badge{display:inline-block;font-size:10px;font-family:var(--mono);padding:2px 8px;border-radius:4px}
-.badge-free{background:var(--paper2);color:var(--ink3);border:1px solid var(--border)}
-.badge-premium{background:var(--amber-l);color:var(--amber)}
+.badge-user{background:var(--paper2);color:var(--ink3);border:1px solid var(--border)}
 .badge-admin{background:#1D3461;color:#93C5FD}
-.action-row{display:flex;gap:6px}
-.msg{padding:10px 14px;border-radius:6px;font-size:13px;margin-bottom:12px;display:none}
-.msg.show{display:block}
-.msg-ok{background:var(--teal-l);color:var(--teal);border:1px solid #99D6C4}
-.msg-err{background:var(--red-l);color:var(--red);border:1px solid #FCA5A5}
 #loading{text-align:center;padding:40px;font-size:13px;color:var(--ink3);font-family:var(--mono)}
 </style>
 </head>
@@ -68,40 +52,29 @@ tr:hover td{background:var(--paper2)}
   <a href="index.html" class="logo">LaTeX<span>ify</span></a>
   <span class="admin-tag">ADMIN</span>
   <div style="flex:1"></div>
-  <button class="btn btn-ghost" onclick="doLogout()">Cerrar sesión</button>
+  <button class="btn btn-ghost" onclick="doLogout()">Cerrar sesion</button>
 </nav>
 
 <div class="main">
-  <h1>Panel de Administración</h1>
-  <p class="subtitle">Gestión de usuarios y activación de cuentas Premium</p>
+  <h1>Panel de Administracion</h1>
+  <p class="subtitle">Monitoreo general de usuarios. El acceso al editor es abierto para todas las cuentas.</p>
 
   <div class="stats">
-    <div class="stat-card"><div class="stat-label">Total usuarios</div><div class="stat-val" id="stat-total">—</div></div>
-    <div class="stat-card"><div class="stat-label">Premium activos</div><div class="stat-val amber" id="stat-premium">—</div></div>
-    <div class="stat-card"><div class="stat-label">Plan gratuito</div><div class="stat-val teal" id="stat-free">—</div></div>
+    <div class="stat-card"><div class="stat-label">Total usuarios</div><div class="stat-val" id="stat-total">-</div></div>
+    <div class="stat-card"><div class="stat-label">Administradores</div><div class="stat-val teal" id="stat-admins">-</div></div>
+    <div class="stat-card"><div class="stat-label">Con proyecto guardado</div><div class="stat-val" id="stat-saved">-</div></div>
   </div>
 
   <div class="card">
-    <div class="card-title">Activar Premium por correo</div>
-    <div class="msg msg-ok" id="act-ok"></div>
-    <div class="msg msg-err" id="act-err"></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap">
-      <input type="email" id="act-email" placeholder="correo@estudiante.edu.co" style="flex:1;min-width:200px">
-      <select id="act-months" style="font-family:var(--sans);font-size:13px;background:var(--paper2);border:1px solid var(--border);border-radius:6px;padding:8px 12px;color:var(--ink)">
-        <option value="1">1 mes</option>
-        <option value="6">6 meses (semestral)</option>
-        <option value="12">12 meses</option>
-      </select>
-      <button class="btn btn-amber" onclick="activateByEmail()">Activar Premium</button>
-    </div>
-    <p style="font-size:11px;color:var(--ink3);margin-top:10px">Busca el usuario por correo y activa su plan. Se registra la fecha de activación automáticamente.</p>
+    <div class="card-title">Modo gratuito activado</div>
+    <p class="card-text">Esta vista queda como panel de consulta. Ya no hay activaciones manuales ni cambios de acceso desde aqui.</p>
   </div>
 
   <div class="card">
     <div class="card-title">
       Todos los usuarios
       <div style="flex:1"></div>
-      <button class="btn btn-ghost" onclick="loadUsers()" style="font-size:12px;padding:5px 12px">↺ Recargar</button>
+      <button class="btn btn-ghost" onclick="loadUsers()" style="font-size:12px;padding:5px 12px">Recargar</button>
     </div>
     <div class="search-row">
       <input type="text" id="search-input" placeholder="Buscar por nombre o correo..." oninput="filterTable()">
@@ -113,10 +86,9 @@ tr:hover td{background:var(--paper2)}
           <tr>
             <th>Nombre</th>
             <th>Correo</th>
-            <th>Plan</th>
-            <th>Vence</th>
-            <th>Compilaciones hoy</th>
-            <th>Acciones</th>
+            <th>Rol</th>
+            <th>Ultimo guardado</th>
+            <th>Estado</th>
           </tr>
         </thead>
         <tbody id="user-tbody"></tbody>
@@ -125,139 +97,116 @@ tr:hover td{background:var(--paper2)}
   </div>
 </div>
 
+<script src="firebase-config.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-functions.js";
+import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyAaezwe-pPDi1rsS3uFopk9JMY199LLoqk",
-  authDomain:        "latexify-4bfc9.firebaseapp.com",
-  projectId:         "latexify-4bfc9",
-  storageBucket:     "latexify-4bfc9.firebasestorage.app",
-  messagingSenderId: "292044762895",
-  appId:             "1:292044762895:web:a7a0ed9489331e2e88d87a"
-};
+const FIREBASE_CONFIG = window.FIREBASE_CONFIG;
+const ADMIN_EMAILS = (window.LATEXIFY_ADMIN_EMAILS || ["tu@correo.com"]).map(email => email.toLowerCase());
 
 const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
-const functions = getFunctions(app);
-const listUsersFn = httpsCallable(functions, 'listUsers');
-const setPremiumStatusFn = httpsCallable(functions, 'setPremiumStatus');
+const db = getFirestore(app);
 let allUsers = [];
 
-function fmtDate(value){
-  if(!value) return '—';
-  const d = new Date(value);
-  return Number.isNaN(d.getTime()) ? value : d.toLocaleDateString('es-CO',{year:'numeric',month:'short',day:'numeric'});
+function formatSavedAt(value){
+  if(!value){ return '-'; }
+  const date = new Date(value);
+  if(Number.isNaN(date.getTime())){ return '-'; }
+  return date.toLocaleString('es-CO', {
+    year:'numeric',
+    month:'short',
+    day:'numeric',
+    hour:'2-digit',
+    minute:'2-digit'
+  });
 }
 
-function showError(message){
-  const loading = document.getElementById('loading');
-  loading.style.display='block';
-  loading.textContent=message;
+function buildCell(text, extraStyle = ''){
+  const td = document.createElement('td');
+  td.textContent = text;
+  if(extraStyle){ td.style.cssText = extraStyle; }
+  return td;
 }
 
-async function assertAdmin(user){
-  const token = await user.getIdTokenResult(true);
-  if(token.claims.admin !== true){
-    alert('Acceso denegado. Esta vista ahora exige custom claims de administrador.');
-    window.location.href='editor.html';
-    return false;
-  }
-  return true;
+function buildBadge(role){
+  const span = document.createElement('span');
+  span.className = `badge ${role === 'admin' ? 'badge-admin' : 'badge-user'}`;
+  span.textContent = role === 'admin' ? 'ADMIN' : 'USUARIO';
+  return span;
 }
-
-onAuthStateChanged(auth, async (user) => {
-  if(!user){ window.location.href='login.html'; return; }
-  if(!(await assertAdmin(user))) return;
-  loadUsers();
-});
-
-window.loadUsers = async function(){
-  document.getElementById('loading').style.display='block';
-  document.getElementById('user-table').style.display='none';
-  try{
-    const result = await listUsersFn();
-    allUsers = result.data.users || [];
-    renderTable(allUsers);
-    const premium = allUsers.filter(u=>u.premium).length;
-    document.getElementById('stat-total').textContent   = allUsers.length;
-    document.getElementById('stat-premium').textContent = premium;
-    document.getElementById('stat-free').textContent    = allUsers.length - premium;
-  }catch(e){
-    console.error(e);
-    showError('No fue posible cargar usuarios. Verifica que desplegaste las Cloud Functions y tengas custom claims de admin.');
-  }
-};
 
 function renderTable(users){
-  document.getElementById('loading').style.display='none';
-  document.getElementById('user-table').style.display='table';
+  document.getElementById('loading').style.display = 'none';
+  document.getElementById('user-table').style.display = 'table';
   const tbody = document.getElementById('user-tbody');
-  tbody.innerHTML = users.map(u=>`
-    <tr data-id="${u.id}" data-email="${(u.email||'').toLowerCase()}" data-name="${(u.name||'').toLowerCase()}">
-      <td>${u.name||'—'}</td>
-      <td style="font-family:var(--mono);font-size:12px">${u.email||'—'}</td>
-      <td><span class="badge ${u.role==='admin'?'badge-admin':u.premium?'badge-premium':'badge-free'}">${u.role==='admin'?'ADMIN':u.premium?'PREMIUM':'FREE'}</span></td>
-      <td style="font-size:12px;color:var(--ink3)">${fmtDate(u.premiumExpiry)}</td>
-      <td style="font-size:12px;text-align:center">${u.compilationsToday||0}</td>
-      <td>
-        <div class="action-row">
-          ${!u.premium?`<button class="btn btn-amber" style="font-size:11px;padding:4px 10px" onclick="activateUser('${u.id}',1)">+1 mes</button>`:
-          `<button class="btn btn-red" style="font-size:11px;padding:4px 10px" onclick="revokeUser('${u.id}')">Revocar</button>`}
-          <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px" onclick="activateUser('${u.id}',6)">+6 mes</button>
-        </div>
-      </td>
-    </tr>`).join('');
+  tbody.textContent = '';
+
+  users.forEach(user => {
+    const tr = document.createElement('tr');
+    tr.dataset.email = (user.email || '').toLowerCase();
+    tr.dataset.name = (user.name || '').toLowerCase();
+
+    tr.appendChild(buildCell(user.name || '-'));
+    tr.appendChild(buildCell(user.email || '-', 'font-family:var(--mono);font-size:12px'));
+
+    const roleCell = document.createElement('td');
+    roleCell.appendChild(buildBadge(user.role || 'user'));
+    tr.appendChild(roleCell);
+
+    tr.appendChild(buildCell(formatSavedAt(user.lastSavedAt), 'font-size:12px;color:var(--ink3)'));
+    tr.appendChild(buildCell(user.lastSavedAt ? 'Con proyecto' : 'Sin guardar'));
+
+    tbody.appendChild(tr);
+  });
 }
+
+window.loadUsers = async function(){
+  document.getElementById('loading').style.display = 'block';
+  document.getElementById('user-table').style.display = 'none';
+  try{
+    const snap = await getDocs(collection(db,'users'));
+    allUsers = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    renderTable(allUsers);
+
+    const admins = allUsers.filter(user => user.role === 'admin').length;
+    const saved = allUsers.filter(user => Boolean(user.lastSavedAt)).length;
+
+    document.getElementById('stat-total').textContent = allUsers.length;
+    document.getElementById('stat-admins').textContent = admins;
+    document.getElementById('stat-saved').textContent = saved;
+  }catch(e){
+    document.getElementById('loading').textContent = `Error: ${e.message}`;
+  }
+};
 
 window.filterTable = function(){
   const q = document.getElementById('search-input').value.toLowerCase();
   const rows = document.querySelectorAll('#user-tbody tr');
-  rows.forEach(r=>{ r.style.display=(r.dataset.email.includes(q)||r.dataset.name.includes(q))?'':'none'; });
+  rows.forEach(row => {
+    row.style.display = (row.dataset.email.includes(q) || row.dataset.name.includes(q)) ? '' : 'none';
+  });
 };
 
-async function setUserPremium(uid, active, months){
-  await setPremiumStatusFn({ uid, active, months });
-}
-
-window.activateUser = async function(uid, months){
-  try{
-    await setUserPremium(uid, true, months);
-    await loadUsers();
-    alert(`Premium activado por ${months} mes(es) ✓`);
-  }catch(e){ alert('Error: '+(e.message||e)); }
+window.doLogout = async function(){
+  await signOut(auth);
+  window.location.href = 'login.html';
 };
 
-window.revokeUser = async function(uid){
-  if(!confirm('¿Revocar acceso Premium?')) return;
-  try{
-    await setUserPremium(uid, false, 0);
-    await loadUsers();
-    alert('Premium revocado.');
-  }catch(e){ alert('Error: '+(e.message||e)); }
-};
-
-window.activateByEmail = async function(){
-  const email  = document.getElementById('act-email').value.trim().toLowerCase();
-  const months = parseInt(document.getElementById('act-months').value);
-  const ok  = document.getElementById('act-ok');
-  const err = document.getElementById('act-err');
-  ok.classList.remove('show'); err.classList.remove('show');
-  if(!email){ err.textContent='Ingresa un correo.'; err.classList.add('show'); return; }
-  const user = allUsers.find(u=>(u.email||'').toLowerCase()===email);
-  if(!user){ err.textContent=`No se encontró ningún usuario con el correo ${email}`; err.classList.add('show'); return; }
-  try{
-    await setUserPremium(user.id, true, months);
-    await loadUsers();
-    ok.textContent=`✓ Premium activado para ${email} por ${months} mes(es).`;
-    ok.classList.add('show');
-    document.getElementById('act-email').value='';
-  }catch(e){ err.textContent='Error: '+(e.message||e); err.classList.add('show'); }
-};
-
-window.doLogout = async function(){ await signOut(auth); window.location.href='login.html'; };
+onAuthStateChanged(auth, user => {
+  if(!user){
+    window.location.href = 'login.html';
+    return;
+  }
+  if(!ADMIN_EMAILS.includes((user.email || '').toLowerCase())){
+    alert('Acceso denegado. Solo administradores.');
+    window.location.href = 'editor.html';
+    return;
+  }
+  loadUsers();
+});
 </script>
 </body>
 </html>
