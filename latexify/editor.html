@@ -1432,6 +1432,7 @@ const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const TEXT_PROJECT_EXTENSIONS = new Set(["tex","bib","cls","sty","bst","txt","md","json","csv","xml","yml","yaml","svg","html","css","js","ts","py","sh","r","m","tikz"]);
+const CLOUD_PROJECT_FILE_BYTES_LIMIT = 900 * 1024;
 
 const state = {
   currentUser: null,
@@ -1568,6 +1569,75 @@ function createSingleFileProject(content, fileName = "main.tex"){
     [state.activeTexFile, { type: "text", content }]
   ]);
   renderProjectFiles();
+}
+
+function scoreCloudProjectFile(fileName = ""){
+  const ext = getFileExtension(fileName);
+  let score = 0;
+  if(fileName === state.activeTexFile){ score += 100; }
+  if(/(^|\/)main\.tex$/i.test(fileName)){ score += 80; }
+  if(ext === "tex"){ score += 40; }
+  if(["cls","sty","bib","bst","tikz"].includes(ext)){ score += 30; }
+  return score;
+}
+
+function getCloudProjectFilesSnapshot(){
+  const textFiles = Array.from(state.projectFiles.entries())
+    .filter(([path, entry]) => isTextProjectFile(path) && entry?.type === "text")
+    .map(([path, entry]) => ({
+      path,
+      type: "text",
+      content: typeof entry?.content === "string" ? entry.content : ""
+    }))
+    .sort((a, b) => scoreCloudProjectFile(b.path) - scoreCloudProjectFile(a.path) || a.path.localeCompare(b.path));
+
+  const selected = [];
+  let omittedCount = 0;
+  for(const file of textFiles){
+    const candidate = [...selected, file];
+    const bytes = new TextEncoder().encode(JSON.stringify(candidate)).length;
+    if(bytes <= CLOUD_PROJECT_FILE_BYTES_LIMIT || !selected.length){
+      selected.push(file);
+    }else{
+      omittedCount += 1;
+    }
+  }
+
+  return { files: selected, omittedCount };
+}
+
+function restoreProjectFilesFromSnapshot(projectFiles, fallbackCode, fallbackFileName = "main.tex"){
+  if(!Array.isArray(projectFiles) || !projectFiles.length){
+    createSingleFileProject(fallbackCode, fallbackFileName);
+    applyEditorValue(fallbackCode);
+    return;
+  }
+
+  const restored = new Map();
+  projectFiles.forEach(file => {
+    if(!file?.path || typeof file?.content !== "string"){ return; }
+    restored.set(file.path, { type: "text", content: file.content });
+  });
+
+  if(!restored.size){
+    createSingleFileProject(fallbackCode, fallbackFileName);
+    applyEditorValue(fallbackCode);
+    return;
+  }
+
+  const initialFile = restored.has(fallbackFileName)
+    ? fallbackFileName
+    : pickPrimaryTexFile(Array.from(restored.keys())) || Array.from(restored.keys())[0] || fallbackFileName;
+
+  state.projectFiles = restored;
+  setActiveTexFile(initialFile);
+
+  if(!state.projectFiles.has(initialFile)){
+    state.projectFiles.set(initialFile, { type: "text", content: fallbackCode });
+  }
+
+  const activeEntry = state.projectFiles.get(initialFile);
+  applyEditorValue(typeof activeEntry?.content === "string" ? activeEntry.content : fallbackCode);
 }
 
 function syncCurrentDocumentToProjectFiles(){
@@ -1980,12 +2050,14 @@ async function persistDocument(logMessage = "", isManual = false){
   if(!state.currentUser){ return; }
   setSaveState("saving","Guardando...");
   syncCurrentDocumentToProjectFiles();
+  const cloudProject = getCloudProjectFilesSnapshot();
   const payload = {
     lastCode: state.editor.getValue(),
     lastSavedAt: new Date().toISOString(),
     lastTemplate: state.currentTemplate,
     projectName: els.projectName.value || "Proyecto LaTeX",
-    activeTexFile: state.activeTexFile || "main.tex"
+    activeTexFile: state.activeTexFile || "main.tex",
+    projectTextFiles: cloudProject.files
   };
   try{
     await setDoc(doc(db,"users",state.currentUser.uid), payload, { merge: true });
@@ -1996,6 +2068,9 @@ async function persistDocument(logMessage = "", isManual = false){
     if(isManual || Date.now() - state.lastManualLogAt > 45000){
       addActivity("Guardado", logMessage || "Cambios sincronizados en la nube.");
       state.lastManualLogAt = Date.now();
+    }
+    if(cloudProject.omittedCount){
+      addActivity("Guardado parcial", `Se omitieron ${cloudProject.omittedCount} archivo(s) de texto del respaldo en nube por tamano.`);
     }
   }catch(error){
     console.error(error);
@@ -2518,8 +2593,7 @@ async function loadUserDocument(uid){
   els.projectName.value = state.userData.projectName || "Proyecto LaTeX";
   updateWindowTitle();
   const code = state.userData.lastCode || TEMPLATES[state.currentTemplate] || TEMPLATES.article;
-  createSingleFileProject(code, state.userData.activeTexFile || "main.tex");
-  applyEditorValue(code);
+  restoreProjectFilesFromSnapshot(state.userData.projectTextFiles, code, state.userData.activeTexFile || "main.tex");
   if(state.userData.lastSavedAt){
     state.lastSavedAt = state.userData.lastSavedAt;
     els.lastSavedLabel.textContent = `Ultimo guardado a las ${formatTime(new Date(state.userData.lastSavedAt))}`;
