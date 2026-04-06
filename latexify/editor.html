@@ -2326,13 +2326,26 @@ function searchInEditor(){
   setStatus(`Coincidencia encontrada para "${term}"`, "ok");
 }
 
+function normalizeCompilerEndpoint(value){
+  if(typeof value !== "string"){ return ""; }
+  const trimmed = value.trim();
+  if(!trimmed){ return ""; }
+  try{
+    const resolved = new URL(trimmed, window.location.href);
+    if(/^https?:/i.test(trimmed) && resolved.origin !== window.location.origin){
+      return "";
+    }
+  }catch(_error){
+    return trimmed;
+  }
+  return trimmed;
+}
+
 function getCompilerEndpoints(){
-  const configuredSingle = typeof window.LATEXIFY_COMPILER_ENDPOINT === "string"
-    ? window.LATEXIFY_COMPILER_ENDPOINT.trim()
-    : "";
+  const configuredSingle = normalizeCompilerEndpoint(window.LATEXIFY_COMPILER_ENDPOINT);
   const configuredList = Array.isArray(window.LATEXIFY_COMPILER_ENDPOINTS)
     ? window.LATEXIFY_COMPILER_ENDPOINTS
-        .map(value => typeof value === "string" ? value.trim() : "")
+        .map(value => normalizeCompilerEndpoint(value))
         .filter(Boolean)
     : [];
   const configured = [configuredSingle, ...configuredList].filter(Boolean);
