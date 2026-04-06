@@ -1,0 +1,6 @@
+2026/04/05-20:35:00.096 631c Creating DB C:\latexify\.repo-sync\.chrome-admin-check-2\Default\IndexedDB\http_127.0.0.1_4177.indexeddb.leveldb since it was missing.
+2026/04/05-20:35:00.107 631c Reusing MANIFEST C:\latexify\.repo-sync\.chrome-admin-check-2\Default\IndexedDB\http_127.0.0.1_4177.indexeddb.leveldb/MANIFEST-000001
+2026/04/05-20:35:00.485 507c Level-0 table #5: started
+2026/04/05-20:35:00.490 507c Level-0 table #5: 1312 bytes OK
+2026/04/05-20:35:00.495 507c Delete type=0 #3
+2026/04/05-20:35:00.497 4d7c Manual compaction at level-0 from '\x00\x01\x00\x00\x00' @ 72057594037927935 : 1 .. '\x00\x02\x00\x00\x00' @ 0 : 0; will stop at (end)

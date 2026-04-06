@@ -1719,6 +1719,21 @@ function getCompileSourceFile(){
   return texFiles.find(fileName => /(^|\/)main\.tex$/i.test(fileName)) || texFiles[0];
 }
 
+const COMPILER_SAFE_PAYLOAD_BYTES = 4 * 1024 * 1024;
+const COMPILER_IGNORED_PATTERNS = [
+  /(^|\/)__MACOSX\//i,
+  /(^|\/)\.ds_store$/i,
+  /(^|\/)thumbs\.db$/i,
+  /\.pdf$/i,
+  /\.(aux|log|out|toc|lof|lot|fls|fdb_latexmk|nav|snm|vrb|xdv|dvi|ps)$/i,
+  /\.synctex(\.gz)?$/i,
+  /\.(tmp|temp|bak|zip)$/i
+];
+
+function shouldIncludeInCompilePayload(fileName = ""){
+  return !COMPILER_IGNORED_PATTERNS.some(pattern => pattern.test(fileName));
+}
+
 function uint8ArrayToBase64(bytes){
   let binary = "";
   const chunkSize = 0x8000;
@@ -1745,6 +1760,23 @@ function serializeProjectFiles(){
       content: typeof entry?.content === "string" ? entry.content : ""
     };
   });
+}
+
+function getCompilationProjectFiles(){
+  return serializeProjectFiles().filter(file => shouldIncludeInCompilePayload(file.path));
+}
+
+function formatBytes(bytes){
+  if(bytes < 1024){ return `${bytes} B`; }
+  if(bytes < 1024 * 1024){ return `${(bytes / 1024).toFixed(1)} KB`; }
+  return `${(bytes / (1024 * 1024)).toFixed(2)} MB`; 
+}
+
+function estimateCompilationPayload(code, target, projectFiles){
+  const payload = { code, target, projectFiles };
+  const serialized = JSON.stringify(payload);
+  const bytes = new TextEncoder().encode(serialized).length;
+  return { payload, bytes };
 }
 
 function updateWindowTitle(){
@@ -2229,13 +2261,10 @@ function getCompilerEndpoints(){
         .filter(Boolean)
     : [];
   const configured = [configuredSingle, ...configuredList].filter(Boolean);
-  if(configured.length){
-    return configured;
-  }
-  if(window.location.protocol === "https:"){
-    return ["/api/compile"];
-  }
-  return ["http://46.183.116.172:3000/compile", "/api/compile"];
+  const fallback = window.location.protocol === "https:"
+    ? []
+    : ["http://46.183.116.172:3000/compile"];
+  return Array.from(new Set(["/api/compile", ...configured, ...fallback]));
 }
 
 async function requestCompilation(code, target, projectFiles){
@@ -2279,10 +2308,21 @@ async function compilePDF(){
   const compileFile = getCompileSourceFile();
   const compileEntry = state.projectFiles.get(compileFile);
   const codeToCompile = typeof compileEntry?.content === "string" ? compileEntry.content : state.editor.getValue();
+  const projectFiles = getCompilationProjectFiles();
+  const omittedFiles = Math.max(0, state.projectFiles.size - projectFiles.length);
+  const { bytes: payloadBytes } = estimateCompilationPayload(codeToCompile, compileFile, projectFiles);
   if(!codeToCompile.trim()){
     setActiveTab("pdf");
     showPdfNotice("No hay contenido .tex para compilar.", "error");
     setStatus("No hay contenido .tex para compilar", "error");
+    return;
+  }
+  if(payloadBytes > COMPILER_SAFE_PAYLOAD_BYTES){
+    const failureMessage = `El proyecto pesa ${formatBytes(payloadBytes)} para enviarlo al compilador y supera el tamano seguro de ${formatBytes(COMPILER_SAFE_PAYLOAD_BYTES)}.`;
+    setActiveTab("pdf");
+    showPdfNotice(`${failureMessage}\nReduce imagenes pesadas o elimina archivos de salida como PDF, LOG y AUX del ZIP antes de compilar.`, "error");
+    setStatus(`${failureMessage} Reduce el proyecto antes de reintentar.`, "error");
+    addActivity("Compilacion bloqueada", `${failureMessage}${omittedFiles ? ` Se omitieron ${omittedFiles} archivo(s) auxiliares del envio.` : ""}`);
     return;
   }
   setStatus(`Compilando ${getBasename(compileFile)}...`);
@@ -2301,16 +2341,16 @@ async function compilePDF(){
     }
   }, 15000);
   try {
-    const { data, endpoint } = await requestCompilation(codeToCompile, compileFile, serializeProjectFiles());
+    const { data, endpoint } = await requestCompilation(codeToCompile, compileFile, projectFiles);
     if(data.pdf){
       const pdfBlob = new Blob([Uint8Array.from(atob(data.pdf), c => c.charCodeAt(0))], { type:"application/pdf" });
       const pdfUrl = URL.createObjectURL(pdfBlob);
       showPdfDocument(pdfUrl);
       setStatus("PDF compilado exitosamente", "ok");
       if(compileFile !== state.activeTexFile){
-        addActivity("Compilacion", `Se compilo ${getBasename(compileFile)} desde ${endpoint} mientras editabas ${getBasename(state.activeTexFile)}.`);
+        addActivity("Compilacion", `Se compilo ${getBasename(compileFile)} desde ${endpoint} mientras editabas ${getBasename(state.activeTexFile)}.${omittedFiles ? ` Se omitieron ${omittedFiles} archivo(s) auxiliares.` : ""}`);
       }else{
-        addActivity("Compilacion", `Se compilo ${getBasename(compileFile)} desde ${endpoint}.`);
+        addActivity("Compilacion", `Se compilo ${getBasename(compileFile)} desde ${endpoint}.${omittedFiles ? ` Se omitieron ${omittedFiles} archivo(s) auxiliares.` : ""}`);
       }
     } else {
       state.awaitingPdfLoad = false;
