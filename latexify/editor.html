@@ -119,7 +119,7 @@ a{color:inherit}
 .save-dot.dirty{background:var(--danger)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.32}}
 
-.topbar-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.topbar-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
 .select-wrap{display:flex;flex-direction:column;gap:4px;min-width:170px}
 .select-wrap span{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.06em}
 
@@ -130,6 +130,24 @@ a{color:inherit}
 .select-wrap select{padding:0 14px;outline:none;cursor:pointer}
 .btn,.icon-btn{
   padding:0 14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-weight:500;
+}
+.app-topbar .select-wrap{min-width:148px;gap:3px}
+.app-topbar .select-wrap span{font-size:10px;letter-spacing:0.08em}
+.app-topbar .select-wrap select,
+.app-topbar .btn,
+.app-topbar .icon-btn,
+.app-topbar .user-chip{
+  height:34px;
+  border-radius:10px;
+}
+.app-topbar .btn,
+.app-topbar .icon-btn{
+  padding:0 12px;
+  font-size:13px;
+}
+.app-topbar .icon-btn{
+  min-width:34px;
+  width:auto;
 }
 .btn:hover,.icon-btn:hover,.select-wrap select:hover{border-color:var(--line-strong);background:var(--panel-2)}
 .btn:disabled{cursor:not-allowed;opacity:.64}
@@ -147,6 +165,7 @@ a{color:inherit}
   border:1px solid var(--line);background:var(--panel);color:var(--text-soft);font-size:13px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
 }
+.app-topbar .user-chip{font-size:12px}
 
 .mobile-switch{
   display:none;
@@ -268,85 +287,40 @@ a{color:inherit}
 }
 
 .preview-headbar{
-  display:block;
-  padding:10px 12px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+  flex-wrap:wrap;
+  padding:14px 16px 12px;
   background:#15181d;
   border-bottom:1px solid #2b3038;
 }
 
-.browser-toolbar{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
-
-.browser-dots{
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-.browser-dots span{
-  width:10px;
-  height:10px;
-  border-radius:999px;
-  display:block;
-}
-
-.browser-dots span:nth-child(1){background:#ff5f57}
-.browser-dots span:nth-child(2){background:#febc2e}
-.browser-dots span:nth-child(3){background:#28c840}
-
-.browser-address{
-  flex:1;
-  height:32px;
-  display:flex;
-  align-items:center;
-  padding:0 12px;
-  border-radius:8px;
-  background:#20252c;
-  border:1px solid #2e353f;
-  color:#aab7c8;
-  font-size:12px;
-  overflow:hidden;
-  text-overflow:ellipsis;
-  white-space:nowrap;
-}
-
-.preview-meta{
-  margin-top:10px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  flex-wrap:wrap;
-}
+.preview-headcopy{display:flex;flex-direction:column;gap:4px}
 
 .preview-status{
   font-size:11px;
   color:#93a2b6;
   font-family:'IBM Plex Mono',monospace;
+  line-height:1.5;
 }
 
 .metric-pill,.tab-btn{
-  border-radius:999px;border:1px solid var(--line);background:var(--panel);padding:8px 12px;
-  font-size:12px;color:var(--text-soft);
+  border-radius:999px;border:1px solid var(--line);background:var(--panel);padding:7px 11px;
+  font-size:11px;color:var(--text-soft);
 }
 .metric-pill{font-family:'IBM Plex Mono',monospace}
-.tab-btn{cursor:pointer;transition:background .18s,border-color .18s,color .18s}
-.tab-btn:hover{background:var(--panel-2);border-color:var(--line-strong)}
-.tab-btn.active{background:var(--accent-soft);color:var(--accent);border-color:rgba(15,139,114,0.26)}
-
-.editor-toolbar{
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:10px 14px;border-bottom:1px solid #2b3038;
-  background:#181c22;
-}
-.tool-btn{
-  height:30px;padding:0 10px;border-radius:6px;border:1px solid #2d333c;background:#20252c;
-  color:#b8c5d4;font-family:'IBM Plex Mono',monospace;font-size:11px;cursor:pointer;
+.tab-btn{
+  cursor:pointer;
   transition:background .18s,border-color .18s,color .18s;
+  background:#20252c;
+  border-color:#2d333c;
+  color:#b9c6d5;
+  min-height:32px;
 }
-.tool-btn:hover{background:#262c34;border-color:#3b4552;color:#fff}
+.tab-btn:hover{background:#262c34;border-color:#3b4552}
+.tab-btn.active{background:var(--accent-soft);color:var(--accent);border-color:rgba(15,139,114,0.26)}
 
 .editor-surface{flex:1;min-height:0;padding:0;background:#1d2128}
 .editor-frame{
@@ -369,24 +343,10 @@ a{color:inherit}
   width:4px;height:52px;border-radius:999px;background:linear-gradient(180deg,var(--line),var(--line-strong),var(--line));
 }
 
-.preview-actions{
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 12px;border-bottom:1px solid #d7dce2;background:#f2f4f7;
-}
-.preview-actions .btn.small{
-  height:30px;
-  background:#fff;
-  border-color:#cfd5de;
-  color:#475569;
-  box-shadow:none;
-}
-.preview-actions .btn.small:hover{
-  background:#f8fafc;
-  border-color:#b9c3cf;
-}
-.preview-body{flex:1;min-height:0;position:relative;background:#dfe4ea}
+.preview-body{flex:1;min-height:0;position:relative;background:#10161f}
 .tab-panel{display:none;height:100%;overflow:auto}
 .tab-panel.active{display:block}
-.preview-render{padding:24px;min-height:100%;display:flex;justify-content:center}
+.preview-render{padding:20px;min-height:100%;display:flex;justify-content:center}
 
 .preview-sheet{
   width:min(100%,860px);
@@ -469,16 +429,16 @@ a{color:inherit}
 }
 .preview-note{margin-top:18px;font-size:12px;color:#6b7280}
 
-.pdf-panel{height:100%;padding:14px;display:flex;flex-direction:column;gap:12px}
+.pdf-panel{height:100%;padding:20px;display:flex;flex-direction:column;gap:14px;background:#10161f}
 .pdf-frame-wrap{
-  flex:1;min-height:0;border-radius:8px;overflow:hidden;border:1px solid #cfd5de;box-shadow:0 14px 28px rgba(15,23,42,0.1);background:#fff;
+  flex:1;min-height:0;border-radius:12px;overflow:hidden;border:1px solid #2b3038;box-shadow:0 18px 40px rgba(3,8,15,0.26);background:#fff;
 }
 #pdf-frame{width:100%;height:100%;border:none;background:#fff}
 
-.activity-list{padding:14px;display:grid;gap:12px;background:#f4f6f8}
-.activity-item{border:1px solid #d7dce2;background:#fff;border-radius:8px;padding:14px 16px}
-.activity-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:6px;font-size:12px;color:#6b7280}
-.activity-body{color:#475569;line-height:1.6;font-size:13px}
+.activity-list{padding:18px;display:grid;gap:12px;background:#10161f}
+.activity-item{border:1px solid #243447;background:#141d28;border-radius:12px;padding:14px 16px}
+.activity-head{display:flex;justify-content:space-between;gap:12px;margin-bottom:6px;font-size:12px;color:#8fa3ba}
+.activity-body{color:#c4d1de;line-height:1.6;font-size:13px}
 
 .statusbar{
   height:34px;padding:0 16px;display:flex;align-items:center;gap:14px;background:var(--status-bg);color:var(--status-ink);
@@ -506,7 +466,7 @@ a{color:inherit}
 @media (max-width:980px){
   .main-stack{grid-template-columns:1fr}
   .pane-resizer{display:none}
-  .preview-actions,.editor-toolbar,.panel-head,.app-topbar{padding-left:14px;padding-right:14px}
+  .panel-head,.app-topbar{padding-left:14px;padding-right:14px}
   .paper-page{padding:38px 28px 44px}
 }
 @media (max-width:720px){
@@ -516,11 +476,10 @@ a{color:inherit}
   .topbar-actions{justify-content:flex-start}
   .select-wrap{min-width:0;width:100%}
   .select-wrap select,.btn,.icon-btn,.user-chip{width:100%}
-  .preview-actions{display:grid;grid-template-columns:1fr}
   .paper-page{padding:28px 18px 36px}
   .paper-summary{gap:8px}
   .paper-chip{width:100%;border-radius:8px}
-  .preview-meta{align-items:flex-start}
+  .preview-headbar{align-items:flex-start}
 }
 </style>
 </head>
@@ -556,8 +515,10 @@ a{color:inherit}
           <option value="apa">APA Report</option>
         </select>
       </label>
-      <button id="load-template-btn" class="btn" type="button">Cargar</button>
+      <button id="load-template-btn" class="btn" type="button">Aplicar</button>
       <button id="save-btn" class="btn" type="button">Guardar</button>
+      <button id="import-zip-btn" class="btn" type="button">Cargar ZIP</button>
+      <button id="export-zip-btn" class="btn" type="button">Descargar ZIP</button>
       <button id="theme-btn" class="icon-btn" type="button" title="Cambiar tema">Tema</button>
       <button id="compile-btn" class="btn primary" type="button">Compilar PDF</button>
       <button id="overleaf-btn" class="btn accent" type="button">Abrir en Overleaf</button>
@@ -580,7 +541,7 @@ a{color:inherit}
           <div class="file-info">
             <div class="file-badge">.tex</div>
             <div>
-              <div class="file-name">main.tex</div>
+              <div id="active-file-name" class="file-name">main.tex</div>
               <div id="last-saved-label" class="file-subtitle">Sincronizado localmente</div>
             </div>
           </div>
@@ -616,31 +577,12 @@ a{color:inherit}
         <div class="panel-head editor-headbar">
           <div class="editor-tab">
             <span class="editor-tab-dot"></span>
-            <span>main.tex</span>
+            <span id="editor-file-label">main.tex</span>
           </div>
           <div class="panel-pillbar">
             <span id="doc-metrics" class="metric-pill editor-meta">0 lineas - 0 palabras</span>
             <span id="cursor-info" class="metric-pill editor-meta">L1 C1</span>
           </div>
-        </div>
-
-        <div class="editor-toolbar">
-          <button class="tool-btn" type="button" data-before="\textbf{" data-after="}">\textbf</button>
-          <button class="tool-btn" type="button" data-before="\textit{" data-after="}">\textit</button>
-          <button class="tool-btn" type="button" data-before="$" data-after="$">$ x $</button>
-          <button class="tool-btn" type="button" data-before="\[\n" data-after="\n\]">Bloque math</button>
-          <button class="tool-btn" type="button" data-before="\begin{equation}\n" data-after="\n\end{equation}">Ecuacion</button>
-          <button class="tool-btn" type="button" data-before="\section{" data-after="}">Seccion</button>
-          <button class="tool-btn" type="button" data-before="\subsection{" data-after="}">Subsec.</button>
-          <button class="tool-btn" type="button" data-before="\begin{itemize}\n  \item " data-after="\n\end{itemize}">Lista</button>
-          <button class="tool-btn" type="button" data-before="\begin{enumerate}\n  \item " data-after="\n\end{enumerate}">Lista 1.</button>
-          <button class="tool-btn" type="button" data-before="\begin{figure}[h]\n  \centering\n  \includegraphics[width=0.65\textwidth]{" data-after="}\n  \caption{Descripcion}\n  \label{fig:etiqueta}\n\end{figure}">Figura</button>
-          <button class="tool-btn" type="button" data-before="\begin{table}[h]\n  \centering\n  \caption{Titulo}\n  \begin{tabular}{|c|c|}\n    \hline\n    Col1 & Col2 \\\n    \hline\n    Dato & Dato \\\n    \hline\n  \end{tabular}\n" data-after="\end{table}">Tabla</button>
-          <button class="tool-btn" type="button" data-before="\cite{" data-after="}">\cite</button>
-          <button class="tool-btn" type="button" data-before="\label{" data-after="}">\label</button>
-          <button id="search-btn" class="tool-btn" type="button">Buscar</button>
-          <button id="comment-btn" class="tool-btn" type="button">Comentar</button>
-          <button id="indent-btn" class="tool-btn" type="button">Indentar</button>
         </div>
 
         <div class="editor-surface">
@@ -654,29 +596,15 @@ a{color:inherit}
 
       <section id="preview-panel" class="workspace-panel">
         <div class="panel-head preview-headbar">
-          <div class="browser-toolbar">
-            <div class="browser-dots" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-            </div>
-            <div class="browser-address">latexify://preview/main.tex</div>
+          <div class="preview-headcopy">
+            <div class="panel-title">Vista del documento</div>
+            <div id="preview-caption" class="preview-status">Resumen visual del archivo activo y salida PDF compilada.</div>
           </div>
-          <div class="preview-meta">
-            <div id="preview-caption" class="preview-status">Vista estructural del documento</div>
-            <div class="panel-pillbar">
-              <button class="tab-btn active" type="button" data-tab="preview">Vista</button>
-              <button class="tab-btn" type="button" data-tab="pdf">PDF</button>
-              <button class="tab-btn" type="button" data-tab="activity">Actividad</button>
-            </div>
+          <div class="panel-pillbar">
+            <button class="tab-btn active" type="button" data-tab="preview">Vista</button>
+            <button class="tab-btn" type="button" data-tab="pdf">PDF</button>
+            <button class="tab-btn" type="button" data-tab="activity">Actividad</button>
           </div>
-        </div>
-
-        <div class="preview-actions">
-          <button id="refresh-preview-btn" class="btn small" type="button">Actualizar vista</button>
-          <button id="pdf-tab-btn" class="btn small" type="button">Ir al PDF</button>
-          <button id="open-pdf-btn" class="btn small" type="button">PDF en nueva pestana</button>
-          <button id="copy-selection-btn" class="btn small" type="button">Copiar seleccion</button>
         </div>
 
         <div class="preview-body">
@@ -709,11 +637,8 @@ a{color:inherit}
     <span id="footer-summary">0 palabras</span>
     <span>UTF-8</span>
   </footer>
+  <input id="project-zip-input" type="file" accept=".zip,application/zip" hidden>
 </div>
-
-<form id="compile-form" style="display:none">
-  <input id="form-code" type="hidden" name="code">
-</form>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
@@ -722,6 +647,7 @@ a{color:inherit}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/selection/active-line.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/comment/comment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <script src="firebase-config.js"></script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -960,6 +886,7 @@ Sintesis de los hallazgos principales.
 const app = initializeApp(FIREBASE_CONFIG);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const TEXT_PROJECT_EXTENSIONS = new Set(["tex","bib","cls","sty","bst","txt","md","json","csv","xml","yml","yaml","svg","html","css","js","ts","py","sh","r","m","tikz"]);
 
 const state = {
   currentUser: null,
@@ -975,7 +902,9 @@ const state = {
   lastSearchQuery: "",
   currentTemplate: "article",
   currentTab: "preview",
-  activity: []
+  activity: [],
+  projectFiles: new Map(),
+  activeTexFile: "main.tex"
 };
 
 const els = {
@@ -989,10 +918,14 @@ const els = {
   templateSelect: document.getElementById("tpl-sel"),
   loadTemplateBtn: document.getElementById("load-template-btn"),
   saveBtn: document.getElementById("save-btn"),
+  importZipBtn: document.getElementById("import-zip-btn"),
+  exportZipBtn: document.getElementById("export-zip-btn"),
   themeBtn: document.getElementById("theme-btn"),
   compileBtn: document.getElementById("compile-btn"),
   overleafBtn: document.getElementById("overleaf-btn"),
   logoutBtn: document.getElementById("logout-btn"),
+  activeFileName: document.getElementById("active-file-name"),
+  editorFileLabel: document.getElementById("editor-file-label"),
   lastSavedLabel: document.getElementById("last-saved-label"),
   copyCodeBtn: document.getElementById("copy-code-btn"),
   downloadTexBtn: document.getElementById("download-tex-btn"),
@@ -1001,14 +934,7 @@ const els = {
   docMetrics: document.getElementById("doc-metrics"),
   cursorInfo: document.getElementById("cursor-info"),
   editorSource: document.getElementById("editor-source"),
-  searchBtn: document.getElementById("search-btn"),
-  commentBtn: document.getElementById("comment-btn"),
-  indentBtn: document.getElementById("indent-btn"),
   previewCaption: document.getElementById("preview-caption"),
-  refreshPreviewBtn: document.getElementById("refresh-preview-btn"),
-  pdfTabBtn: document.getElementById("pdf-tab-btn"),
-  openPdfBtn: document.getElementById("open-pdf-btn"),
-  copySelectionBtn: document.getElementById("copy-selection-btn"),
   previewRender: document.getElementById("preview-render"),
   pdfEmpty: document.getElementById("pdf-empty"),
   pdfFrame: document.getElementById("pdf-frame"),
@@ -1017,8 +943,7 @@ const els = {
   statusOk: document.getElementById("status-ok"),
   statusErr: document.getElementById("status-err"),
   footerSummary: document.getElementById("footer-summary"),
-  compileForm: document.getElementById("compile-form"),
-  formCode: document.getElementById("form-code"),
+  projectZipInput: document.getElementById("project-zip-input"),
   paneResizer: document.getElementById("pane-resizer"),
   mainStack: document.getElementById("main-stack"),
   mobileSwitchButtons: Array.from(document.querySelectorAll(".mobile-switch-btn"))
@@ -1054,12 +979,62 @@ function wordCount(code){
   return words ? words.length : 0;
 }
 
-function getProjectFilename(){
-  const base = (els.projectName.value || "proyecto-latex")
+function slugifyProjectName(value = ""){
+  return value
     .toLowerCase()
     .replace(/[^a-z0-9]+/g,"-")
-    .replace(/^-+|-+$/g,"");
-  return `${base || "proyecto-latex"}.tex`;
+    .replace(/^-+|-+$/g,"") || "proyecto-latex";
+}
+
+function getProjectFilename(){
+  return `${slugifyProjectName(els.projectName.value || "proyecto-latex")}.tex`;
+}
+
+function getProjectZipFilename(){
+  return `${slugifyProjectName(els.projectName.value || "proyecto-latex")}.zip`;
+}
+
+function getVisibleTexFilename(){
+  if(!state.activeTexFile){ return getProjectFilename(); }
+  const parts = state.activeTexFile.split("/");
+  return parts[parts.length - 1] || state.activeTexFile;
+}
+
+function updateActiveFileLabels(){
+  const label = getVisibleTexFilename();
+  els.activeFileName.textContent = label;
+  els.editorFileLabel.textContent = label;
+}
+
+function setActiveTexFile(fileName = "main.tex"){
+  state.activeTexFile = fileName || "main.tex";
+  updateActiveFileLabels();
+}
+
+function createSingleFileProject(content, fileName = "main.tex"){
+  setActiveTexFile(fileName);
+  state.projectFiles = new Map([
+    [state.activeTexFile, { type: "text", content }]
+  ]);
+}
+
+function syncCurrentDocumentToProjectFiles(){
+  if(!state.editor){ return; }
+  const fileName = state.activeTexFile || "main.tex";
+  state.projectFiles.set(fileName, { type: "text", content: state.editor.getValue() });
+}
+
+function isTextProjectFile(fileName = ""){
+  const extension = fileName.toLowerCase().split(".").pop() || "";
+  return TEXT_PROJECT_EXTENSIONS.has(extension);
+}
+
+function pickPrimaryTexFile(fileNames){
+  const texFiles = fileNames.filter(name => /\.tex$/i.test(name));
+  if(!texFiles.length){ return ""; }
+  return texFiles.find(name => /(^|\/)main\.tex$/i.test(name))
+    || texFiles.find(name => /(^|\/)(index|document|paper|article|tesis|thesis)\.tex$/i.test(name))
+    || texFiles[0];
 }
 
 function updateWindowTitle(){
@@ -1197,7 +1172,7 @@ function updatePreview(){
       <div class="paper-page">
         <div class="paper-topline">
           <span>${escapeHtml(els.projectName.value || "Proyecto LaTeX")}</span>
-          <span>${escapeHtml(state.currentTemplate.toUpperCase())}</span>
+          <span>${escapeHtml(getVisibleTexFilename())}</span>
         </div>
 
         <header class="sheet-header">
@@ -1279,11 +1254,13 @@ function schedulePreview(){
 async function persistDocument(logMessage = "", isManual = false){
   if(!state.currentUser){ return; }
   setSaveState("saving","Guardando...");
+  syncCurrentDocumentToProjectFiles();
   const payload = {
     lastCode: state.editor.getValue(),
     lastSavedAt: new Date().toISOString(),
     lastTemplate: state.currentTemplate,
-    projectName: els.projectName.value || "Proyecto LaTeX"
+    projectName: els.projectName.value || "Proyecto LaTeX",
+    activeTexFile: state.activeTexFile || "main.tex"
   };
   try{
     await setDoc(doc(db,"users",state.currentUser.uid), payload, { merge: true });
@@ -1315,6 +1292,7 @@ function applyEditorValue(value){
   state.suspendAutosave = true;
   state.editor.setValue(value);
   state.suspendAutosave = false;
+  syncCurrentDocumentToProjectFiles();
   updateMetrics();
   updatePreview();
 }
@@ -1345,29 +1323,6 @@ function setMobilePanel(panel){
   });
 }
 
-function decodeSnippet(value = ""){
-  return value.replace(/\\n/g,"\n");
-}
-
-function insertSnippet(before, after = ""){
-  const docEditor = state.editor.getDoc();
-  const selection = docEditor.getSelection();
-  const from = docEditor.getCursor("from");
-  before = decodeSnippet(before);
-  after = decodeSnippet(after);
-  docEditor.replaceSelection(`${before}${selection}${after}`, "around");
-  if(selection){
-    const to = docEditor.getCursor("to");
-    docEditor.setSelection(
-      { line: from.line, ch: from.ch + before.length },
-      { line: to.line, ch: Math.max(to.ch - after.length, 0) }
-    );
-  }else{
-    docEditor.setCursor({ line: from.line, ch: from.ch + before.length });
-  }
-  state.editor.focus();
-}
-
 async function copyText(text, successMessage){
   try{
     if(navigator.clipboard?.writeText){
@@ -1395,13 +1350,110 @@ function downloadTex(){
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = getProjectFilename();
+  link.download = getVisibleTexFilename();
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
   setStatus("Archivo .tex descargado", "ok");
-  addActivity("Descarga", `Se genero ${getProjectFilename()} para descarga local.`);
+  addActivity("Descarga", `Se genero ${getVisibleTexFilename()} para descarga local.`);
+}
+
+async function importProjectZip(file){
+  if(!file){ return; }
+  if(typeof JSZip === "undefined"){
+    setStatus("La herramienta ZIP no esta disponible en este navegador", "error");
+    return;
+  }
+  setStatus("Cargando proyecto ZIP...");
+  try{
+    const zip = await JSZip.loadAsync(file);
+    const entries = Object.values(zip.files)
+      .filter(entry => !entry.dir && !entry.name.startsWith("__MACOSX/"))
+      .map(entry => ({ entry, name: entry.name.replace(/^\/+/,"") }))
+      .filter(item => item.name);
+
+    if(!entries.length){
+      setStatus("El ZIP no contiene archivos que se puedan usar", "error");
+      return;
+    }
+
+    const primaryTexFile = pickPrimaryTexFile(entries.map(item => item.name));
+    if(!primaryTexFile){
+      setStatus("No se encontro ningun archivo .tex dentro del ZIP", "error");
+      return;
+    }
+
+    const importedFiles = new Map();
+    for(const item of entries){
+      if(isTextProjectFile(item.name)){
+        importedFiles.set(item.name, { type: "text", content: await item.entry.async("string") });
+      }else{
+        importedFiles.set(item.name, { type: "binary", content: await item.entry.async("uint8array") });
+      }
+    }
+
+    state.projectFiles = importedFiles;
+    setActiveTexFile(primaryTexFile);
+    const primarySource = state.projectFiles.get(primaryTexFile);
+    applyEditorValue(typeof primarySource?.content === "string" ? primarySource.content : "");
+
+    const suggestedName = file.name.replace(/\.zip$/i,"").trim();
+    if(suggestedName){
+      els.projectName.value = suggestedName;
+      updateWindowTitle();
+    }
+    els.lastSavedLabel.textContent = `Proyecto local importado desde ${file.name}`;
+    setSaveState("dirty","Proyecto ZIP cargado");
+    scheduleSave();
+    setStatus(`Proyecto importado desde ${file.name}`, "ok");
+    addActivity("Importacion ZIP", `Se cargaron ${state.projectFiles.size} archivo(s) del proyecto local.`);
+    if(state.projectFiles.size > 1){
+      addActivity("Proyecto completo", "La descarga ZIP conservara todos los archivos importados. La compilacion integrada sigue usando el .tex abierto.");
+    }
+  }catch(error){
+    console.error(error);
+    setStatus("No fue posible leer el archivo ZIP", "error");
+  }finally{
+    els.projectZipInput.value = "";
+  }
+}
+
+async function downloadProjectZip(){
+  if(typeof JSZip === "undefined"){
+    setStatus("La descarga ZIP no esta disponible en este navegador", "error");
+    return;
+  }
+  try{
+    syncCurrentDocumentToProjectFiles();
+    const zip = new JSZip();
+    const files = state.projectFiles.size
+      ? Array.from(state.projectFiles.entries())
+      : [[state.activeTexFile || "main.tex", { type: "text", content: state.editor.getValue() }]];
+
+    files.forEach(([name, entry]) => {
+      if(entry.type === "binary"){
+        zip.file(name, entry.content);
+      }else{
+        zip.file(name, entry.content || "");
+      }
+    });
+
+    const blob = await zip.generateAsync({ type: "blob" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = getProjectZipFilename();
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    setStatus("Proyecto ZIP descargado", "ok");
+    addActivity("Descarga ZIP", `Se descargo ${getProjectZipFilename()} con ${files.length} archivo(s).`);
+  }catch(error){
+    console.error(error);
+    setStatus("No fue posible generar el ZIP del proyecto", "error");
+  }
 }
 
 function openOverleaf(){
@@ -1450,58 +1502,49 @@ function searchInEditor(){
   setStatus(`Coincidencia encontrada para "${term}"`, "ok");
 }
 
-async function compilePDF(target = "latex-frame"){
+async function compilePDF(){
   if(!state.currentUser){ return; }
+  syncCurrentDocumentToProjectFiles();
   setStatus("Compilando PDF...");
   els.compileBtn.disabled = true;
-  els.openPdfBtn.disabled = true;
-  els.formCode.value = state.editor.getValue();
-  const previousTarget = els.compileForm.target;
-  els.compileForm.target = target;
-  state.awaitingPdfLoad = target === "latex-frame";
-  if(target === "latex-frame"){
-    if(window.innerWidth <= 1240){ setMobilePanel("preview"); }
-    setActiveTab("pdf");
-    els.pdfEmpty.style.display = "none";
-    window.clearTimeout(state.compileTimer);
-    state.compileTimer = window.setTimeout(() => {
-      els.compileBtn.disabled = false;
-      els.openPdfBtn.disabled = false;
-      if(state.awaitingPdfLoad){
-        state.awaitingPdfLoad = false;
-        setStatus("La compilacion tardo mas de lo normal. Revisa el panel PDF o intenta de nuevo.", "error");
-      }
-    }, 15000);
-  }
-  try {
-  const code = state.editor.getValue();
-  const response = await fetch("http://46.183.116.172:3000/compile", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ code })
-  });
-  const data = await response.json();
-  if(data.pdf){
-    const pdfBlob = new Blob([Uint8Array.from(atob(data.pdf), c => c.charCodeAt(0))], {type:"application/pdf"});
-    const pdfUrl = URL.createObjectURL(pdfBlob);
-    if(target === "latex-frame"){
-      document.getElementById("latex-frame").src = pdfUrl;
-    } else {
-      window.open(pdfUrl, "_blank");
-    }
-    setStatus("PDF compilado exitosamente", "ok");
-  } else {
-    setStatus(data.error || "Error al compilar", "error");
-  }
-} catch(e) {
-  setStatus("Error conectando con el compilador", "error");
-}
-  els.compileForm.target = previousTarget;
-  addActivity("Compilacion", target === "latex-frame" ? "Se envio el documento al compilador PDF integrado." : "Se compilo el documento en una nueva pestana.");
-  if(target !== "latex-frame"){
+  state.awaitingPdfLoad = true;
+  if(window.innerWidth <= 1240){ setMobilePanel("preview"); }
+  setActiveTab("pdf");
+  els.pdfEmpty.style.display = "none";
+  window.clearTimeout(state.compileTimer);
+  state.compileTimer = window.setTimeout(() => {
     els.compileBtn.disabled = false;
-    els.openPdfBtn.disabled = false;
-    setStatus("PDF abierto en una nueva pestana", "ok");
+    if(state.awaitingPdfLoad){
+      state.awaitingPdfLoad = false;
+      setStatus("La compilacion tardo mas de lo normal. Revisa el panel PDF o intenta de nuevo.", "error");
+    }
+  }, 15000);
+  try {
+    const code = state.editor.getValue();
+    const response = await fetch("http://46.183.116.172:3000/compile", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code })
+    });
+    const data = await response.json();
+    if(data.pdf){
+      const pdfBlob = new Blob([Uint8Array.from(atob(data.pdf), c => c.charCodeAt(0))], { type:"application/pdf" });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      els.pdfFrame.src = pdfUrl;
+      setStatus("PDF compilado exitosamente", "ok");
+      addActivity("Compilacion", "Se envio el documento al compilador PDF integrado.");
+    } else {
+      state.awaitingPdfLoad = false;
+      els.compileBtn.disabled = false;
+      els.pdfEmpty.style.display = "";
+      setStatus(data.error || "Error al compilar", "error");
+    }
+  } catch(error) {
+    console.error(error);
+    state.awaitingPdfLoad = false;
+    els.compileBtn.disabled = false;
+    els.pdfEmpty.style.display = "";
+    setStatus("Error conectando con el compilador", "error");
   }
 }
 
@@ -1517,9 +1560,9 @@ function setActiveTab(tab){
     panel.classList.toggle("active", panel.id === `tab-${tab}`);
   });
   const captions = {
-    preview: "Vista previa del documento",
-    pdf: "PDF real compilado con el motor externo",
-    activity: "Actividad reciente del editor"
+    preview: "Lectura estructural del archivo activo.",
+    pdf: "Salida compilada del proyecto.",
+    activity: "Historial reciente de acciones del editor."
   };
   els.previewCaption.textContent = captions[tab] || "";
 }
@@ -1537,6 +1580,7 @@ function loadTemplate(force = false){
     if(!confirmReplace){ return; }
   }
   state.currentTemplate = selected;
+  createSingleFileProject(TEMPLATES[selected] || TEMPLATES.article);
   applyEditorValue(TEMPLATES[selected] || TEMPLATES.article);
   scheduleSave();
   setStatus("Plantilla cargada", "ok");
@@ -1629,8 +1673,10 @@ function initEditor(){
     }
   });
 
+  createSingleFileProject(TEMPLATES.article);
   applyEditorValue(TEMPLATES.article);
   state.editor.on("change", () => {
+    syncCurrentDocumentToProjectFiles();
     updateMetrics();
     schedulePreview();
     scheduleSave();
@@ -1650,6 +1696,7 @@ async function loadUserDocument(uid){
   els.projectName.value = state.userData.projectName || "Proyecto LaTeX";
   updateWindowTitle();
   const code = state.userData.lastCode || TEMPLATES[state.currentTemplate] || TEMPLATES.article;
+  createSingleFileProject(code, state.userData.activeTexFile || "main.tex");
   applyEditorValue(code);
   if(state.userData.lastSavedAt){
     state.lastSavedAt = state.userData.lastSavedAt;
@@ -1673,11 +1720,16 @@ function bindEvents(){
   els.themeBtn.addEventListener("click", toggleTheme);
   els.loadTemplateBtn.addEventListener("click", () => loadTemplate());
   els.saveBtn.addEventListener("click", () => persistDocument("Guardado manual ejecutado.", true));
+  els.importZipBtn.addEventListener("click", () => els.projectZipInput.click());
+  els.exportZipBtn.addEventListener("click", () => downloadProjectZip());
   els.compileBtn.addEventListener("click", () => compilePDF());
   els.overleafBtn.addEventListener("click", openOverleaf);
   els.logoutBtn.addEventListener("click", async () => {
     await signOut(auth);
     window.location.href = "login.html";
+  });
+  els.projectZipInput.addEventListener("change", event => {
+    importProjectZip(event.target.files?.[0]);
   });
   els.copyCodeBtn.addEventListener("click", () => copyText(state.editor.getValue(), "Codigo completo copiado"));
   els.downloadTexBtn.addEventListener("click", downloadTex);
@@ -1686,32 +1738,8 @@ function bindEvents(){
     updateWindowTitle();
     scheduleSave();
   });
-  els.searchBtn.addEventListener("click", searchInEditor);
-  els.commentBtn.addEventListener("click", () => {
-    state.editor.toggleComment();
-    state.editor.focus();
-  });
-  els.indentBtn.addEventListener("click", () => {
-    state.editor.indentSelection("add");
-    state.editor.focus();
-  });
-  els.refreshPreviewBtn.addEventListener("click", () => {
-    updatePreview();
-    setStatus("Vista previa actualizada", "ok");
-    addActivity("Preview", "Se actualizo la vista previa estructural.");
-  });
-  els.pdfTabBtn.addEventListener("click", () => setActiveTab("pdf"));
-  els.openPdfBtn.addEventListener("click", () => compilePDF("_blank"));
-  els.copySelectionBtn.addEventListener("click", () => {
-    const selection = state.editor.getSelection() || state.editor.getValue();
-    copyText(selection, state.editor.getSelection() ? "Seleccion copiada" : "No habia seleccion: se copio todo el documento");
-  });
   els.mobileSwitchButtons.forEach(button => {
     button.addEventListener("click", () => setMobilePanel(button.dataset.mobilePanel));
-  });
-
-  document.querySelectorAll("[data-before]").forEach(button => {
-    button.addEventListener("click", () => insertSnippet(button.dataset.before || "", button.dataset.after || ""));
   });
 
   document.querySelectorAll(".tab-btn").forEach(button => {
@@ -1731,7 +1759,6 @@ function bindEvents(){
     state.awaitingPdfLoad = false;
     window.clearTimeout(state.compileTimer);
     els.compileBtn.disabled = false;
-    els.openPdfBtn.disabled = false;
     setStatus("PDF compilado y actualizado", "ok");
     addActivity("PDF listo", "El panel derecho ya contiene la version compilada mas reciente.");
   });
