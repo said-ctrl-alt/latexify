@@ -2490,10 +2490,16 @@ function getEndpointPayloadLimit(endpoint){
 }
 
 async function requestCompilation(code, target, projectFiles, payloadBytes, endpoints = getCompilerEndpoints()){
-  let lastError = null;
+  let firstRealError = null;
+  let firstSkippedError = null;
+  const hasTrustedExternal = endpoints.some(endpoint => isTrustedExternalCompilerEndpoint(endpoint));
   for(const endpoint of endpoints){
-    if(payloadBytes > getEndpointPayloadLimit(endpoint)){
-      lastError = new Error(`El proyecto pesa ${formatBytes(payloadBytes)} y supera el limite seguro de ${formatBytes(getEndpointPayloadLimit(endpoint))} para ${endpoint}.`);
+    const endpointLimit = getEndpointPayloadLimit(endpoint);
+    if(payloadBytes > endpointLimit){
+      const skippedError = new Error(`El proyecto pesa ${formatBytes(payloadBytes)} y supera el limite seguro de ${formatBytes(endpointLimit)} para ${endpoint}.`);
+      if(!firstSkippedError){
+        firstSkippedError = skippedError;
+      }
       continue;
     }
     try{
@@ -2520,10 +2526,15 @@ async function requestCompilation(code, target, projectFiles, payloadBytes, endp
       }
       throw new Error("Respuesta invalida del compilador");
     }catch(error){
-      lastError = error;
+      if(!firstRealError){
+        firstRealError = error;
+      }
+      if(hasTrustedExternal && !isTrustedExternalCompilerEndpoint(endpoint) && payloadBytes > COMPILER_SAFE_PAYLOAD_BYTES){
+        continue;
+      }
     }
   }
-  throw lastError || new Error("No se pudo contactar el compilador");
+  throw firstRealError || firstSkippedError || new Error("No se pudo contactar el compilador");
 }
 
 async function compilePDF(){
