@@ -1441,6 +1441,7 @@ const state = {
   saveTimer: null,
   previewTimer: null,
   compileTimer: null,
+  compileHardTimer: null,
   suspendAutosave: false,
   awaitingPdfLoad: false,
   lastSavedAt: null,
@@ -1790,6 +1791,8 @@ function getCompileSourceFile(){
 }
 
 const COMPILER_SAFE_PAYLOAD_BYTES = 4 * 1024 * 1024;
+const COMPILER_SOFT_TIMEOUT_MS = 20000;
+const COMPILER_HARD_TIMEOUT_MS = 180000;
 const COMPILER_IGNORED_PATTERNS = [
   /(^|\/)__MACOSX\//i,
   /(^|\/)\.ds_store$/i,
@@ -2424,14 +2427,22 @@ async function compilePDF(){
   setActiveTab("pdf");
   showPdfNotice(`Compilando ${getBasename(compileFile)}...\nEspera un momento mientras generamos el PDF.`, "info");
   window.clearTimeout(state.compileTimer);
+  window.clearTimeout(state.compileHardTimer);
   state.compileTimer = window.setTimeout(() => {
-    els.compileBtn.disabled = false;
+    if(state.awaitingPdfLoad){
+      showPdfNotice("La compilacion sigue en proceso.\nTu servidor esta trabajando; espera un poco mas.", "info");
+      setStatus("La compilacion sigue en proceso. Espera un poco mas.");
+    }
+  }, COMPILER_SOFT_TIMEOUT_MS);
+  state.compileHardTimer = window.setTimeout(() => {
     if(state.awaitingPdfLoad){
       state.awaitingPdfLoad = false;
-      showPdfNotice("La compilacion tardo mas de lo normal.\nRevisa el error mostrado o intenta de nuevo.", "error");
-      setStatus("La compilacion tardo mas de lo normal. Revisa el panel PDF o intenta de nuevo.", "error");
+      els.compileBtn.disabled = false;
+      showPdfNotice("La compilacion sigue tardando demasiado.\nRevisa el proyecto o intenta de nuevo en unos minutos.", "error");
+      setStatus("La compilacion sigue tardando demasiado. Revisa el panel PDF o intenta de nuevo.", "error");
+      addActivity("Compilacion demorada", `El compilador no devolvio un PDF despues de ${Math.round(COMPILER_HARD_TIMEOUT_MS / 1000)} segundos.`);
     }
-  }, 15000);
+  }, COMPILER_HARD_TIMEOUT_MS);
   try {
     const { data, endpoint } = await requestCompilation(codeToCompile, compileFile, projectFiles);
     if(data.pdf){
@@ -2445,6 +2456,8 @@ async function compilePDF(){
         addActivity("Compilacion", `Se compilo ${getBasename(compileFile)} desde ${endpoint}.${omittedFiles ? ` Se omitieron ${omittedFiles} archivo(s) auxiliares.` : ""}`);
       }
     } else {
+      window.clearTimeout(state.compileTimer);
+      window.clearTimeout(state.compileHardTimer);
       state.awaitingPdfLoad = false;
       els.compileBtn.disabled = false;
       const message = data.error || "Error al compilar";
@@ -2453,6 +2466,8 @@ async function compilePDF(){
     }
   } catch(error) {
     console.error(error);
+    window.clearTimeout(state.compileTimer);
+    window.clearTimeout(state.compileHardTimer);
     state.awaitingPdfLoad = false;
     els.compileBtn.disabled = false;
     const failureMessage = error?.message || "Fallo de red al contactar el compilador.";
@@ -2683,6 +2698,7 @@ function bindEvents(){
     if(!state.awaitingPdfLoad){ return; }
     state.awaitingPdfLoad = false;
     window.clearTimeout(state.compileTimer);
+    window.clearTimeout(state.compileHardTimer);
     els.compileBtn.disabled = false;
     setStatus("PDF compilado y actualizado", "ok");
     addActivity("PDF listo", "El panel derecho ya contiene la version compilada mas reciente.");
