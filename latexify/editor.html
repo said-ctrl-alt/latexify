@@ -1664,6 +1664,45 @@ function getCompilationFailureMessage(message = ""){
   return baseMessage;
 }
 
+function summarizeCompilerLog(log = ""){
+  const text = String(log || "").replace(/\r/g, "");
+  if(!text.trim()){
+    return "";
+  }
+
+  const lines = text.split("\n").map(line => line.trim()).filter(Boolean);
+  const snippets = [];
+
+  for(let index = 0; index < lines.length; index += 1){
+    const line = lines[index];
+    if(/^!/.test(line) || /^l\.\d+/.test(line) || /Undefined control sequence|Emergency stop|Fatal error occurred|not found/i.test(line)){
+      snippets.push(line);
+      const nextLine = lines[index + 1];
+      if(nextLine && !/^!/.test(nextLine) && !/^l\.\d+/.test(nextLine)){
+        snippets.push(nextLine);
+      }
+    }
+    if(snippets.length >= 6){
+      break;
+    }
+  }
+
+  return Array.from(new Set(snippets)).slice(0, 6).join("\n");
+}
+
+function formatCompilerResponseError(data, fallbackMessage = ""){
+  const baseMessage = String(data?.error || fallbackMessage || "Error al compilar");
+  const extraSections = [];
+  if(typeof data?.details === "string" && data.details.trim()){
+    extraSections.push(data.details.trim());
+  }
+  const logSummary = summarizeCompilerLog(data?.log);
+  if(logSummary){
+    extraSections.push(logSummary);
+  }
+  return extraSections.length ? `${baseMessage}\n${extraSections.join("\n")}` : baseMessage;
+}
+
 function restoreProjectFilesFromSnapshot(projectFiles, fallbackCode, fallbackFileName = "main.tex"){
   if(!Array.isArray(projectFiles) || !projectFiles.length){
     state.projectSyncWarning = "";
@@ -2442,8 +2481,7 @@ async function requestCompilation(code, target, projectFiles){
         data = null;
       }
       if(!response.ok){
-        const detailed = data?.details ? `: ${data.details}` : "";
-        throw new Error(data?.error ? `${data.error}${detailed}` : `HTTP ${response.status}`);
+        throw new Error(data ? formatCompilerResponseError(data, `HTTP ${response.status}`) : `HTTP ${response.status}`);
       }
       if(data?.pdf){
         return { data, endpoint };
