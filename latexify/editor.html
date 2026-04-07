@@ -1447,6 +1447,7 @@ const state = {
   lastSavedAt: null,
   lastManualLogAt: 0,
   lastSearchQuery: "",
+  projectSyncWarning: "",
   currentTemplate: "article",
   currentTab: "preview",
   activity: [],
@@ -1607,8 +1608,65 @@ function getCloudProjectFilesSnapshot(){
   return { files: selected, omittedCount };
 }
 
+function getProjectSummarySnapshot(){
+  const files = Array.from(state.projectFiles.entries());
+  const textFiles = files.filter(([path, entry]) => isTextProjectFile(path) && entry?.type === "text");
+  const binaryFiles = files.filter(([_path, entry]) => entry?.type === "binary");
+  return {
+    totalCount: files.length,
+    textCount: textFiles.length,
+    binaryCount: binaryFiles.length,
+    activeTexFile: state.activeTexFile || "main.tex",
+    sampleTextFiles: textFiles.slice(0, 8).map(([path]) => path),
+    sampleBinaryFiles: binaryFiles.slice(0, 8).map(([path]) => path)
+  };
+}
+
+function buildProjectSyncWarning(){
+  const summary = state.userData?.projectSummary;
+  if(!summary || typeof summary !== "object"){
+    return "";
+  }
+
+  const restoredCount = state.projectFiles.size;
+  const totalCount = Number(summary.totalCount) || 0;
+  const binaryCount = Number(summary.binaryCount) || 0;
+  const missingCount = Math.max(0, totalCount - restoredCount);
+
+  if(binaryCount <= 0 && missingCount <= 0){
+    return "";
+  }
+
+  const details = [];
+  if(missingCount > 0){
+    details.push(`solo se restauraron ${restoredCount} de ${totalCount} archivo(s)`);
+  }
+  if(binaryCount > 0){
+    details.push(`${binaryCount} archivo(s) binarios no se sincronizan entre equipos`);
+  }
+
+  return `Este equipo abrio una copia parcial del proyecto: ${details.join("; ")}. Si la compilacion muestra errores como "Undefined control sequence" o archivos faltantes, vuelve a cargar el ZIP completo en este equipo.`;
+}
+
+function refreshProjectSyncWarning(){
+  state.projectSyncWarning = buildProjectSyncWarning();
+  return state.projectSyncWarning;
+}
+
+function getCompilationFailureMessage(message = ""){
+  const baseMessage = String(message || "");
+  if(!state.projectSyncWarning){
+    return baseMessage;
+  }
+  if(/Undefined control sequence|not found|Fatal error occurred|Emergency stop/i.test(baseMessage)){
+    return `${baseMessage}\n\nSugerencia: este equipo parece tener una copia parcial del proyecto. Carga de nuevo el ZIP completo antes de compilar.`;
+  }
+  return baseMessage;
+}
+
 function restoreProjectFilesFromSnapshot(projectFiles, fallbackCode, fallbackFileName = "main.tex"){
   if(!Array.isArray(projectFiles) || !projectFiles.length){
+    state.projectSyncWarning = "";
     createSingleFileProject(fallbackCode, fallbackFileName);
     applyEditorValue(fallbackCode);
     return;
@@ -1621,6 +1679,7 @@ function restoreProjectFilesFromSnapshot(projectFiles, fallbackCode, fallbackFil
   });
 
   if(!restored.size){
+    state.projectSyncWarning = "";
     createSingleFileProject(fallbackCode, fallbackFileName);
     applyEditorValue(fallbackCode);
     return;
@@ -1639,6 +1698,7 @@ function restoreProjectFilesFromSnapshot(projectFiles, fallbackCode, fallbackFil
 
   const activeEntry = state.projectFiles.get(initialFile);
   applyEditorValue(typeof activeEntry?.content === "string" ? activeEntry.content : fallbackCode);
+  refreshProjectSyncWarning();
 }
 
 function syncCurrentDocumentToProjectFiles(){
@@ -2060,7 +2120,8 @@ async function persistDocument(logMessage = "", isManual = false){
     lastTemplate: state.currentTemplate,
     projectName: els.projectName.value || "Proyecto LaTeX",
     activeTexFile: state.activeTexFile || "main.tex",
-    projectTextFiles: cloudProject.files
+    projectTextFiles: cloudProject.files,
+    projectSummary: getProjectSummarySnapshot()
   };
   try{
     await setDoc(doc(db,"users",state.currentUser.uid), payload, { merge: true });
@@ -2221,6 +2282,7 @@ async function importProjectZip(file){
     }
 
     state.projectFiles = importedFiles;
+    state.projectSyncWarning = "";
     setActiveTexFile(primaryTexFile);
     const primarySource = state.projectFiles.get(primaryTexFile);
     applyEditorValue(typeof primarySource?.content === "string" ? primarySource.content : "");
@@ -2460,7 +2522,7 @@ async function compilePDF(){
       window.clearTimeout(state.compileHardTimer);
       state.awaitingPdfLoad = false;
       els.compileBtn.disabled = false;
-      const message = data.error || "Error al compilar";
+      const message = getCompilationFailureMessage(data.error || "Error al compilar");
       showPdfNotice(message, "error");
       setStatus(message, "error");
     }
@@ -2470,7 +2532,7 @@ async function compilePDF(){
     window.clearTimeout(state.compileHardTimer);
     state.awaitingPdfLoad = false;
     els.compileBtn.disabled = false;
-    const failureMessage = error?.message || "Fallo de red al contactar el compilador.";
+    const failureMessage = getCompilationFailureMessage(error?.message || "Fallo de red al contactar el compilador.");
     showPdfNotice(failureMessage, "error");
     setStatus(failureMessage, "error");
     addActivity("Compilacion fallida", failureMessage);
@@ -2626,6 +2688,10 @@ async function loadUserDocument(uid){
   updateWindowTitle();
   const code = state.userData.lastCode || TEMPLATES[state.currentTemplate] || TEMPLATES.article;
   restoreProjectFilesFromSnapshot(state.userData.projectTextFiles, code, state.userData.activeTexFile || "main.tex");
+  if(refreshProjectSyncWarning()){
+    setStatus("Proyecto restaurado parcialmente. Carga el ZIP para compilar el paquete completo.", "error");
+    addActivity("Proyecto parcial", state.projectSyncWarning);
+  }
   if(state.userData.lastSavedAt){
     state.lastSavedAt = state.userData.lastSavedAt;
     els.lastSavedLabel.textContent = `Ultimo guardado a las ${formatTime(new Date(state.userData.lastSavedAt))}`;
