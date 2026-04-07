@@ -1890,6 +1890,7 @@ function getCompileSourceFile(){
 }
 
 const COMPILER_SAFE_PAYLOAD_BYTES = 4 * 1024 * 1024;
+const COMPILER_EXTERNAL_SAFE_PAYLOAD_BYTES = 24 * 1024 * 1024;
 const COMPILER_SOFT_TIMEOUT_MS = 20000;
 const COMPILER_HARD_TIMEOUT_MS = 180000;
 const COMPILER_IGNORED_PATTERNS = [
@@ -2449,6 +2450,19 @@ function normalizeCompilerEndpoint(value){
   return trimmed;
 }
 
+function resolveCompilerEndpoint(endpoint){
+  try{
+    return new URL(endpoint, window.location.href);
+  }catch(_error){
+    return null;
+  }
+}
+
+function isTrustedExternalCompilerEndpoint(endpoint){
+  const resolved = resolveCompilerEndpoint(endpoint);
+  return !!resolved && resolved.origin !== window.location.origin;
+}
+
 function getCompilerEndpoints(){
   const configuredSingle = normalizeCompilerEndpoint(window.LATEXIFY_COMPILER_ENDPOINT);
   const configuredList = Array.isArray(window.LATEXIFY_COMPILER_ENDPOINTS)
@@ -2460,13 +2474,28 @@ function getCompilerEndpoints(){
   const fallback = window.location.protocol === "https:"
     ? []
     : ["http://46.183.116.172:3000/compile"];
-  return Array.from(new Set(["/api/compile", ...configured, ...fallback]));
+  return Array.from(new Set([...configured, "/api/compile", ...fallback]));
 }
 
-async function requestCompilation(code, target, projectFiles){
-  const endpoints = getCompilerEndpoints();
+function getCompilerPayloadLimit(endpoints = []){
+  return endpoints.some(endpoint => isTrustedExternalCompilerEndpoint(endpoint))
+    ? COMPILER_EXTERNAL_SAFE_PAYLOAD_BYTES
+    : COMPILER_SAFE_PAYLOAD_BYTES;
+}
+
+function getEndpointPayloadLimit(endpoint){
+  return isTrustedExternalCompilerEndpoint(endpoint)
+    ? COMPILER_EXTERNAL_SAFE_PAYLOAD_BYTES
+    : COMPILER_SAFE_PAYLOAD_BYTES;
+}
+
+async function requestCompilation(code, target, projectFiles, payloadBytes, endpoints = getCompilerEndpoints()){
   let lastError = null;
   for(const endpoint of endpoints){
+    if(payloadBytes > getEndpointPayloadLimit(endpoint)){
+      lastError = new Error(`El proyecto pesa ${formatBytes(payloadBytes)} y supera el limite seguro de ${formatBytes(getEndpointPayloadLimit(endpoint))} para ${endpoint}.`);
+      continue;
+    }
     try{
       const response = await fetch(endpoint, {
         method: "POST",
@@ -2506,14 +2535,16 @@ async function compilePDF(){
   const projectFiles = getCompilationProjectFiles();
   const omittedFiles = Math.max(0, state.projectFiles.size - projectFiles.length);
   const { bytes: payloadBytes } = estimateCompilationPayload(codeToCompile, compileFile, projectFiles);
+  const compilerEndpoints = getCompilerEndpoints();
+  const compilerPayloadLimit = getCompilerPayloadLimit(compilerEndpoints);
   if(!codeToCompile.trim()){
     setActiveTab("pdf");
     showPdfNotice("No hay contenido .tex para compilar.", "error");
     setStatus("No hay contenido .tex para compilar", "error");
     return;
   }
-  if(payloadBytes > COMPILER_SAFE_PAYLOAD_BYTES){
-    const failureMessage = `El proyecto pesa ${formatBytes(payloadBytes)} para enviarlo al compilador y supera el tamano seguro de ${formatBytes(COMPILER_SAFE_PAYLOAD_BYTES)}.`;
+  if(payloadBytes > compilerPayloadLimit){
+    const failureMessage = `El proyecto pesa ${formatBytes(payloadBytes)} para enviarlo al compilador y supera el tamano seguro de ${formatBytes(compilerPayloadLimit)}.`;
     setActiveTab("pdf");
     showPdfNotice(`${failureMessage}\nReduce imagenes pesadas o elimina archivos de salida como PDF, LOG y AUX del ZIP antes de compilar.`, "error");
     setStatus(`${failureMessage} Reduce el proyecto antes de reintentar.`, "error");
@@ -2544,7 +2575,7 @@ async function compilePDF(){
     }
   }, COMPILER_HARD_TIMEOUT_MS);
   try {
-    const { data, endpoint } = await requestCompilation(codeToCompile, compileFile, projectFiles);
+    const { data, endpoint } = await requestCompilation(codeToCompile, compileFile, projectFiles, payloadBytes, compilerEndpoints);
     if(data.pdf){
       const pdfBlob = new Blob([Uint8Array.from(atob(data.pdf), c => c.charCodeAt(0))], { type:"application/pdf" });
       const pdfUrl = URL.createObjectURL(pdfBlob);
