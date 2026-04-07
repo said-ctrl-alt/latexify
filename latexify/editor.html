@@ -1774,6 +1774,73 @@ function getBasename(fileName = ""){
   return parts[parts.length - 1] || fileName;
 }
 
+function normalizeProjectPath(fileName = ""){
+  return String(fileName || "")
+    .replace(/\\/g, "/")
+    .replace(/^\/+/, "")
+    .split("/")
+    .filter(Boolean)
+    .filter(segment => segment !== "." && segment !== "..")
+    .join("/");
+}
+
+function stripCommonZipRoot(fileNames = []){
+  const normalized = fileNames.map(name => normalizeProjectPath(name)).filter(Boolean);
+  if(normalized.length <= 1){
+    return normalized;
+  }
+
+  const splitPaths = normalized.map(name => name.split("/"));
+  const minDepth = Math.min(...splitPaths.map(parts => parts.length));
+  let sharedDepth = 0;
+
+  for(let index = 0; index < minDepth - 1; index += 1){
+    const current = splitPaths[0][index];
+    if(splitPaths.every(parts => parts[index] === current)){
+      sharedDepth += 1;
+    }else{
+      break;
+    }
+  }
+
+  if(!sharedDepth){
+    return normalized;
+  }
+
+  return splitPaths.map(parts => parts.slice(sharedDepth).join("/")).filter(Boolean);
+}
+
+function replaceProjectWithFiles(projectFiles, primaryTexFile){
+  const importedFiles = projectFiles instanceof Map ? new Map(projectFiles) : new Map(projectFiles || []);
+  const nextPrimary = importedFiles.has(primaryTexFile)
+    ? primaryTexFile
+    : pickPrimaryTexFile(Array.from(importedFiles.keys())) || "main.tex";
+  const primarySource = importedFiles.get(nextPrimary);
+
+  window.clearTimeout(state.saveTimer);
+  window.clearTimeout(state.previewTimer);
+  window.clearTimeout(state.compileTimer);
+  window.clearTimeout(state.compileHardTimer);
+  state.awaitingPdfLoad = false;
+  if(els.compileBtn){
+    els.compileBtn.disabled = false;
+  }
+  revokeFileBlobs();
+  state.projectFiles = importedFiles;
+  state.projectSyncWarning = "";
+  setActiveTexFile(nextPrimary);
+  applyEditorValue(typeof primarySource?.content === "string" ? primarySource.content : "");
+  state.editor.getDoc().clearHistory();
+  state.editor.setCursor({ line: 0, ch: 0 });
+  state.editor.scrollTo(0, 0);
+  state.editor.focus();
+  state.userData = {
+    ...state.userData,
+    activeTexFile: nextPrimary,
+    lastCode: typeof primarySource?.content === "string" ? primarySource.content : ""
+  };
+}
+
 function createBlobUrlForFile(entry, fileName){
   const ext = getFileExtension(fileName);
   const typeMap = {
@@ -2296,9 +2363,14 @@ async function importProjectZip(file){
   setStatus("Cargando proyecto ZIP...");
   try{
     const zip = await JSZip.loadAsync(file);
-    const entries = Object.values(zip.files)
+    const rawEntries = Object.values(zip.files)
       .filter(entry => !entry.dir && !entry.name.startsWith("__MACOSX/"))
-      .map(entry => ({ entry, name: entry.name.replace(/^\/+/,"") }))
+      .map(entry => ({ entry, originalName: entry.name }))
+      .filter(item => item.originalName);
+
+    const normalizedNames = stripCommonZipRoot(rawEntries.map(item => item.originalName));
+    const entries = rawEntries
+      .map((item, index) => ({ entry: item.entry, name: normalizedNames[index] || normalizeProjectPath(item.originalName) }))
       .filter(item => item.name);
 
     if(!entries.length){
@@ -2321,11 +2393,7 @@ async function importProjectZip(file){
       }
     }
 
-    state.projectFiles = importedFiles;
-    state.projectSyncWarning = "";
-    setActiveTexFile(primaryTexFile);
-    const primarySource = state.projectFiles.get(primaryTexFile);
-    applyEditorValue(typeof primarySource?.content === "string" ? primarySource.content : "");
+    replaceProjectWithFiles(importedFiles, primaryTexFile);
 
     const suggestedName = file.name.replace(/\.zip$/i,"").trim();
     if(suggestedName){
